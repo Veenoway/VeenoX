@@ -144,7 +144,7 @@ export const Position = ({ asset }: PositionProps) => {
       if (entry.algo_order_id) {
         const tp = entry?.child_orders[0];
         const sl = entry?.child_orders[1];
-        if (tp.algo_status === "FILLED" || sl.algo_status === "FILLED") {
+        if (tp?.algo_status === "FILLED" || sl?.algo_status === "FILLED") {
           return true;
         }
         return false;

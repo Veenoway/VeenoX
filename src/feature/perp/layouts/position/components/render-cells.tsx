@@ -109,7 +109,7 @@ const renderAdditionalCells = (
   if (section === Sections.FILLED) {
     let filledOrder =
       trade.child_orders?.length > 0
-        ? trade.child_orders[0].algo_status === "FILLED"
+        ? trade.child_orders?.[0]?.algo_status === "FILLED"
           ? trade.child_orders[0]
           : trade.child_orders[1]
         : trade;
@@ -146,7 +146,7 @@ const renderAdditionalCells = (
 
         <td className={tdStyle}>{getFormattedAmount(filledOrder.total_fee)}</td>
         <td className={tdStyle}>
-          {filledOrder.status || filledOrder.algo_status}
+          {filledOrder.status || filledOrder?.algo_status}
         </td>
         <td className={tdStyle}>{trade.reduce_only ? "Yes" : "No"}</td>
         <td className={cn(tdStyle, "pr-5 text-end")}>
@@ -359,7 +359,7 @@ const renderAdditionalCells = (
   } else if (section === Sections.ORDER_HISTORY) {
     let filledOrder =
       trade.child_orders?.length > 0
-        ? trade.child_orders[0].algo_status === "FILLED"
+        ? trade.child_orders?.[0]?.algo_status === "FILLED"
           ? trade.child_orders[0]
           : trade.child_orders[1]
         : trade;
@@ -422,7 +422,7 @@ const renderAdditionalCells = (
     );
   } else if (section === Sections.TP_SL) {
     let filledOrder =
-      trade.child_orders[0].algo_status === "FILLED"
+      trade.child_orders?.[0]?.algo_status === "FILLED"
         ? trade.child_orders[0]
         : trade.child_orders[1];
     console.log(filledOrder, trade);
