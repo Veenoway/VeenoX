@@ -41,17 +41,8 @@ export const Position = ({ asset }: PositionProps) => {
     },
     { keeplive: true }
   );
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log(orders?.[0]);
-    }, 1000);
-  }, [orders]);
-
-  console.log("orderlyWs", orders);
-
   const { currentLeverage } = useMarginRatio();
-  console.log("data", data);
+
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
       setOrderPositions(data?.rows as any);
@@ -67,21 +58,13 @@ export const Position = ({ asset }: PositionProps) => {
     const pingInterval = setInterval(() => {
       ws.send({ event: "ping", ts: Date.now() });
 
-      // Vérifiez si nous n'avons pas reçu de pong depuis plus de 60 secondes
       if (Date.now() - lastPongRef.current > 60000) {
-        console.log(
-          "Pas de pong reçu depuis 60 secondes, réinitialisation de la connexion"
-        );
         ws.close();
-        // La connexion devrait se réinitialiser automatiquement
       }
     }, 30000);
 
-    // Utilisez la méthode 'on' au lieu de 'addEventListener'
     const handleMessage = (data: any) => {
       if (JSON.parse(data).event === "pong") {
-        console.log("Pong reçu");
-
         lastPongRef.current = Date.now();
       }
     };
@@ -90,7 +73,7 @@ export const Position = ({ asset }: PositionProps) => {
 
     return () => {
       clearInterval(pingInterval);
-      ws.off("message", handleMessage); // Utilisez 'off' pour retirer l'écouteur
+      ws.off("message", handleMessage);
     };
   }, [ws]);
 

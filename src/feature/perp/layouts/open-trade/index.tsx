@@ -372,8 +372,7 @@ export const OpenTrade = ({
     return (value / 100).toFixed(3) + "%";
   };
 
-  const [positionPnL, proxy, states] = usePositionStream();
-
+  const [positionPnL] = usePositionStream();
   const [isTooltipDepositOpen, setIsTooltipDepositOpen] = useState(false);
 
   useEffect(() => {
