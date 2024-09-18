@@ -359,9 +359,9 @@ const renderAdditionalCells = (
   } else if (section === Sections.ORDER_HISTORY) {
     let filledOrder =
       trade.child_orders?.length > 0
-        ? trade.child_orders?.[0]?.algo_status === "FILLED"
-          ? trade.child_orders[0]
-          : trade.child_orders[1]
+        ? trade?.child_orders?.[0]?.algo_status === "FILLED"
+          ? trade?.child_orders?.[0]
+          : trade?.child_orders?.[1]
         : trade;
     return (
       <>
@@ -369,19 +369,19 @@ const renderAdditionalCells = (
         <td
           className={cn(
             tdStyle,
-            `${filledOrder.side === "SELL" ? "text-red" : "text-green"}`
+            `${filledOrder?.side === "SELL" ? "text-red" : "text-green"}`
           )}
         >
-          {filledOrder.side}
+          {filledOrder?.side}
         </td>
         <td className={tdStyle}>
-          {filledOrder.total_executed_quantity
-            ? filledOrder.total_executed_quantity
+          {filledOrder?.total_executed_quantity
+            ? filledOrder?.total_executed_quantity
             : filledOrder?.total_executed_quantity}
         </td>
         <td className={tdStyle}>
-          {filledOrder.average_executed_price
-            ? getFormattedAmount(filledOrder.average_executed_price)
+          {filledOrder?.average_executed_price
+            ? getFormattedAmount(filledOrder?.average_executed_price)
             : "--"}
         </td>
 
@@ -402,17 +402,17 @@ const renderAdditionalCells = (
         </td>
         <td className={tdStyle}>
           {getFormattedAmount(
-            filledOrder.total_executed_quantity *
-              filledOrder.average_executed_price
+            filledOrder?.total_executed_quantity *
+              filledOrder?.average_executed_price
           )}
         </td>
         <td className={tdStyle}>
-          {filledOrder.total_fee
-            ? getFormattedAmount(filledOrder.total_fee)
+          {filledOrder?.total_fee
+            ? getFormattedAmount(filledOrder?.total_fee)
             : "--"}
         </td>
         <td className={tdStyle}>
-          {filledOrder.status ? filledOrder.status : filledOrder?.algo_status}
+          {filledOrder?.status ? filledOrder?.status : filledOrder?.algo_status}
         </td>
         <td className={tdStyle}>{filledOrder.reduce_only ? "Yes" : "No"}</td>
         <td className={cn(tdStyle, "pr-5 text-end")}>
@@ -423,43 +423,42 @@ const renderAdditionalCells = (
   } else if (section === Sections.TP_SL) {
     let filledOrder =
       trade.child_orders?.[0]?.algo_status === "FILLED"
-        ? trade.child_orders[0]
-        : trade.child_orders[1];
-    console.log(filledOrder, trade);
+        ? trade?.child_orders?.[0]
+        : trade?.child_orders?.[1];
     return (
       <>
         <td
           className={cn(
             tdStyle,
-            `${trade.side === "SELL" ? "text-red" : "text-green"}`
+            `${trade?.side === "SELL" ? "text-red" : "text-green"}`
           )}
         >
-          {trade.side}
+          {trade?.side}
         </td>
-        <td className={tdStyle}>{filledOrder.total_executed_quantity}</td>
+        <td className={tdStyle}>{filledOrder?.total_executed_quantity}</td>
         <td className={tdStyle}>
-          {filledOrder.algo_type?.split("_").join(" ")}
+          {filledOrder?.algo_type?.split("_").join(" ")}
         </td>
-        <td className={tdStyle}>{filledOrder.trigger_trade_price}</td>
-        <td className={tdStyle}>{filledOrder.trigger_price}</td>
+        <td className={tdStyle}>{filledOrder?.trigger_trade_price}</td>
+        <td className={tdStyle}>{filledOrder?.trigger_price}</td>
 
         <td
           className={cn(
             tdStyle,
             `${
-              filledOrder.realized_pnl > 0
+              filledOrder?.realized_pnl > 0
                 ? "text-green"
-                : filledOrder.realized_pnl < 0
+                : filledOrder?.realized_pnl < 0
                 ? "text-red"
                 : "text-white"
             }`
           )}
         >
-          ${filledOrder.realized_pnl}
+          ${filledOrder?.realized_pnl}
         </td>
-        <td className={tdStyle}>${filledOrder.total_fee.toFixed(2)}</td>
+        <td className={tdStyle}>${filledOrder?.total_fee.toFixed(2)}</td>
         <td className={cn(tdStyle, "pr-5 text-end")}>
-          {getFormattedDate(filledOrder.trigger_time)}
+          {getFormattedDate(filledOrder?.trigger_time)}
         </td>
       </>
     );
