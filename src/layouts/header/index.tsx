@@ -8,6 +8,7 @@ import {
 } from "@/utils/network";
 import {
   useAccountInstance,
+  useChains,
   useAccount as useOrderlyAccount,
 } from "@orderly.network/hooks";
 import Image from "next/image";
@@ -104,7 +105,8 @@ export const Header = () => {
   const chainLogo =
     supportedChains.find((entry) => entry.label === (chain?.name as string))
       ?.icon || getImageFromChainId(chainId as ChainsImageType);
-
+  const [chains, { findByChainId }] = useChains();
+  console.log(chains);
   return (
     <header className="flex items-center justify-between h-[60px] px-2.5 border-b border-borderColor">
       <div className="flex items-center gap-5">
@@ -160,22 +162,22 @@ export const Header = () => {
               className="flex flex-col px-5 py-4 rounded z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
             >
               <div className="flex items-center">
-                {supportedChains
-                  ?.filter((item) => item.network !== "testnet")
-                  .map((supportedChain, i) => (
+                {chains?.mainnet.map((supportedChain, i) => {
+                  const network = supportedChain?.network_infos;
+                  return (
                     <button
                       key={i}
                       className="flex flex-col justify-center items-center py-1 flex-nowrap"
                       onMouseEnter={() => {
-                        if (supportedChain?.id) {
-                          setIsHoverChain(supportedChain.id);
+                        if (network?.chain_id) {
+                          setIsHoverChain(network.chain_id);
                         }
                       }}
                       onMouseLeave={() => setIsHoverChain(null)}
                       onClick={() => {
-                        accountInstance.switchChainId(supportedChain.chainId);
+                        accountInstance.switchChainId(network.chain_id);
                         switchChain({
-                          chainId: supportedChain.chainId,
+                          chainId: network.chain_id,
                         });
                       }}
                     >
@@ -183,7 +185,7 @@ export const Header = () => {
                         className={`h-10 w-10 ${
                           i === 1 ? "mx-6" : ""
                         } p-2 rounded bg-terciary ${
-                          parseInt(supportedChain.id, 16) === chainId
+                          network.chain_id === chainId
                             ? "border-base_color"
                             : "border-borderColor"
                         } border transition-all duration-100 ease-in-out`}
@@ -193,8 +195,8 @@ export const Header = () => {
                           width={18}
                           height={18}
                           className={`h-full w-full object-cover rounded-full mr-2 ${
-                            parseInt(supportedChain.id, 16) === chainId ||
-                            isHoverChain === supportedChain.id
+                            network.chain_id === chainId ||
+                            isHoverChain === network.chain_id
                               ? ""
                               : "grayscale"
                           } transition-all duration-100 ease-in-out`}
@@ -216,7 +218,8 @@ export const Header = () => {
                           : supportedChain.label}
                       </p>
                     </button>
-                  ))}{" "}
+                  );
+                })}{" "}
               </div>
             </PopoverContent>
           </Popover>
