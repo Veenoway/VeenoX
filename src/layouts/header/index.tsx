@@ -159,33 +159,31 @@ export const Header = () => {
             </PopoverTrigger>
             <PopoverContent
               sideOffset={12}
-              className="flex flex-col px-5 py-4 rounded z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
+              className="flex flex-col px-5 py-4 rounded z-[102] max-w-[205px] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
             >
-              <div className="flex items-center">
-                {chains?.mainnet.map((supportedChain, i) => {
-                  const network = supportedChain?.network_infos;
-                  return (
+              <div className="flex items-center flex-wrap gap-2.5">
+                {supportedChains
+                  ?.filter((item) => item.network !== "testnet")
+                  .map((supportedChain, i) => (
                     <button
                       key={i}
                       className="flex flex-col justify-center items-center py-1 flex-nowrap"
                       onMouseEnter={() => {
-                        if (network?.chain_id) {
-                          setIsHoverChain(network.chain_id);
+                        if (supportedChain?.id) {
+                          setIsHoverChain(supportedChain.id);
                         }
                       }}
                       onMouseLeave={() => setIsHoverChain(null)}
                       onClick={() => {
-                        accountInstance.switchChainId(network.chain_id);
+                        accountInstance.switchChainId(supportedChain.chainId);
                         switchChain({
-                          chainId: network.chain_id,
+                          chainId: supportedChain.chainId,
                         });
                       }}
                     >
                       <div
-                        className={`h-10 w-10 ${
-                          i === 1 ? "mx-6" : ""
-                        } p-2 rounded bg-terciary ${
-                          network.chain_id === chainId
+                        className={`h-10 w-10 p-2 rounded bg-terciary ${
+                          parseInt(supportedChain.id, 16) === chainId
                             ? "border-base_color"
                             : "border-borderColor"
                         } border transition-all duration-100 ease-in-out`}
@@ -195,8 +193,8 @@ export const Header = () => {
                           width={18}
                           height={18}
                           className={`h-full w-full object-cover rounded-full mr-2 ${
-                            network.chain_id === chainId ||
-                            isHoverChain === network.chain_id
+                            parseInt(supportedChain.id, 16) === chainId ||
+                            isHoverChain === supportedChain.id
                               ? ""
                               : "grayscale"
                           } transition-all duration-100 ease-in-out`}
@@ -218,8 +216,7 @@ export const Header = () => {
                           : supportedChain.label}
                       </p>
                     </button>
-                  );
-                })}{" "}
+                  ))}{" "}
               </div>
             </PopoverContent>
           </Popover>
