@@ -69,8 +69,10 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
         autoClose: 2000,
       });
     } finally {
-      setLoading(false);
       await refreshPosition();
+      await refreshPosition();
+      await refreshPosition();
+      setLoading(false);
       setTPSLOpenOrder(null);
       setOrderPositions([]);
     }

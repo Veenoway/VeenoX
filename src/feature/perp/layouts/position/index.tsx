@@ -32,7 +32,7 @@ export const Position = ({ asset }: PositionProps) => {
     width: string;
     left: string;
   }>({ width: "20%", left: "0%" });
-  const [data, _info, { refresh: refreshPosition, loading }] =
+  const [data, _info, { refresh: refreshPosition, error, loading }] =
     usePositionStream();
   const [orders, { cancelOrder, refresh }] = useOrderStream(
     {
