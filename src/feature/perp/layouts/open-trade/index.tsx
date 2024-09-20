@@ -137,15 +137,12 @@ export const OpenTrade = ({
     { watchOrderbook: true }
   );
 
-  const [_, { refresh }] = useOrderStream(
-    {
-      symbol: asset.symbol,
-    },
-    { keeplive: true }
-  );
+  const [_, { refresh }] = useOrderStream({
+    symbol: asset.symbol,
+  });
 
   const newMaxQty = useMaxQty(asset?.symbol, values.direction as OrderSide);
-
+  console.log("newMaxQty", newMaxQty, maxQty);
   // const isAlgoOrder = values?.algo_order_id !== undefined;
 
   const rangeInfo = useSymbolPriceRange(
@@ -195,14 +192,15 @@ export const OpenTrade = ({
       calculate,
       currentAsset?.base_tick
     );
-
+    console.log(calculate(values, "order_quantity", values.quantity));
     if (errors && Object.keys(errors)?.length > 0) {
       if (errors?.total?.message) {
         triggerAlert("Error", errors?.total?.message);
         return;
       }
-      if (errors?.order_quantity?.message)
+      if (errors?.order_quantity?.message) {
         triggerAlert("Error", errors?.order_quantity?.message);
+      }
       return;
     }
 
@@ -222,12 +220,12 @@ export const OpenTrade = ({
       return;
     }
     const id = toast.loading("Executing Order");
+    const val = calculate(
+      getInput(values, asset.symbol, currentAsset?.base_tick),
+      "order_quantity",
+      values?.quantity
+    );
     try {
-      const val = calculate(
-        getInput(values, asset.symbol, currentAsset?.base_tick),
-        "order_quantity",
-        values?.quantity
-      );
       await onSubmit(val as OrderEntity);
       toast.update(id, {
         render: "Order executed",
@@ -235,6 +233,15 @@ export const OpenTrade = ({
         isLoading: false,
         autoClose: 2000,
       });
+    } catch (err: any) {
+      console.log(err);
+      toast.update(id, {
+        render: err?.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } finally {
       refresh();
       refreshPosition();
       setOrderPositions(val as any);
@@ -244,15 +251,10 @@ export const OpenTrade = ({
         direction: values.direction,
       });
       setSliderValue(100);
-    } catch (err: any) {
-      toast.update(id, {
-        render: err?.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
     }
   };
+
+  console.log("TEST");
 
   const getStyleFromType = () => {
     return values.direction === "BUY"
@@ -551,7 +553,14 @@ export const OpenTrade = ({
           <button
             key={i}
             className="w-1/3 h-full text-white text-xs font-medium"
-            onClick={() => handleValueChange("type", type.toUpperCase())}
+            onClick={() => {
+              if (values.price && values.type === "LIMIT")
+                setValues((prev) => ({
+                  ...prev,
+                  price: undefined,
+                }));
+              handleValueChange("type", type.toUpperCase());
+            }}
           >
             {type}
           </button>

@@ -118,7 +118,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const ws = useWS();
   const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
   const [chartLines, setChartLines] = useState<{ [key: string]: any }>({});
-  const [orders] = usePositionStream();
+  const [orders, _info, { refresh: refreshPosition }] = usePositionStream();
   const [isChartReady, setIsChartReady] = useState(false);
   const chartRef = useRef<any>(null);
   const prevPositionsRef = useRef("");
@@ -152,6 +152,8 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       ) || []
     );
   }, [orders, params?.perp]);
+
+  console.log(orders);
 
   const saveChartState = useCallback(
     (chart: any) => {

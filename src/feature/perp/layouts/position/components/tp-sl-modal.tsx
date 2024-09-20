@@ -6,7 +6,11 @@ import {
   DialogTitle,
 } from "@/lib/shadcn/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
-import { useOrderStream, useTPSLOrder } from "@orderly.network/hooks";
+import {
+  useOrderStream,
+  usePositionStream,
+  useTPSLOrder,
+} from "@orderly.network/hooks";
 import { useState } from "react";
 import { GrPowerReset } from "react-icons/gr";
 import { IoChevronDown } from "react-icons/io5";
@@ -31,8 +35,9 @@ export const TPSLModal = ({ order }: any) => {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
   const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(TPSLOpenOrder);
+  const [data, _info, { refresh: refreshPosition }] = usePositionStream();
   const { setOrderPositions } = useGeneralContext();
-
+  console.log("algoOrder", algoOrder);
   const handleSubmit = async () => {
     setLoading(true);
     if (errors) {
@@ -55,7 +60,6 @@ export const TPSLModal = ({ order }: any) => {
         isLoading: false,
         autoClose: 2000,
       });
-      refresh();
       setTPSLOpenOrder(null);
       setOrderPositions([]);
       setLoading(false);
@@ -69,6 +73,14 @@ export const TPSLModal = ({ order }: any) => {
       setLoading(false);
     } finally {
       setLoading(false);
+      try {
+        refreshPosition();
+        refresh();
+
+        console.log("I REFRESH");
+      } catch (e) {
+        console.log("e", e);
+      }
     }
   };
 

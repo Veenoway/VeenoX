@@ -5,7 +5,6 @@ import {
   useMarginRatio,
   useOrderStream,
   usePositionStream,
-  useWS,
 } from "@orderly.network/hooks";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -44,38 +43,15 @@ export const Position = ({ asset }: PositionProps) => {
   const { currentLeverage } = useMarginRatio();
 
   useEffect(() => {
+    refresh();
+    refreshPosition();
+  }, [data?.rows?.length, orders?.[0]]);
+
+  useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
       setOrderPositions(data?.rows as any);
     }
   }, [data?.rows]);
-
-  const ws = useWS();
-  const lastPongRef = useRef(Date.now());
-
-  useEffect(() => {
-    if (!ws) return;
-
-    const pingInterval = setInterval(() => {
-      ws.send({ event: "ping", ts: Date.now() });
-
-      if (Date.now() - lastPongRef.current > 60000) {
-        ws.close();
-      }
-    }, 30000);
-
-    const handleMessage = (data: any) => {
-      if (JSON.parse(data).event === "pong") {
-        lastPongRef.current = Date.now();
-      }
-    };
-
-    ws.on("message", handleMessage);
-
-    return () => {
-      clearInterval(pingInterval);
-      ws.off("message", handleMessage);
-    };
-  }, [ws]);
 
   useEffect(() => {
     const updateUnderline = () => {
