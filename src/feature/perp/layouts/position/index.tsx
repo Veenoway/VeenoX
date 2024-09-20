@@ -38,7 +38,7 @@ export const Position = ({ asset }: PositionProps) => {
     {
       symbol: asset.symbol,
     },
-    { keeplive: true }
+    { keeplive: true, stopOnUnmount: false }
   );
   const { currentLeverage } = useMarginRatio();
 

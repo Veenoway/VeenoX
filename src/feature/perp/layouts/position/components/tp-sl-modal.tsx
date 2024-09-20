@@ -32,11 +32,10 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     sl_trigger_price: TPSLOpenOrder.sl_trigger_price,
     quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
   };
-
   const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(position, {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
-  const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(TPSLOpenOrder);
+  const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(position);
   const { setOrderPositions } = useGeneralContext();
 
   const handleSubmit = async () => {
@@ -61,6 +60,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
         isLoading: false,
         autoClose: 2000,
       });
+      await Promise.all([refreshPosition(), refresh()]);
     } catch (error) {
       toast.update(idToast, {
         render: (error as any)?.message,
@@ -69,9 +69,6 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
         autoClose: 2000,
       });
     } finally {
-      await refreshPosition();
-      await refreshPosition();
-      await refreshPosition();
       setLoading(false);
       setTPSLOpenOrder(null);
       setOrderPositions([]);
@@ -89,7 +86,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
         isLoading: false,
         autoClose: 2000,
       });
-      refresh();
+      await Promise.all([refreshPosition()]);
       setOrderPositions([]);
       setTPSLOpenOrder(null);
     } catch (e) {
