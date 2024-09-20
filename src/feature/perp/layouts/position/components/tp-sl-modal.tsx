@@ -7,13 +7,19 @@ import {
 } from "@/lib/shadcn/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
 import { useOrderStream, useTPSLOrder } from "@orderly.network/hooks";
+import { API } from "@orderly.network/types";
 import { useState } from "react";
 import { GrPowerReset } from "react-icons/gr";
 import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-export const TPSLModal = ({ order, refreshPosition }: any) => {
+type TPSLModalType = {
+  order: API.PositionTPSLExt;
+  refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
+};
+
+export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
@@ -30,7 +36,6 @@ export const TPSLModal = ({ order, refreshPosition }: any) => {
   const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(position, {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
-  console.log(order);
   const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(TPSLOpenOrder);
   const { setOrderPositions } = useGeneralContext();
 
