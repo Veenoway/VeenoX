@@ -142,7 +142,6 @@ export const OpenTrade = ({
   });
 
   const newMaxQty = useMaxQty(asset?.symbol, values.direction as OrderSide);
-  console.log("newMaxQty", newMaxQty, maxQty);
   // const isAlgoOrder = values?.algo_order_id !== undefined;
 
   const rangeInfo = useSymbolPriceRange(
@@ -192,7 +191,6 @@ export const OpenTrade = ({
       calculate,
       currentAsset?.base_tick
     );
-    console.log(calculate(values, "order_quantity", values.quantity));
     if (errors && Object.keys(errors)?.length > 0) {
       if (errors?.total?.message) {
         triggerAlert("Error", errors?.total?.message);
@@ -234,7 +232,6 @@ export const OpenTrade = ({
         autoClose: 2000,
       });
     } catch (err: any) {
-      console.log(err);
       toast.update(id, {
         render: err?.message,
         type: "error",
@@ -253,8 +250,6 @@ export const OpenTrade = ({
       setSliderValue(100);
     }
   };
-
-  console.log("TEST");
 
   const getStyleFromType = () => {
     return values.direction === "BUY"

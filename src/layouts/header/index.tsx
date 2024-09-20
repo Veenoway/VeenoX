@@ -106,7 +106,6 @@ export const Header = () => {
     supportedChains.find((entry) => entry.label === (chain?.name as string))
       ?.icon || getImageFromChainId(chainId as ChainsImageType);
   const [chains, { findByChainId }] = useChains();
-  console.log(chains);
   return (
     <header className="flex items-center justify-between h-[60px] px-2.5 border-b border-borderColor">
       <div className="flex items-center gap-5">
