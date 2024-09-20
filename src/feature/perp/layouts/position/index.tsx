@@ -2,6 +2,7 @@ import { useGeneralContext } from "@/context";
 import { FuturesAssetProps } from "@/models";
 import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
 import {
+  useAccount,
   useMarginRatio,
   useOrderStream,
   usePositionStream,
@@ -32,6 +33,8 @@ export const Position = ({ asset }: PositionProps) => {
     width: string;
     left: string;
   }>({ width: "20%", left: "0%" });
+  const { state } = useAccount();
+  console.log("Log in state: ", state);
   const [data, _info, { refresh: refreshPosition, error, loading }] =
     usePositionStream(asset?.symbol, {
       refreshInterval: 1000,

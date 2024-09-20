@@ -344,7 +344,10 @@ export const OpenTrade = ({
   };
 
   const [data, _info, { refresh: refreshPosition, loading }] =
-    usePositionStream();
+    usePositionStream(asset?.symbol, {
+      refreshInterval: 1000,
+      revalidateOnFocus: true,
+    });
 
   const [sliderValue, setSliderValue] = useState(toPercentage(newMaxQty));
 
