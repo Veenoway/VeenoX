@@ -33,7 +33,10 @@ export const Position = ({ asset }: PositionProps) => {
     left: string;
   }>({ width: "20%", left: "0%" });
   const [data, _info, { refresh: refreshPosition, error, loading }] =
-    usePositionStream();
+    usePositionStream(asset?.symbol, {
+      refreshInterval: 1000,
+      revalidateOnFocus: true,
+    });
   const [orders, { cancelOrder, refresh }] = useOrderStream(
     {
       symbol: asset.symbol,

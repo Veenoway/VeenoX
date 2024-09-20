@@ -72,6 +72,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
       setLoading(false);
       setTPSLOpenOrder(null);
       setOrderPositions([]);
+      await Promise.all([refreshPosition(), refresh()]);
     }
   };
 
