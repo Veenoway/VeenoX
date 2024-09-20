@@ -70,7 +70,9 @@ export const RenderCells = ({
         refreshPosition
       )}
 
-      {TPSLOpenOrder ? <TPSLModal order={order} /> : null}
+      {TPSLOpenOrder ? (
+        <TPSLModal refreshPosition={refreshPosition} order={order} />
+      ) : null}
     </>
   );
 };

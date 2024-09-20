@@ -6,18 +6,14 @@ import {
   DialogTitle,
 } from "@/lib/shadcn/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
-import {
-  useOrderStream,
-  usePositionStream,
-  useTPSLOrder,
-} from "@orderly.network/hooks";
+import { useOrderStream, useTPSLOrder } from "@orderly.network/hooks";
 import { useState } from "react";
 import { GrPowerReset } from "react-icons/gr";
 import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-export const TPSLModal = ({ order }: any) => {
+export const TPSLModal = ({ order, refreshPosition }: any) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
@@ -34,10 +30,10 @@ export const TPSLModal = ({ order }: any) => {
   const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(position, {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
+  console.log(order);
   const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(TPSLOpenOrder);
-  const [data, _info, { refresh: refreshPosition }] = usePositionStream();
   const { setOrderPositions } = useGeneralContext();
-  console.log("algoOrder", algoOrder);
+
   const handleSubmit = async () => {
     setLoading(true);
     if (errors) {
@@ -60,9 +56,6 @@ export const TPSLModal = ({ order }: any) => {
         isLoading: false,
         autoClose: 2000,
       });
-      setTPSLOpenOrder(null);
-      setOrderPositions([]);
-      setLoading(false);
     } catch (error) {
       toast.update(idToast, {
         render: (error as any)?.message,
@@ -70,17 +63,11 @@ export const TPSLModal = ({ order }: any) => {
         isLoading: false,
         autoClose: 2000,
       });
-      setLoading(false);
     } finally {
       setLoading(false);
-      try {
-        refreshPosition();
-        refresh();
-
-        console.log("I REFRESH");
-      } catch (e) {
-        console.log("e", e);
-      }
+      await refreshPosition();
+      setTPSLOpenOrder(null);
+      setOrderPositions([]);
     }
   };
 
