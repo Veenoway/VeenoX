@@ -128,8 +128,15 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const order = orders?.rows?.find((entry) => entry.symbol === asset?.symbol);
   const [ordersData, { refresh }] = useOrderStream({ symbol: asset?.symbol });
 
+  const refreshPos = async () => {
+    await refreshPosition();
+    await refresh();
+  };
+
   useEffect(() => {
-    if (orders) refresh();
+    if (orders) {
+      refreshPos();
+    }
   }, [orders?.rows?.length]);
 
   const pendingPosition = useMemo(() => {
