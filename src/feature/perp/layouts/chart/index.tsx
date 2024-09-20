@@ -153,8 +153,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
     );
   }, [orders, params?.perp]);
 
-  console.log(orders);
-
   const saveChartState = useCallback(
     (chart: any) => {
       const currentState: ChartState = {
