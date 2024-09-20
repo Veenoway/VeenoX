@@ -110,34 +110,34 @@ const renderAdditionalCells = (
 ) => {
   if (section === Sections.FILLED) {
     let filledOrder =
-      trade.child_orders?.length > 0
-        ? trade.child_orders?.[0]?.algo_status === "FILLED"
-          ? trade.child_orders[0]
-          : trade.child_orders[1]
+      trade?.child_orders?.length > 0
+        ? trade?.child_orders?.[0]?.algo_status === "FILLED"
+          ? trade?.child_orders?.[0]
+          : trade?.child_orders?.[1]
         : trade;
     return (
       <>
-        <td className={tdStyle}>{filledOrder.type}</td>
+        <td className={tdStyle}>{filledOrder?.type}</td>
         <td
           className={cn(
             tdStyle,
-            `${filledOrder.side === "SELL" ? "text-red" : "text-green"}`
+            `${filledOrder?.side === "SELL" ? "text-red" : "text-green"}`
           )}
         >
-          {filledOrder.side}
+          {filledOrder?.side}
         </td>
-        <td className={tdStyle}>{filledOrder.total_executed_quantity}</td>
+        <td className={tdStyle}>{filledOrder?.total_executed_quantity}</td>
         <td className={tdStyle}>
-          {getFormattedAmount(filledOrder.trigger_price)}
+          {getFormattedAmount(filledOrder?.trigger_price)}
         </td>
-        <td className={tdStyle}>{filledOrder.trigger_price || "--"}</td>
+        <td className={tdStyle}>{filledOrder?.trigger_price || "--"}</td>
         <td
           className={cn(
             tdStyle,
             `${
-              filledOrder.realized_pnl > 0
+              filledOrder?.realized_pnl > 0
                 ? "text-green"
-                : filledOrder.realized_pnl < 0
+                : filledOrder?.realized_pnl < 0
                 ? "text-red"
                 : "text-white"
             }`
@@ -148,11 +148,11 @@ const renderAdditionalCells = (
 
         <td className={tdStyle}>{getFormattedAmount(filledOrder.total_fee)}</td>
         <td className={tdStyle}>
-          {filledOrder.status || filledOrder?.algo_status}
+          {filledOrder?.status || filledOrder?.algo_status}
         </td>
-        <td className={tdStyle}>{trade.reduce_only ? "Yes" : "No"}</td>
+        <td className={tdStyle}>{trade?.reduce_only ? "Yes" : "No"}</td>
         <td className={cn(tdStyle, "pr-5 text-end")}>
-          {getFormattedDate(trade.created_time)}
+          {getFormattedDate(trade?.created_time)}
         </td>
       </>
     );
@@ -207,7 +207,7 @@ const renderAdditionalCells = (
             <EditModal order={trade} />
             <button
               onClick={() => {
-                closePendingOrder(trade.order_id);
+                closePendingOrder(trade?.order_id);
                 setOrderPositions([]);
               }}
               className="h-[25px] w-fit px-2 text-xs ml-2.5 text-white bg-base_color border-borderColor-DARK rounded"
@@ -224,8 +224,6 @@ const renderAdditionalCells = (
       trade.mark_price *
       trade.IMR_withdraw_orders;
     const totalMargin = initialMargin + trade.unrealized_pnl;
-    const maintenanceMargin =
-      Math.abs(trade.position_qty) * trade.mark_price * trade.MMR_with_orders;
 
     return (
       <>
@@ -241,20 +239,20 @@ const renderAdditionalCells = (
             } font-medium`
           )}
         >
-          {trade.position_qty} {formatSymbol(trade.symbol, true)}
+          {trade?.position_qty} {formatSymbol(trade?.symbol, true)}
         </td>
         <td className={tdStyle}>
-          {getFormattedAmount(trade.average_open_price)}
+          {getFormattedAmount(trade?.average_open_price)}
         </td>
-        <td className={tdStyle}>{getFormattedAmount(trade.mark_price)}</td>
+        <td className={tdStyle}>{getFormattedAmount(trade?.mark_price)}</td>
 
         <td
           className={cn(
             tdStyle,
             `${
-              trade.unrealized_pnl > 0
+              trade?.unrealized_pnl > 0
                 ? "text-green"
-                : trade.unrealized_pnl < 0
+                : trade?.unrealized_pnl < 0
                 ? "text-red"
                 : "text-white"
             }`
@@ -263,12 +261,12 @@ const renderAdditionalCells = (
           <div className="flex items-center justify-start w-full h-full font-medium">
             <p className="mr-2">
               {`${
-                trade.unrealized_pnl > 0
+                trade?.unrealized_pnl > 0
                   ? `+$${Math.abs(trade.unrealized_pnl).toFixed(2)} (${Number(
                       trade.unrealized_pnl_ROI
                     ).toFixed(2)})`
-                  : `-$${Math.abs(trade.unrealized_pnl).toFixed(2)} (${Number(
-                      trade.unrealized_pnl_ROI
+                  : `-$${Math.abs(trade?.unrealized_pnl).toFixed(2)} (${Number(
+                      trade?.unrealized_pnl_ROI
                     ).toFixed(2)}%)`
               }`}{" "}
             </p>
@@ -279,30 +277,30 @@ const renderAdditionalCells = (
           <div className="flex items-center justify-start w-full font-medium h-full text-font-80">
             <p
               className={`${
-                trade.tp_trigger_price ? "text-green" : "text-white"
+                trade?.tp_trigger_price ? "text-green" : "text-white"
               }`}
             >
-              {trade.tp_trigger_price || "--"}
+              {trade?.tp_trigger_price || "--"}
             </p>
             <p className="mx-1"> / </p>
             <p
               className={`${
-                trade.sl_trigger_price ? "text-red" : "text-white"
+                trade?.sl_trigger_price ? "text-red" : "text-white"
               }`}
             >
-              {trade.sl_trigger_price || "--"}
+              {trade?.sl_trigger_price || "--"}
             </p>
           </div>
         </td>
         <td className={cn(tdStyle, "text-orange-300")}>
-          {getFormattedAmount(trade.est_liq_price)}
+          {getFormattedAmount(trade?.est_liq_price)}
         </td>
-        <td className={tdStyle}>{getFormattedAmount(trade.cost_position)}</td>
+        <td className={tdStyle}>{getFormattedAmount(trade?.cost_position)}</td>
         <td className={tdStyle}>
           ${isNaN(totalMargin.toFixed(2)) ? "N/A" : totalMargin.toFixed(2)}
         </td>
         <td className={cn(tdStyle, "")}>
-          {getFormattedAmount(trade.notional)}
+          {getFormattedAmount(trade?.notional)}
         </td>
         <td className={cn(tdStyle, "pr-5")}>
           <div className="w-full h-full justify-end items-center flex">
@@ -367,7 +365,9 @@ const renderAdditionalCells = (
         : trade;
     return (
       <>
-        <td className={tdStyle}>{filledOrder.type || filledOrder.algo_type}</td>
+        <td className={tdStyle}>
+          {filledOrder?.type || filledOrder?.algo_type}
+        </td>
         <td
           className={cn(
             tdStyle,
@@ -416,9 +416,9 @@ const renderAdditionalCells = (
         <td className={tdStyle}>
           {filledOrder?.status ? filledOrder?.status : filledOrder?.algo_status}
         </td>
-        <td className={tdStyle}>{filledOrder.reduce_only ? "Yes" : "No"}</td>
+        <td className={tdStyle}>{filledOrder?.reduce_only ? "Yes" : "No"}</td>
         <td className={cn(tdStyle, "pr-5 text-end")}>
-          {getFormattedDate(filledOrder.created_time)}
+          {getFormattedDate(filledOrder?.created_time)}
         </td>
       </>
     );
