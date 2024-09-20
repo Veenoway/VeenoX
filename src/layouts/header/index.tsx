@@ -8,6 +8,7 @@ import {
 } from "@/utils/network";
 import {
   useAccountInstance,
+  useChains,
   useAccount as useOrderlyAccount,
 } from "@orderly.network/hooks";
 import Image from "next/image";
@@ -104,7 +105,8 @@ export const Header = () => {
   const chainLogo =
     supportedChains.find((entry) => entry.label === (chain?.name as string))
       ?.icon || getImageFromChainId(chainId as ChainsImageType);
-
+  const [chains, { findByChainId }] = useChains();
+  console.log(chains);
   return (
     <header className="flex items-center justify-between h-[60px] px-2.5 border-b border-borderColor">
       <div className="flex items-center gap-5">
@@ -157,9 +159,9 @@ export const Header = () => {
             </PopoverTrigger>
             <PopoverContent
               sideOffset={12}
-              className="flex flex-col px-5 py-4 rounded z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
+              className="flex flex-col px-5 py-4 rounded z-[102] max-w-[205px] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
             >
-              <div className="flex items-center">
+              <div className="flex items-center flex-wrap gap-2.5">
                 {supportedChains
                   ?.filter((item) => item.network !== "testnet")
                   .map((supportedChain, i) => (
@@ -180,9 +182,7 @@ export const Header = () => {
                       }}
                     >
                       <div
-                        className={`h-10 w-10 ${
-                          i === 1 ? "mx-6" : ""
-                        } p-2 rounded bg-terciary ${
+                        className={`h-10 w-10 p-2 rounded bg-terciary ${
                           parseInt(supportedChain.id, 16) === chainId
                             ? "border-base_color"
                             : "border-borderColor"

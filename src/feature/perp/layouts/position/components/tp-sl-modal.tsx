@@ -7,13 +7,19 @@ import {
 } from "@/lib/shadcn/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
 import { useOrderStream, useTPSLOrder } from "@orderly.network/hooks";
+import { API } from "@orderly.network/types";
 import { useState } from "react";
 import { GrPowerReset } from "react-icons/gr";
 import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-export const TPSLModal = ({ order }: any) => {
+type TPSLModalType = {
+  order: API.PositionTPSLExt;
+  refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
+};
+
+export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
@@ -55,10 +61,6 @@ export const TPSLModal = ({ order }: any) => {
         isLoading: false,
         autoClose: 2000,
       });
-      refresh();
-      setTPSLOpenOrder(null);
-      setOrderPositions([]);
-      setLoading(false);
     } catch (error) {
       toast.update(idToast, {
         render: (error as any)?.message,
@@ -66,9 +68,13 @@ export const TPSLModal = ({ order }: any) => {
         isLoading: false,
         autoClose: 2000,
       });
-      setLoading(false);
     } finally {
+      await refreshPosition();
+      await refreshPosition();
+      await refreshPosition();
       setLoading(false);
+      setTPSLOpenOrder(null);
+      setOrderPositions([]);
     }
   };
 
