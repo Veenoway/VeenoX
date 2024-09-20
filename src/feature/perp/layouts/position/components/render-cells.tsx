@@ -338,7 +338,7 @@ const renderAdditionalCells = (
                     isLoading: false,
                     autoClose: 2000,
                   });
-                  refreshPosition();
+                  await refreshPosition();
                   setOrderPositions(["closed"]);
                 } catch (e) {
                   toast.update(idToast, {

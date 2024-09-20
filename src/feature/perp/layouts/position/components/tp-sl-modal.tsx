@@ -35,7 +35,10 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
   const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(position, {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
-  const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(position);
+  const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(position, {
+    keeplive: true,
+    stopOnUnmount: false,
+  });
   const { setOrderPositions } = useGeneralContext();
 
   const handleSubmit = async () => {
