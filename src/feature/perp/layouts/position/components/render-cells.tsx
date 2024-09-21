@@ -55,6 +55,7 @@ export const RenderCells = ({
     },
     { watchOrderbook: true }
   );
+
   return (
     <>
       {renderCommonCells(order)}

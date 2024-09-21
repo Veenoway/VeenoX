@@ -28,7 +28,8 @@ export const Position = ({ asset }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
   const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { setOrderPositions, orderPositions } = useGeneralContext();
+  const { setOrderPositions, orderPositions, shouldRefresh, TPSLOpenOrder } =
+    useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
     left: string;
@@ -36,14 +37,14 @@ export const Position = ({ asset }: PositionProps) => {
   const { state } = useAccount();
   console.log("Log in state: ", state);
   const [data, _info, { refresh: refreshPosition, error, loading }] =
-    usePositionStream(asset?.symbol, {
-      refreshInterval: 1000,
+    usePositionStream(undefined, {
+      revalidateOnMount: true,
       revalidateOnFocus: true,
-      refreshWhenHidden: true,
       refreshWhenOffline: true,
       revalidateIfStale: true,
-      dedupingInterval: 0,
+      dedupingInterval: 2000,
     });
+
   const [orders, { cancelOrder, refresh }] = useOrderStream(
     {
       symbol: asset.symbol,
@@ -52,10 +53,13 @@ export const Position = ({ asset }: PositionProps) => {
   );
   const { currentLeverage } = useMarginRatio();
 
+  const triggerRefresh = async () => {
+    await Promise.all([refresh(), refreshPosition()]);
+  };
+
   useEffect(() => {
-    refresh();
-    refreshPosition();
-  }, [data?.rows?.length, orders?.[0]]);
+    triggerRefresh();
+  }, [data?.rows?.length, orders?.[0], shouldRefresh]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -191,6 +195,39 @@ export const Position = ({ asset }: PositionProps) => {
   };
 
   const noOrderMessage = getEmptyMessageFromActiveSection();
+
+  // const {
+  //   data: fetchAlgoOrder,
+  //   isLoading,
+  //   error: ooo,
+  // } = usePrivateQuery(
+  //   `/v1/algo/order/${TPSLOpenOrder.algo_order?.algo_order_id}`
+  // );
+  // const tpPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[0]
+  //   ?.trigger_price;
+  // const PositionTpPrice =
+  //   TPSLOpenOrder.algo_order?.child_orders?.[0]?.trigger_price;
+  // const slPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[1]
+  //   ?.trigger_price;
+  // const positionSlPrice =
+  //   TPSLOpenOrder.algo_order?.child_orders?.[1]?.trigger_price;
+  // console.log(
+  //   "tpPrice !== PositionTpPrice || slPrice !== positionSlPrice",
+  //   tpPrice,
+  //   PositionTpPrice,
+  //   ":::",
+  //   slPrice,
+  //   positionSlPrice
+  // );
+  // useEffect(() => {
+  //   // if ((fetchAlgoOrder as API.AlgoOrderExt)?.child_orders) {
+
+  //   if (tpPrice !== PositionTpPrice || slPrice !== positionSlPrice) {
+  //     console.log("fjriof");
+  //     refreshPosition();
+  //   }
+  //   // }
+  // }, [order, fetchAlgoOrder, TPSLOpenOrder, refreshPosition]);
 
   return (
     <div className="w-full min-h-[320px] h-[320px] max-h-[320px]">
