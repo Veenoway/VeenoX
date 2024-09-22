@@ -1,0 +1,66 @@
+diff --git a/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/usePositionStream.js b/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/usePositionStream.js
+index a2e64cd..53da4da 100644
+--- a/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/usePositionStream.js
++++ b/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/usePositionStream.js
+@@ -1,16 +1,16 @@
+-import { useEffect, useMemo, useState } from "react";
+-import { usePrivateQuery } from "../../usePrivateQuery";
+ import { account, positions } from "@orderly.network/perp";
+-import { createGetter } from "../../utils/createGetter";
+-import { useFundingRates } from "../useFundingRates";
+ import { AlgoOrderRootType, OrderStatus } from "@orderly.network/types";
+-import { useSymbolsInfo } from "../useSymbolsInfo";
+-import { useMarkPricesStream } from "../useMarkPricesStream";
++import { zero } from "@orderly.network/utils";
+ import { pathOr, propOr } from "ramda";
++import { useEffect, useMemo, useState } from "react";
++import { usePrivateQuery } from "../../usePrivateQuery";
++import { createGetter } from "../../utils/createGetter";
+ import { parseHolding } from "../../utils/parseHolding";
+-import { zero } from "@orderly.network/utils";
+-import { useMarketsStream } from "../useMarketsStream";
+ import { useOrderStream } from "../orderlyHooks";
++import { useFundingRates } from "../useFundingRates";
++import { useMarketsStream } from "../useMarketsStream";
++import { useMarkPricesStream } from "../useMarkPricesStream";
++import { useSymbolsInfo } from "../useSymbolsInfo";
+ import { findPositionTPSLFromOrders, findTPSLFromOrder } from "./utils";
+ export const usePositionStream = (/**
+    * If symbol is passed, only the position of that symbol will be returned.
+@@ -34,15 +34,24 @@ export const usePositionStream = (/**
+         formatter: (data)=>data,
+         onError: (err)=>{}
+     });
++
++
++
+     const { data: markPrices } = useMarkPricesStream();
+     // get TP/SL orders;
+-    const [tpslOrders] = useOrderStream({
++    const [tpslOrders,{refresh}] = useOrderStream({
+         status: OrderStatus.INCOMPLETE,
+         includes: [
+             AlgoOrderRootType.POSITIONAL_TP_SL,
+             AlgoOrderRootType.TP_SL
+-        ]
++        ],
+     });
++
++    function venooxHardRefresh(){
++        //Function to fix the broken hook
++        refresh();
++        refreshPositions();
++    }
+     //
+     // console.log("---------------");
+     const [priceMode, setPriceMode] = useState(options?.calcMode || "markPrice");
+@@ -256,7 +265,8 @@ export const usePositionStream = (/**
+             // showSymbol,
+             error,
+             // loadMore: () => {},
+-            refresh: refreshPositions
++            refresh: venooxHardRefresh,
++            
+         }
+     ];
+ };
