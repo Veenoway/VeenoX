@@ -35,7 +35,7 @@ export const Header = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const { account, state } = useOrderlyAccount();
-  const { address, isDisconnected, isConnecting, chain, chainId, isConnected } =
+  const { address, isDisconnected, isConnecting, chainId, chain, isConnected } =
     useAccount();
   const [isHoverChain, setIsHoverChain] = useState<string | null>(null);
   const { connect, connectors } = useConnect();
@@ -100,7 +100,7 @@ export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { switchChain } = useSwitchChain();
-  const { isDeposit } = useGeneralContext();
+  // const { isDeposit } = useGeneralContext();
   const accountInstance = useAccountInstance();
   const chainLogo =
     supportedChains.find((entry) => entry.label === (chain?.name as string))
