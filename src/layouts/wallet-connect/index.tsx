@@ -1,23 +1,14 @@
 "use client";
-import { useGeneralContext } from "@/context";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/lib/shadcn/dialog";
+
+import { useCopyToClipboard } from "@/hook/useCopy";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
 import { addressSlicer } from "@/utils/misc";
-import { useAccount as useOrderlyAccount } from "@orderly.network/hooks";
+import { useAccount } from "@orderly.network/hooks";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { IoChevronDown, IoPowerSharp } from "react-icons/io5";
 import { MdContentCopy } from "react-icons/md";
-import { TfiWallet } from "react-icons/tfi";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { getActiveStep } from "./constant";
 
 export enum AccountStatusEnum {
   NotConnected = 0,
@@ -29,271 +20,81 @@ export enum AccountStatusEnum {
 }
 
 export const ConnectWallet = () => {
-  const [isCopied, setIsCopied] = useState(false);
-  const { account } = useOrderlyAccount();
-  const {
-    address,
-    isDisconnected,
-    isConnecting,
-    isConnected,
-    chainId,
-    connector,
-  } = useAccount();
-  const [isActive, setIsActive] = useState(0);
-  const { connect, connectors, isPending, isError, isSuccess, data } =
-    useConnect();
-  const { isWalletConnectorOpen, setIsWalletConnectorOpen } =
-    useGeneralContext();
+  const { account } = useAccount();
+  const [{ wallet }, connectWallet, disconnectWallet] = useConnectWallet();
   const [isDisconnectOpen, setIsDisconnectOpen] = useState(false);
-  const [activeConnector, setActiveConnector] = useState<string | null>(null);
-  const { disconnect } = useDisconnect();
-
-  //  useEffect(() => {
-  //    if () return;
-  //    const switchChain = async () => {
-  //      try {
-  //        await switchChain(data?.chainId);
-  //        console.log(`Switched to chain ${data?.chainId}`);
-  //      } catch (error) {
-  //        console.log(`Failed to switch chain: `);
-  //      }
-  //    };
-
-  //    if (isConnected) {
-  //      switchChain();
-  //    }
-  //  }, [data?.chainId, isConnected, switchChain]);
-
-  const getAccount = async () => {
-    if (!address) return;
-    try {
-      const provider = await connector?.getProvider();
-      await account.setAddress(address, {
-        provider,
-        chain: {
-          id: chainId as number,
-        },
-        wallet: {
-          name: connector?.name as string,
-        },
-      });
-    } catch (error) {}
-  };
+  const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   useEffect(() => {
-    getAccount();
-  }, [address, account]);
+    if (!wallet) return;
 
-  useEffect(() => {
-    if (isSuccess && address) {
-      const setAccount = async () => {
-        try {
-          const provider = await connectors[isActive - 1]?.getProvider();
-          await account.setAddress(address, {
-            provider,
-            chain: {
-              id: data?.chainId,
-            },
-            wallet: {
-              name: activeConnector as string,
-            },
-          });
-          setActiveConnector(null);
-        } catch (e) {}
-      };
-      setAccount();
-    }
-  }, [isSuccess, address, account]);
+    account.setAddress(wallet.accounts[0].address, {
+      provider: wallet.provider,
 
-  const handleConnect = (i: number) => {
-    connect({ connector: connectors[i] });
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(address || "");
-    setIsCopied(true);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
-  };
-
-  const getImageFromConnector = (
-    name: string,
-    image: string
-  ): string | null => {
-    if (name === "Injected") return null;
-    else if (name === "Coinbase Wallet") return "/logo/coinbase.png";
-    else return image;
-  };
-
-  const getConnectorsToShow = (name: string) => {
-    switch (name) {
-      case "WalletConnect":
-        return false;
-      case "Web3Modal Auth":
-        return false;
-      case "SubWallet":
-        return false;
-      case "Keplr":
-        return false;
-      default:
-        return true;
-    }
-  };
-
-  useEffect(() => {
-    if (isSuccess)
-      setTimeout(() => {
-        setIsWalletConnectorOpen(false);
-      }, 3000);
-  }, [isSuccess]);
+      chain: {
+        id: wallet.chains[0].id,
+      },
+    });
+  }, [wallet, account]);
 
   return (
     <div className="w-fit h-fit relative">
-      <Dialog open={isWalletConnectorOpen}>
-        <DialogTrigger>
-          <Popover open={isDisconnectOpen}>
-            <PopoverTrigger
-              className="h-full min-w-fit"
-              onClick={() => {
-                if (isConnected) setIsDisconnectOpen((prev) => !prev);
-                else setIsWalletConnectorOpen(true);
-              }}
-            >
-              <div
-                className="text-white bg-base_color border border-borderColor-DARK text-bold font-poppins text-xs
-        h-[30px] sm:h-[35px] px-2 sm:px-2.5 flex items-center justify-center rounded sm:rounded-md 
-        "
-              >
-                {isDisconnected || isConnecting ? (
-                  "Connect"
-                ) : (
-                  <span className="flex items-center w-full h-full">
-                    <p>{addressSlicer(address)}</p>
-                    <IoChevronDown
-                      className={`ml-1 ${
-                        isDisconnectOpen ? "rotate-180" : ""
-                      } transition-all duration-150 ease-in-out`}
-                    />
-                  </span>
-                )}
-              </div>
-            </PopoverTrigger>
-            <PopoverContent
-              sideOffset={12}
-              className="flex flex-col px-3 py-2 rounded z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-secondary shadow-xl"
-            >
-              <div
-                className="flex items-center cursor-pointer text-white text-xs"
-                onClick={handleCopy}
-              >
-                <p className="mr-2">{addressSlicer(address)}</p>
-                {isCopied ? (
-                  <FaCheck className="text-green" />
-                ) : (
-                  <MdContentCopy className="text-white" />
-                )}
-              </div>
-              <div className="h-[1px] mb-1.5 mt-2.5 bg-borderColor w-full rounded" />
-              <button
-                className="text-font-80 flex items-center justify-center hover:text-base_color transition-all duration-100 ease-in-out text-bold font-poppins text-sm"
-                onClick={() => {
-                  setIsDisconnectOpen(false);
-                  disconnect();
-                }}
-              >
-                <IoPowerSharp className="text-red mr-2" />
-                Disconnect
-              </button>
-            </PopoverContent>
-          </Popover>
-        </DialogTrigger>
-        <DialogContent
-          close={() => setIsWalletConnectorOpen(false)}
-          className="w-full flex flex-col max-w-[475px] h-auto max-h-auto"
+      <Popover open={isDisconnectOpen}>
+        <PopoverTrigger
+          className="h-full min-w-fit"
+          onClick={async () => {
+            if (wallet) setIsDisconnectOpen((prev) => !prev);
+            else await connectWallet();
+          }}
         >
-          <DialogHeader>
-            <DialogTitle>{getActiveStep(status).title}</DialogTitle>
-            <DialogDescription className="text-font-60">
-              {getActiveStep(status).description}
-            </DialogDescription>
-          </DialogHeader>
-          {isPending ? (
-            <div className="h-[208px] w-full flex flex-col items-center justify-center">
-              {getImageFromConnector(
-                connectors[isActive - 1].name,
-                connectors[isActive - 1].icon as string
-              ) ? (
-                <img
-                  src={
-                    getImageFromConnector(
-                      connectors[isActive - 1].name,
-                      connectors[isActive - 1].icon as string
-                    ) as string
-                  }
-                  height={80}
-                  width={80}
-                  className="rounded-full animate-pulse-scale"
+          <div
+            className="text-white bg-base_color border border-borderColor-DARK text-bold font-poppins text-xs
+              h-[30px] sm:h-[35px] px-2 sm:px-2.5 flex items-center justify-center rounded sm:rounded-md "
+          >
+            {!wallet ? (
+              "Connect"
+            ) : (
+              <span className="flex items-center w-full h-full">
+                <p>{addressSlicer(wallet?.accounts[0].address)}</p>
+
+                <IoChevronDown
+                  className={`ml-1 ${
+                    isDisconnectOpen ? "rotate-180" : ""
+                  } transition-all duration-150 ease-in-out`}
                 />
-              ) : (
-                <TfiWallet className="text-6xl text-white animate-pulse-scale shadow-xl shadow-slate-800" />
-              )}
-              <p className="text-white text-sm mt-5">
-                {`Connecting to ${connectors[isActive - 1].name}`}
-              </p>
-            </div>
-          ) : isSuccess ? (
-            <div className="h-[208px] w-full flex flex-col items-center justify-center">
-              <FaCheck className="text-6xl text-green" />
-              <p className="text-white mt-5 font-medium">
-                Successfully Connected!
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2 w-full items-center">
-              {connectors?.map((connector, i) => {
-                const image = getImageFromConnector(
-                  connector.name,
-                  connector.icon as string
-                );
-                const includeWallet = connector.name.includes("Wallet");
-                const formatName = includeWallet
-                  ? connector.name.split(" Wallet")[0]
-                  : connector.name;
-                const isToRender = getConnectorsToShow(connector.name);
-                if (isToRender)
-                  return (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        handleConnect(i);
-                        setIsActive(i + 1);
-                        setActiveConnector(connector.name);
-                      }}
-                      className={`w-[100px] h-[100px] hover:bg-base_color ${
-                        isActive === i + 1 ? "bg-base_color" : "bg-terciary"
-                      } transition-all duration-200 ease-in-out rounded border border-borderColor
-                     flex items-center flex-col justify-center`}
-                    >
-                      {image ? (
-                        <img
-                          src={image}
-                          height={40}
-                          width={40}
-                          className="rounded"
-                        />
-                      ) : (
-                        <TfiWallet className="text-4xl text-white" />
-                      )}
-                      <p className="text-white text-xs mt-2.5">{formatName}</p>
-                    </button>
-                  );
-                return null;
-              })}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+              </span>
+            )}
+          </div>
+        </PopoverTrigger>
+        <PopoverContent
+          sideOffset={12}
+          className="flex flex-col px-3 py-2 rounded z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-secondary shadow-xl"
+        >
+          <div
+            className="flex items-center cursor-pointer text-white text-xs"
+            onClick={() => copyToClipboard(wallet?.accounts[0].address || "")}
+          >
+            <p className="mr-2">{addressSlicer(wallet?.accounts[0].address)}</p>
+            {isCopied ? (
+              <FaCheck className="text-green" />
+            ) : (
+              <MdContentCopy className="text-white" />
+            )}
+          </div>
+          <div className="h-[1px] mb-1.5 mt-2.5 bg-borderColor w-full rounded" />
+          <button
+            className="text-font-80 flex items-center justify-center hover:text-white transition-all duration-100 ease-in-out text-bold font-poppins text-sm"
+            onClick={() => {
+              setIsDisconnectOpen(false);
+              disconnectWallet({ label: wallet?.label as string });
+              account.disconnect();
+            }}
+          >
+            <IoPowerSharp className="text-white mr-2" />
+            Disconnect
+          </button>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

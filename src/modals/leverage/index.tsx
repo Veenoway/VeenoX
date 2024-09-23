@@ -7,18 +7,25 @@ import {
   DialogTrigger,
 } from "@/lib/shadcn/dialog";
 import { useLeverage, useMarginRatio } from "@orderly.network/hooks";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { LeverageContent } from "./leverage";
 
 export const Leverage = () => {
+  const [{ wallet }, connectWallet] = useConnectWallet();
   const { currentLeverage } = useMarginRatio();
   const [showPopup, setShowPopup] = useState(false);
   const [maxLeverage] = useLeverage();
 
   return (
     <Dialog open={showPopup}>
-      <DialogTrigger onClick={() => setShowPopup(true)}>
+      <DialogTrigger
+        onClick={async () => {
+          if (wallet) setShowPopup(true);
+          else await connectWallet();
+        }}
+      >
         <button className="text-white flex flex-col justify-center items-end">
           <p className="text-font-60 text-xs mb-[3px]">Account Leverage</p>
           <div className="flex items-center text-sm text-white hover:text-base_color transition-color duration-150 ease-in-out">
@@ -28,7 +35,7 @@ export const Leverage = () => {
         </button>
       </DialogTrigger>
       <DialogContent
-        className="max-w-[450px] w-[90%] flex flex-col gap-0 overflow-auto no-scrollbar"
+        className="max-w-[400px] pb-2 w-[90%] flex flex-col gap-0 overflow-auto no-scrollbar"
         close={() => {
           setShowPopup(false);
         }}
