@@ -35,6 +35,8 @@ interface GeneralContextProps {
   setOpenWithdraw: Dispatch<SetStateAction<boolean>>;
   depositAmount: number | null;
   setDepositAmount: Dispatch<SetStateAction<number | null>>;
+  shouldRefresh: boolean;
+  setShouldRefresh: Dispatch<SetStateAction<boolean>>;
 }
 
 const INITIAL_TRADE_INFO = {
@@ -67,6 +69,7 @@ export const GeneralProvider: FC<PropsWithChildren> = ({ children }) => {
   const [TPSLOpenOrder, setTPSLOpenOrder] = useState(null);
   const [openWithdraw, setOpenWithdraw] = useState(false);
   const [depositAmount, setDepositAmount] = useState<number | null>(null);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
   const value = useMemo(
     () => ({
       showMobileTradeCreator,
@@ -93,11 +96,14 @@ export const GeneralProvider: FC<PropsWithChildren> = ({ children }) => {
       setOpenWithdraw,
       setDepositAmount,
       depositAmount,
+      setShouldRefresh,
+      shouldRefresh,
     }),
     [
       showMobileTradeCreator,
       isWalletConnectorOpen,
       tradeInfo,
+      shouldRefresh,
       mobileActiveSection,
       isChartLoading,
       isEnableTradingModalOpen,

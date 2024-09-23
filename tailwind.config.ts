@@ -36,6 +36,7 @@ const config: Config = {
         // 2C3E50
         green: "rgb(14 203 129)",
         "green-opacity-10": "rgba(14, 203, 129,0.1)",
+        "green-opacity-15": "rgba(14, 203, 129,0.15)",
         "green-opacity-20": "rgba(14, 203, 129,0.2)",
 
         blue: "#3498DB",
@@ -43,6 +44,7 @@ const config: Config = {
 
         red: "rgb(234 57 67)",
         "red-opacity-10": "rgba(234, 57, 67, 0.1)",
+        "red-opacity-15": "rgba(234, 57, 67, 0.15)",
         "red-opacity-20": "rgba(234, 57, 67, 0.2)",
 
         font: {

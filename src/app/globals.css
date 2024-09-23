@@ -465,7 +465,7 @@ input[type="number"] {
 }
 
 .resizerY {
-  height: 4px;
+  height: 2px;
   cursor: row-resize;
   flex-shrink: 0;
   background-color: transparent;
@@ -474,16 +474,16 @@ input[type="number"] {
 }
 
 .resizerY:hover {
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: #836ef9;
   opacity: 1;
 }
 
 .resizerY:focus {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #836ef9;
   opacity: 1;
 }
 .resizerY:active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #836ef9;
   opacity: 1;
 }
 
@@ -491,7 +491,7 @@ input[type="number"] {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 2px;
   cursor: col-resize;
   z-index: 10;
   transition: opacity 0.2s ease-in-out;
@@ -509,12 +509,12 @@ a[href]:active {
 }
 
 .resizer:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #836ef9;
   opacity: 1;
 }
 
 .resizer:active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #836ef9;
   opacity: 1;
 }
 

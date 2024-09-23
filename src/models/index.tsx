@@ -153,3 +153,18 @@ export interface MaintenanceType {
     endTime: number;
   } | null;
 }
+
+type Aggregated = {
+  unrealPnL: number;
+  notional: number;
+  unsettledPnL: number;
+  unrealPnlROI: number;
+};
+
+export type PositionStream = {
+  rows: any["rows"];
+  aggregated: any["aggregated"];
+  totalCollateral: any["totalCollateral"];
+  totalValue: any["totalValue"];
+  totalUnrealizedROI: any["totalUnrealizedROI"];
+};

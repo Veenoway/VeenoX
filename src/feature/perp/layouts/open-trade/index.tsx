@@ -430,7 +430,6 @@ export const OpenTrade = ({
             </div>
             {isMobile ? null : <Leverage />}
           </div>
-          <div className="border-t border-borderColor-DARK pt-2 pb-1.5" />
           <div className="flex items-center justify-between pb-3">
             <div className="flex flex-col w-fit">
               <p className="text-xs text-font-60 mb-[3px]">Unreal PnL</p>

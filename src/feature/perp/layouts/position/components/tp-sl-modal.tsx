@@ -32,14 +32,21 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     sl_trigger_price: TPSLOpenOrder.sl_trigger_price,
     quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
   };
-  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(position, {
+
+  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(order, {
     defaultOrder: TPSLOpenOrder.algo_order,
   });
-  const [_, { cancelAllTPSLOrders, refresh }] = useOrderStream(position, {
-    keeplive: true,
-    stopOnUnmount: false,
-  });
-  const { setOrderPositions } = useGeneralContext();
+  const [data, { cancelAllTPSLOrders, loadMore, refresh, submitting }] =
+    useOrderStream(position, {
+      stopOnUnmount: false,
+    });
+  const { setOrderPositions, setShouldRefresh } = useGeneralContext();
+
+  const findTpSl = data?.find(
+    (entry) =>
+      entry?.quantity === TPSLOpenOrder?.position_qty &&
+      entry?.average_executed_price === TPSLOpenOrder?.average_open_price
+  );
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -57,25 +64,28 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
 
     try {
       await submit();
+
+      setTPSLOpenOrder(null);
+      setOrderPositions([]);
+      setLoading(false);
       toast.update(idToast, {
         render: "TP/SL set successfully",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
-      await Promise.all([refreshPosition(), refresh()]);
+      await refreshPosition();
     } catch (error) {
+      console.log(error);
       toast.update(idToast, {
         render: (error as any)?.message,
         type: "error",
         isLoading: false,
         autoClose: 2000,
       });
+      setLoading(false);
     } finally {
       setLoading(false);
-      setTPSLOpenOrder(null);
-      setOrderPositions([]);
-      await Promise.all([refreshPosition(), refresh()]);
     }
   };
 
@@ -84,6 +94,8 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
 
     try {
       await cancelAllTPSLOrders();
+      setOrderPositions([]);
+      setTPSLOpenOrder(null);
       toast.update(idToast, {
         render: "TP/SL reset",
         type: "success",
@@ -91,8 +103,6 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
         autoClose: 2000,
       });
       await Promise.all([refreshPosition()]);
-      setOrderPositions([]);
-      setTPSLOpenOrder(null);
     } catch (e) {
       toast.update(idToast, {
         render: "Error while cancelling tp/sl",
