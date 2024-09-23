@@ -499,6 +499,15 @@ input[type="number"] {
   /* background-color: #836ef9; */
 }
 
+a[href],
+a[href]:hover,
+a[href]:focus,
+a[href]:active {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
 .resizer:hover {
   background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;

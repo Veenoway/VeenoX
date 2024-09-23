@@ -103,7 +103,7 @@ export const PairSelector = ({ params }: FavoriteProps) => {
               return (
                 <tbody
                   key={token.symbol}
-                  className="hover:bg-[#242424] transition-all duration-75 ease-linear"
+                  className="hover:bg-terciary cursor-pointer transition-all duration-75 ease-linear"
                 >
                   <tr className="text-font-80">
                     <td className="py-1">
