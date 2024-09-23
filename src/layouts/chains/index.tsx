@@ -41,7 +41,7 @@ export const Chains: React.FC = () => {
     "
         >
           <Image
-            src={chainIcon || "/assets/ARB.png"}
+            src={chainIcon || "/assets/ETH.png"}
             width={20}
             height={20}
             className="object-cover rounded-full"
