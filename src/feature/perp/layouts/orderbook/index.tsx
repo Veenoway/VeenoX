@@ -108,27 +108,6 @@ export const Orderbook = ({
     asset?.symbol
   );
 
-  const getBidsOrAsks = (type: "bids" | "asks") => {
-    if (!data?.[type] || !Array.isArray(data[type])) {
-      return Array(exepectedOrderbookLength).fill(["--", "--", "--", "--"]);
-    }
-
-    const orders = [...data[type]];
-    const missingEntries = exepectedOrderbookLength - orders.length;
-
-    if (missingEntries > 0) {
-      const fillerOrders = Array(missingEntries).fill(["--", "--", "--", "--"]);
-      return [...orders, ...fillerOrders];
-    }
-
-    return orders.slice(0, exepectedOrderbookLength);
-  };
-
-  const bids = getBidsOrAsks("bids");
-  const asks = getBidsOrAsks("asks");
-
-  console.log(bids);
-
   function formatOrderbook(
     type: "bids" | "asks",
     affichageEnUSDC: boolean = false
@@ -143,45 +122,24 @@ export const Orderbook = ({
     });
   }
 
-  console.log("Affichage en BTC:");
-  console.log("PRICE | QTY BTC | TOTAL BTC");
-  formatOrderbook("bids", isQtyUSDC)?.forEach(([price, qty, total]) => {
-    console.log(
-      `${price.toFixed(2)} | ${qty.toFixed(6)} | ${total.toFixed(6)}`
-    );
-  });
-
-  console.log("\nAffichage en USDC:");
-  console.log("PRICE | QTY USDC | TOTAL USDC");
-  formatOrderbook("asks", isQtyUSDC)?.map(([price, qty, total]) => {
-    console.log(
-      `${price.toFixed(2)} | ${qty.toFixed(2)} | ${total.toFixed(2)}`
-    );
-  });
-
-  console.log(
-    "formatOrderbook(, isQtyUSDC)",
-    formatOrderbook("asks", isQtyUSDC)
-  );
-
   return (
     <section
       ref={sectionRef}
       className={`w-full md:max-h-full ${
         isMobileOpenTrade ? "h-auto max-h-full" : "h-[450px] max-h-[450px]"
-      } md:h-full  overflow-y-hidden md:min-w-[250px] `}
+      } md:h-full  overflow-y-hidden md:min-w-[230px]`}
     >
       {isMobileOpenTrade || isMobile ? null : (
         <>
           <div className="flex items-center w-full h-[44px] relative">
             <button
-              className="w-1/2 h-full text-white text-sm"
+              className="w-1/2 h-full text-white text-[13px]"
               onClick={() => setActiveSection(0)}
             >
               Orderbook
             </button>
             <button
-              className="w-1/2 h-full text-white text-sm"
+              className="w-1/2 h-full text-white text-[13px]"
               onClick={() => setActiveSection(1)}
             >
               Trade History
