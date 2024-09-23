@@ -416,26 +416,6 @@ input[type="number"] {
   position: relative;
 }
 
-.resizer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 15px;
-  cursor: col-resize;
-  z-index: 10;
-  /* background-color: #836ef9; */
-}
-
-.resizer:hover {
-  /* background-color: #836ef9; */
-}
-.resizer:nth-child(2) {
-  left: calc(60% + 0px);
-}
-.resizer:nth-child(2) {
-  left: calc(80% + 0px);
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -485,15 +465,55 @@ input[type="number"] {
 }
 
 .resizerY {
-  background: red;
-  height: 5px;
+  height: 4px;
   cursor: row-resize;
   flex-shrink: 0;
   background-color: transparent;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
 }
 
 .resizerY:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: #836ef9;
+  opacity: 1;
+}
+
+.resizerY:focus {
+  background-color: #836ef9;
+  opacity: 1;
+}
+.resizerY:active {
+  background-color: #836ef9;
+  opacity: 1;
+}
+
+.resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  z-index: 10;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+  /* background-color: #836ef9; */
+}
+
+.resizer:hover {
+  background-color: #836ef9;
+  opacity: 1;
+}
+
+.resizer:active {
+  background-color: #836ef9;
+  opacity: 1;
+}
+
+.resizer:nth-child(2) {
+  left: calc(60% + 0px);
+}
+.resizer:nth-child(2) {
+  left: calc(80% + 0px);
 }
 
 .text-outlined {

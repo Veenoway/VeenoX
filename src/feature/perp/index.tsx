@@ -7,7 +7,7 @@ import { FavoriteProps, FuturesAssetProps } from "@/models";
 import { useHoldingStream, useMarkets } from "@orderly.network/hooks";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Favorites } from "./layouts/favorites";
 import { MobileOpenTrade } from "./layouts/mobile-open-trade";
 import { MobilePnL } from "./layouts/mobile-pnl";
@@ -33,8 +33,7 @@ enum MarketsType {
 export const Perp = ({ asset }: PerpProps) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [topHeight, setTopHeight] = useState(70);
-  const { mobileActiveSection, setIsChartLoading } = useGeneralContext();
+  const { mobileActiveSection } = useGeneralContext();
   const rowUpRef = useRef<HTMLDivElement>(null);
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
