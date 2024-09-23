@@ -26,6 +26,7 @@ import {
   useSymbolsInfo,
 } from "@orderly.network/hooks";
 import { OrderEntity, OrderSide } from "@orderly.network/types";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoChevronDown } from "react-icons/io5";
@@ -33,7 +34,6 @@ import { MdRefresh } from "react-icons/md";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import "rsuite/Slider/styles/index.css";
-import { useAccount } from "wagmi";
 
 type OpenTradeProps = {
   isMobile?: boolean;
@@ -74,11 +74,10 @@ export const OpenTrade = ({
   asset,
   holding,
 }: OpenTradeProps) => {
-  const { setTradeInfo } = useGeneralContext();
   const accountInstance = useAccountInstance();
   const [isTooltipMarketTypeOpen, setIsTooltipMarketTypeOpen] = useState(false);
-  const { state, account } = useOrderlyAccount();
-  const { address } = useAccount();
+  const { state } = useOrderlyAccount();
+  const [{ wallet }, connectWallet] = useConnectWallet();
   const [activeHoldings, setActiveHoldings] = useState(0);
   const [isSettleLoading, setIsSettleLoading] = useState(false);
   const {
@@ -89,15 +88,7 @@ export const OpenTrade = ({
     depositAmount,
   } = useGeneralContext();
 
-  const {
-    totalCollateral,
-    freeCollateral: freeCollat,
-    totalValue,
-    availableBalance,
-    unsettledPnL,
-    positions,
-    accountInfo,
-  } = useCollateral({
+  const { totalValue, unsettledPnL, accountInfo } = useCollateral({
     dp: 2,
   });
   const { usdc } = useHoldingStream();
@@ -109,7 +100,6 @@ export const OpenTrade = ({
     }
   }, [usdc]);
 
-  const [isTokenQuantity, setIsTokenQuantity] = useState(true);
   const [values, setValues] = useState(defaultValues);
   const [inputErrors, setInputErrors] = useState({
     input_quantity: false,
@@ -266,8 +256,8 @@ export const OpenTrade = ({
   const barPosition = getSectionBarPosition();
 
   const handleButtonLongClick = async () => {
-    if (state.status === 0) setIsWalletConnectorOpen(true);
-    else if (state.status === 2 || state.status === 4)
+    if (state.status === 0) await connectWallet();
+    else if (state.status >= 1 && state.status <= 4)
       setIsEnableTradingModalOpen(true);
     else {
       if (values.type === "LIMIT") {
@@ -295,7 +285,7 @@ export const OpenTrade = ({
         title: "Connect wallet",
         color: "bg-base_color",
       };
-    else if (state.status === 2 || state.status === 4)
+    else if (state.status >= 1 && state.status <= 4)
       return {
         title: "Enable trading",
         color: "bg-base_color",
@@ -344,7 +334,7 @@ export const OpenTrade = ({
   };
 
   const [data, _info, { refresh: refreshPosition, loading }] =
-    usePositionStream(asset?.symbol, {
+    usePositionStream(undefined, {
       refreshInterval: 1000,
       revalidateOnFocus: true,
       refreshWhenHidden: true,
@@ -376,7 +366,6 @@ export const OpenTrade = ({
     return (value / 100).toFixed(3) + "%";
   };
 
-  const [positionPnL] = usePositionStream();
   const [isTooltipDepositOpen, setIsTooltipDepositOpen] = useState(false);
 
   useEffect(() => {
@@ -435,7 +424,7 @@ export const OpenTrade = ({
                 {depositAmount ? (
                   <AiOutlineLoading3Quarters className="animate-spin text-base_color text-sm mr-2" />
                 ) : null}
-                {totalValue} {positionPnL.aggregated.unrealizedPnl}{" "}
+                {totalValue} {data.aggregated.unrealizedPnl}{" "}
                 <span className="text-font-60 ml-1">USDC</span>
               </div>{" "}
             </div>
@@ -727,7 +716,7 @@ export const OpenTrade = ({
                 }
               }}
               type="number"
-              disabled={!freeCollateral || !address}
+              disabled={!freeCollateral || !wallet}
               value={truncatePrice(values.quantity as string)}
             />
             <button
@@ -796,7 +785,7 @@ export const OpenTrade = ({
                 type="number"
                 min={0}
                 max={100}
-                disabled={!freeCollateral || !address}
+                disabled={!freeCollateral || !wallet}
                 onChange={(e) => {
                   if (!e.target.value) {
                     setSliderValue(0);

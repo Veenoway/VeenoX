@@ -40,24 +40,24 @@ export const supportedChains: SupportedChain[] = [
     rpcUrl: "https://base-rpc.publicnode.com",
     chainId: 8453,
   },
-  {
-    network: "mainnet",
-    icon: "/assets/MATIC.png",
-    id: "0x89",
-    token: "POL",
-    label: "Polygon",
-    rpcUrl: "https://polygon-bor-rpc.publicnode.com",
-    chainId: 137,
-  },
-  {
-    network: "mainnet",
-    icon: "/assets/ETH.png",
-    id: "0x1",
-    token: "ETH",
-    label: "Ethereum",
-    rpcUrl: "https://ethereum-rpc.publicnode.com",
-    chainId: 1,
-  },
+  // {
+  //   network: "mainnet",
+  //   icon: "/assets/MATIC.png",
+  //   id: "0x89",
+  //   token: "POL",
+  //   label: "Polygon",
+  //   rpcUrl: "https://polygon-bor-rpc.publicnode.com",
+  //   chainId: 137,
+  // },
+  // {
+  //   network: "mainnet",
+  //   icon: "/assets/ETH.png",
+  //   id: "0x1",
+  //   token: "ETH",
+  //   label: "Ethereum",
+  //   rpcUrl: "https://ethereum-rpc.publicnode.com",
+  //   chainId: 1,
+  // },
   {
     network: "testnet",
     icon: "/assets/arbitrum_sepolia.svg",
@@ -134,4 +134,15 @@ export const chainsName: { [key: number]: string } = {
 
 export const getImageFromChainId = (id: ChainsImageType): string => {
   return chainsImage[id];
+};
+
+export const parseChainId = (
+  chainId: string | undefined
+): number | string | undefined => {
+  if (!chainId) return chainId;
+  if (chainId.startsWith("0x")) {
+    return parseInt(chainId, 16);
+  } else {
+    return parseInt(chainId, 10);
+  }
 };
