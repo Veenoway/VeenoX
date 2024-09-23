@@ -52,14 +52,39 @@ export const Orderbook = ({
       ? 14
       : 12;
 
-  const [data, { isLoading, onDepthChange, depth, allDepths }] =
-    useOrderbookStream(asset?.symbol, undefined, {
+  const [data, { onDepthChange, depth, allDepths }] = useOrderbookStream(
+    asset?.symbol,
+    undefined,
+    {
       level: exepectedOrderbookLength,
       padding: false,
-    });
-  const bestBid: number | undefined = (data?.bids as [number[]])[0]?.[0];
-  const bestAsk = (data?.asks as [])[(data.asks as []).length - 1]?.[0];
-  const spread = bestAsk - bestBid;
+    }
+  );
+
+  function calculateSpread(data: any): {
+    spread: number | undefined;
+    spreadRatio: number | undefined;
+  } {
+    if (!data || data.bids.length === 0 || data.asks.length === 0) {
+      return { spread: undefined, spreadRatio: undefined };
+    }
+
+    const bestBid = data.bids[0][0];
+    const bestAsk = data.asks[0][0];
+
+    if (bestBid === undefined || bestAsk === undefined) {
+      return { spread: undefined, spreadRatio: undefined };
+    }
+
+    const spread = bestAsk - bestBid;
+    const spreadPercentage = (spread / bestBid) * 100;
+    const spreadRatio = spread / bestBid;
+
+    return { spread: spreadPercentage, spreadRatio: spreadRatio };
+  }
+
+  const { spreadRatio } = calculateSpread(data);
+  const spread = spreadRatio !== undefined ? spreadRatio.toFixed(4) : undefined;
 
   const getWidthFromVolume = (type: AsksBidsType): number[] => {
     const is_asks = type === "asks";
@@ -254,12 +279,14 @@ export const Orderbook = ({
                         {getFormattedAmount(data?.middlePrice as any, true) ||
                           0}
                       </p>
-                      <span className="text-[13px] text-white hidden sm:flex">
-                        Spread
-                      </span>
-                      <span className="text-xs sm:text-[13px] text-white">
-                        {spread.toFixed(3)}
-                      </span>
+                      <div className="flex items-center">
+                        <span className="text-[13px] mr-2.5 text-white hidden sm:flex">
+                          Spread
+                        </span>
+                        <span className="text-xs sm:text-[13px] text-white">
+                          {spread}%
+                        </span>{" "}
+                      </div>
                     </div>
                   </td>
                 </tr>

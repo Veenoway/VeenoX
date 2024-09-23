@@ -5,10 +5,8 @@ import { cn } from "@/utils/cn";
 import {
   useOrderStream,
   usePositionStream,
-  usePrivateQuery,
   useWS,
 } from "@orderly.network/hooks";
-import { API } from "@orderly.network/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
@@ -121,12 +119,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
   const [chartLines, setChartLines] = useState<{ [key: string]: any }>({});
   const [orders, _info, { refresh: refreshPosition }] = usePositionStream();
-  const { data, isLoading, error } = usePrivateQuery("/v1/algo/orders", {
-    refreshInterval: 1000, // Rafraîchit toutes les 1000ms (1 seconde)
-    dedupingInterval: 1000, // Évite les requêtes multiples dans le même intervalle
-    revalidateOnFocus: false, // Désactive la revalidation lors du focus de la fenêtre
-    revalidateOnReconnect: false, // Désactive la revalidation lors de la reconnexion réseau
-  });
   const [isChartReady, setIsChartReady] = useState(false);
   const chartRef = useRef<any>(null);
   const prevPositionsRef = useRef("");
@@ -134,7 +126,18 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const prevPendingRef = useRef("");
   const [currentInterval, setCurrentInterval] = useState<string>("");
   const order = orders?.rows?.find((entry) => entry.symbol === asset?.symbol);
-  const [ordersData] = useOrderStream({ symbol: asset?.symbol });
+  const [ordersData, { refresh }] = useOrderStream({ symbol: asset?.symbol });
+
+  const refreshPos = async () => {
+    await refreshPosition();
+    await refresh();
+  };
+
+  useEffect(() => {
+    if (orders) {
+      refreshPos();
+    }
+  }, [orders?.rows?.length]);
 
   const pendingPosition = useMemo(() => {
     return (
@@ -156,17 +159,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       ) || []
     );
   }, [orders, params?.perp]);
-
-  const testPos = useMemo(() => {
-    return (data as API.AlgoOrderExt[])?.filter((entry) => {
-      return (
-        (entry.algo_status === "REPLACED" || entry.algo_status === "NEW") &&
-        entry.symbol === asset?.symbol
-      );
-    });
-  }, [params?.perp, data]);
-
-  const prevTPSLRef = useRef([]);
 
   const saveChartState = useCallback(
     (chart: any) => {
@@ -407,18 +399,13 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       return;
     }
     let hasChanges = false;
-
     try {
       const hasPositionChanged = (prev: any, current: any) => {
         return (
           prev.average_open_price !== current.average_open_price ||
           prev.tp_trigger_price !== current.tp_trigger_price ||
           prev.sl_trigger_price !== current.sl_trigger_price ||
-          prev.position_qty !== current.position_qty ||
-          prev.child_orders?.[0]?.trigger_price !==
-            current.child_orders?.[0]?.trigger_price ||
-          prev.child_orders?.[1]?.trigger_price !==
-            current.child_orders?.[1]?.trigger_price
+          prev.position_qty !== current.position_qty
         );
       };
       const newPrices: number[] = [];
@@ -435,23 +422,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         hasChanges = true;
       }
 
-      if (testPos?.length !== prevTPSLRef.current.length) {
-        hasChanges = true;
-      } else {
-        for (let i = 0; i < testPos?.length; i++) {
-          if (
-            testPos[i].child_orders?.[0]?.trigger_price !==
-              (prevTPSLRef.current[i] as any)?.child_orders?.[0]
-                ?.trigger_price ||
-            testPos[i].child_orders?.[1]?.trigger_price !==
-              (prevTPSLRef.current[i] as any)?.child_orders?.[1]?.trigger_price
-          ) {
-            hasChanges = true;
-            break;
-          }
-        }
-      }
-
       if (
         relevantPositions.length !== prevPositionsRef.current.length ||
         pendingPosition?.length !== Number(prevPendingRef.current) ||
@@ -465,11 +435,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
               prevPositionsRef.current[i],
               relevantPositions[i]
             ) ||
-            prevTimeframe.current !== timeframe ||
-            hasPositionChanged(
-              prevPositionsRef.current[i],
-              relevantPositions[i]
-            )
+            prevTimeframe.current !== timeframe
           ) {
             hasChanges = true;
             break;
@@ -518,17 +484,12 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
             setLineStyle: 1,
           });
           if (openPriceLine) newChartLines[openPriceLineId] = openPriceLine;
-        });
-        console.log("position", testPos);
 
-        testPos?.forEach((position: any) => {
-          console.log("position", position);
-          if (position.child_orders?.[0]) {
-            console.log("ICHANGE TP");
-            const tpLineId = `tp_${position?.algo_order_id}`;
+          if (position.tp_trigger_price) {
+            const tpLineId = `tp_${position?.algo_order?.algo_order_id}`;
             const tpLine = createLine({
               setText: "Take Profit",
-              setPrice: position.child_orders?.[0]?.trigger_price || 150,
+              setPrice: position.tp_trigger_price || 150,
               setLineWidth: 1,
               setQuantity: "",
               setBodyTextColor: "#FFF",
@@ -540,12 +501,11 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
             if (tpLine) newChartLines[tpLineId] = tpLine;
           }
 
-          if (position.child_orders?.[1]) {
-            console.log("ICHANGE SL");
-            const slLineId = `sl_${position?.algo_order_id}`;
+          if (position.sl_trigger_price) {
+            const slLineId = `sl_${position?.algo_order?.algo_order_id}`;
             const slLine = createLine({
               setText: "Stop Loss",
-              setPrice: position.child_orders?.[1]?.trigger_price || 150,
+              setPrice: position?.sl_trigger_price || 150,
               setLineWidth: 1,
               setQuantity: "",
               setBodyTextColor: "#FFF",
@@ -590,7 +550,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         (prevPositionsRef as any).current = relevantPositions;
         (prevPendingPriceRef as any).current = prices;
         (prevPendingRef as any).current = pendingPosition?.length;
-        (prevTPSLRef as any).current = testPos;
       } else updatePositions();
       prevTimeframe.current = timeframe;
     } catch (e) {}
