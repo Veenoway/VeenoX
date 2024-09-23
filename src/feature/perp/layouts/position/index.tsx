@@ -40,7 +40,6 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateOnFocus: true,
       refreshWhenOffline: true,
       revalidateIfStale: true,
-      dedupingInterval: 0,
     }
   );
   const [orders, { cancelOrder, refresh }] = useOrderStream(
