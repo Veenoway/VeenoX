@@ -62,6 +62,7 @@ export const OrderlyRewards = () => {
                 width={25}
                 alt="Order logo"
                 src="https://s2.coinmarketcap.com/static/img/coins/64x64/32809.png"
+                className="border border-base_color rounded-full"
               />
               <div className="ml-2 flex-col items-start text-xs">
                 <p className="text-[10px] text-font-60">Est. reward:</p>
