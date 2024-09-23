@@ -83,14 +83,14 @@ export const ConnectWallet = () => {
           </div>
           <div className="h-[1px] mb-1.5 mt-2.5 bg-borderColor w-full rounded" />
           <button
-            className="text-font-80 flex items-center justify-center hover:text-base_color transition-all duration-100 ease-in-out text-bold font-poppins text-sm"
+            className="text-font-80 flex items-center justify-center hover:text-white transition-all duration-100 ease-in-out text-bold font-poppins text-sm"
             onClick={() => {
               setIsDisconnectOpen(false);
               disconnectWallet({ label: wallet?.label as string });
               account.disconnect();
             }}
           >
-            <IoPowerSharp className="text-red mr-2" />
+            <IoPowerSharp className="text-white mr-2" />
             Disconnect
           </button>
         </PopoverContent>

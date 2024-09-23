@@ -128,16 +128,18 @@ export const Deposit = () => {
               token: "USDC",
               allowCrossChainWithdraw: true,
             });
-            triggerAlert("Success", "Withdraw executed.");
             setIsWithdrawSuccess(true);
             setAmount(undefined);
             setNewWalletBalance(undefined);
             setNewOrderlyBalance(undefined);
             setOpenWithdraw(false);
+            triggerAlert("Success", "Withdraw executed.");
           }
-        } catch (err) {
+        } catch (err: any) {
           console.log("Withdraw error: ", err);
-          triggerAlert("Error", "Withdraw failed.");
+          if (err?.message?.include("settle") || err?.message?.include("pnl"))
+            triggerAlert("Error", "Settle PnL First");
+          else triggerAlert("Error", "Withdraw failed.");
         }
       }
     } else {
@@ -179,7 +181,7 @@ export const Deposit = () => {
         </DialogTrigger>
         <DialogContent
           close={() => setOpenWithdraw(false)}
-          className="w-full max-w-[435px] bg-secondary h-auto max-h-auto flex flex-col gap-0 "
+          className="w-full max-w-[435px] bg-secondary h-auto max-h-auto flex flex-col gap-0"
         >
           <DialogHeader>
             <DialogTitle className="">

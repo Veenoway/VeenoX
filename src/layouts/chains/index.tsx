@@ -3,7 +3,7 @@ import { supportedChains } from "@/utils/network";
 import { useAccount } from "@orderly.network/hooks";
 import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
 export const Chains: React.FC = () => {
@@ -14,11 +14,23 @@ export const Chains: React.FC = () => {
   const chainIcon = supportedChains?.find(
     ({ id }) => id === connectedChain?.id
   )?.icon;
+
   const selectChain = (chainId: string) => () => {
     setChain({
       chainId,
     });
   };
+
+  const handleChainSelect = useCallback(
+    (id: string) => {
+      return async () => {
+        const chainSelectFunction = selectChain(id);
+        chainSelectFunction();
+        account.switchChainId(id);
+      };
+    },
+    [selectChain, account]
+  );
 
   return (
     <Popover>
@@ -54,7 +66,7 @@ export const Chains: React.FC = () => {
                   className="flex flex-col justify-center items-center py-1 flex-nowrap"
                   onMouseEnter={() => setIsHoverChain(id)}
                   onMouseLeave={() => setIsHoverChain(null)}
-                  onClick={selectChain(id)}
+                  onClick={handleChainSelect(id)}
                 >
                   <div
                     className={`h-10 w-10 p-2 rounded bg-terciary ${
