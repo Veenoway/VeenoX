@@ -474,16 +474,16 @@ input[type="number"] {
 }
 
 .resizerY:hover {
-  background-color: #836ef9;
+  background-color: rgba(255, 255, 255, 0.25);
   opacity: 1;
 }
 
 .resizerY:focus {
-  background-color: #836ef9;
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
 }
 .resizerY:active {
-  background-color: #836ef9;
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
 }
 
@@ -500,12 +500,12 @@ input[type="number"] {
 }
 
 .resizer:hover {
-  background-color: #836ef9;
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
 }
 
 .resizer:active {
-  background-color: #836ef9;
+  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
 }
 

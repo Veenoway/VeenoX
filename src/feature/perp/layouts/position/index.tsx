@@ -32,15 +32,17 @@ export const Position = ({ asset }: PositionProps) => {
     width: string;
     left: string;
   }>({ width: "20%", left: "0%" });
-  const [data, _info, { refresh: refreshPosition, error, loading }] =
-    usePositionStream(undefined, {
+  const [data, _info, { refresh: refreshPosition }] = usePositionStream(
+    undefined,
+    {
       refreshInterval: 1000,
       revalidateOnFocus: true,
       refreshWhenHidden: true,
       refreshWhenOffline: true,
       revalidateIfStale: true,
       dedupingInterval: 0,
-    });
+    }
+  );
   const [orders, { cancelOrder, refresh }] = useOrderStream(
     {
       symbol: asset.symbol,
@@ -131,20 +133,6 @@ export const Position = ({ asset }: PositionProps) => {
 
     return true;
   };
-
-  // const [tt] = useOrderStream({
-  //   includes: [AlgoOrderRootType.TP_SL, AlgoOrderRootType.POSITIONAL_TP_SL],
-  // });
-
-  // const tpslOrder = findPositionTPSLFromOrders(orders, asset?.symbol);
-  // console.log("tt", tt, orders);
-  // if (tpslOrder) {
-  //   console.log("TP/SL order trouvé pour BTC-USDT:", tpslOrder);
-  //   console.log("Take Profit:", tpslOrder.tp_trigger_price);
-  //   console.log("Stop Loss:", tpslOrder.sl_trigger_price);
-  // } else {
-  //   console.log("Aucun ordre TP/SL trouvé pour BTC-USDT");
-  // }
 
   const getPnLChange = () => {
     const arr =
@@ -272,6 +260,7 @@ export const Position = ({ asset }: PositionProps) => {
               : orders
                   ?.filter(filterSide)
                   ?.sort((a, b) => b.updated_time - a.updated_time)
+                  ?.filter((_, i) => i < 40)
             )?.map((order, i) => {
               if (
                 (activeSection === 0 && !data?.rows?.length) ||
