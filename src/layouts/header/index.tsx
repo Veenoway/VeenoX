@@ -5,6 +5,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { Chains } from "../chains";
 import { Deposit } from "../deposit";
 import { EnableTrading } from "../enable-trading";
+import { OrderlyRewards } from "../orderly-rewards";
 import { ConnectWallet } from "../wallet-connect";
 import { MobileModal } from "./mobile";
 
@@ -40,6 +41,7 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-5">
         <div className="flex relative w-fit h-fit">
+          <OrderlyRewards />
           <Deposit />
           <Chains />
           <ConnectWallet />
