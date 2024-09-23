@@ -99,20 +99,22 @@ export const Perp = ({ asset }: PerpProps) => {
               }}
             >
               <div
-                className="border-r border-borderColor overflow-x-hidden no-scrollbar md:min-w-[400px] lg:min-w-[700px]"
+                className="border-r border-borderColor no-scrollbar md:min-w-[400px] lg:min-w-[700px]"
                 ref={chartRef}
               >
                 {!mobileActiveSection ? (
                   <>
                     <Favorites props={params as FavoriteProps as never} />
-                    <TokenInfo params={params} asset={asset} />
-                    <MobilePnL />
-                    <MobileSectionSelector />
-                    <TradingViewChart
-                      params={useParam}
-                      asset={asset}
-                      className={""}
-                    />
+                    <div className="overflow-x-hidden h-full w-full no-scrollbar">
+                      <TokenInfo params={params} asset={asset} />
+                      <MobilePnL />
+                      <MobileSectionSelector />
+                      <TradingViewChart
+                        params={useParam}
+                        asset={asset}
+                        className={""}
+                      />
+                    </div>
                   </>
                 ) : (
                   <>
