@@ -29,7 +29,6 @@ export const Header = () => {
               <li>
                 <Link href="/dashboard">Dashboard</Link>
               </li>
-              <li className="text-font-40 cursor-not-allowed">Portfolio</li>
               <li className="text-font-40 cursor-not-allowed">Swap</li>
               <li className="text-font-40 cursor-not-allowed">Bridge</li>
               <li className="text-font-40 cursor-not-allowed">
