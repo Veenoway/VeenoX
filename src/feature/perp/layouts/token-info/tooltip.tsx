@@ -3,23 +3,16 @@ import { FavoriteProps, MarketTickerProps } from "@/models";
 import { formatSymbol, getFormattedAmount } from "@/utils/misc";
 import { useLocalStorage } from "@orderly.network/hooks";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa6";
 
 export const PairSelector = ({ params }: FavoriteProps) => {
-  const {
-    data,
-    addToHistory,
-    // favoriteTabs,
-    updateFavoriteTabs,
-    updateSymbolFavoriteState,
-  } = params;
-  const router = useRouter();
+  const { data } = params;
   const sections: string[] = ["All Coins", "x10", "x20", "x50"];
   const [activeSection, setActiveSection] = useState(sections[0]);
   const [searchInput, setSearchInput] = useState("");
-  const { isChartLoading, setIsChartLoading } = useGeneralContext();
+  const { setIsChartLoading } = useGeneralContext();
   const pathname = usePathname();
   const [value, setValue] = useLocalStorage<string[]>(
     "FAVORITES",
@@ -112,10 +105,7 @@ export const PairSelector = ({ params }: FavoriteProps) => {
                   key={token.symbol}
                   className="hover:bg-[#242424] transition-all duration-75 ease-linear"
                 >
-                  <tr
-                    className="text-font-80"
-                    onClick={() => setIsChartLoading(true)}
-                  >
+                  <tr className="text-font-80">
                     <td className="py-1">
                       <div className="w-full h-full flex items-center">
                         <button
@@ -151,24 +141,34 @@ export const PairSelector = ({ params }: FavoriteProps) => {
                         </Link>{" "}
                       </div>
                     </td>
-                    <td className="text-end">
+                    <td
+                      className="text-end"
+                      onClick={() => setIsChartLoading(true)}
+                    >
                       <Link href={`/perp/${token.symbol}`}>
                         {getFormattedAmount(token.mark_price)}
                       </Link>
                     </td>
                     <td
                       className={`text-end ${isUp ? "text-green" : "text-red"}`}
+                      onClick={() => setIsChartLoading(true)}
                     >
                       <Link href={`/perp/${token.symbol}`}>
                         {percentage_change?.toFixed(2)}%
                       </Link>
                     </td>
-                    <td className="text-end md:table-cell hidden">
+                    <td
+                      className="text-end md:table-cell hidden"
+                      onClick={() => setIsChartLoading(true)}
+                    >
                       <Link href={`/perp/${token.symbol}`}>
                         {getFormattedAmount(token["24h_volume"])}
                       </Link>
                     </td>
-                    <td className="text-end md:table-cell hidden">
+                    <td
+                      className="text-end md:table-cell hidden"
+                      onClick={() => setIsChartLoading(true)}
+                    >
                       <Link href={`/perp/${token.symbol}`}>
                         {getFormattedAmount(token.open_interest)}
                       </Link>
