@@ -1,28 +1,31 @@
 import { useGeneralContext } from "@/context";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
 import { triggerAlert } from "@/lib/toaster";
-import {
-  ConnectorNameType,
-  addressSlicer,
-  connectorsToImage,
-  getFormattedAmount,
-} from "@/utils/misc";
+import { addressSlicer, getFormattedAmount } from "@/utils/misc";
 import {
   ChainsImageType,
   getImageFromChainId,
+  parseChainId,
   supportedChains,
 } from "@/utils/network";
 import { utils } from "@orderly.network/core";
 import {
-  useAccountInstance,
   useAccount as useOrderlyAccount,
   useSettleSubscription,
 } from "@orderly.network/hooks";
+import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import { FixedNumber } from "ethers";
 import Image from "next/image";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaCheck } from "react-icons/fa6";
 import { IoChevronDown } from "react-icons/io5";
-import { useAccount, useSwitchChain } from "wagmi";
 import { filterAllowedCharacters } from "../../utils";
 
 type TemplateDisplayProps = {
@@ -36,15 +39,35 @@ type TemplateDisplayProps = {
 };
 
 const InputQuantity = () => {
-  const { state } = useOrderlyAccount();
-  const { address, chainId, chain } = useAccount();
-  const { switchChain } = useSwitchChain();
-  const { isDeposit } = useGeneralContext();
-  const accountInstance = useAccountInstance();
+  const [{ wallet }] = useConnectWallet();
+  const [{ connectedChain, chains }, setChain] = useSetChain();
+  const { account } = useOrderlyAccount();
+
+  const selectChain = (chainId: string) => () => {
+    setChain({
+      chainId,
+    });
+  };
+
+  const handleChainSelect = useCallback(
+    (id: string) => {
+      return async () => {
+        const chainSelectFunction = selectChain(id);
+        chainSelectFunction();
+        account.switchChainId(id);
+      };
+    },
+    [selectChain, account]
+  );
 
   const chainLogo =
-    supportedChains.find((entry) => entry.label === (chain?.name as string))
-      ?.icon || getImageFromChainId(chainId as ChainsImageType);
+    supportedChains.find(({ id }) => id === (connectedChain?.id as string))
+      ?.icon ||
+    getImageFromChainId(connectedChain?.id as unknown as ChainsImageType);
+
+  const chainName = supportedChains.find(
+    ({ id }) => id === (connectedChain?.id as string)
+  )?.label;
 
   return (
     <div className="w-full flex items-center mb-2">
@@ -52,7 +75,7 @@ const InputQuantity = () => {
         <input
           type="text"
           readOnly
-          placeholder={addressSlicer(address)}
+          placeholder={addressSlicer(wallet?.accounts?.[0]?.address)}
           className="h-full px-2.5 w-full text-xs"
         />
       </div>
@@ -67,42 +90,39 @@ const InputQuantity = () => {
                 className="ml-2 object-cover rounded-full mr-2"
                 alt="Chain logo"
               />
-              {chain?.name}
+              {chainName}
               <IoChevronDown className="min-w-[18px] text-xs ml-[1px] mr-2" />
             </button>
           </PopoverTrigger>
           <PopoverContent
-            sideOffset={3}
-            className="flex flex-col px-2 py-0.5 rounded z-[102] w-fit whitespace-nowrap bg-primary border border-borderColor-DARK shadow-xl"
+            sideOffset={9}
+            align="end"
+            className="flex flex-col py-0.5 px-0 rounded z-[102] w-fit whitespace-nowrap bg-primary shadow-xl shadow-secondary border border-borderColor-DARK"
           >
             {supportedChains
               ?.filter((item) => item.network !== "testnet")
-              .map((supportedChain, i) => (
+              .map(({ id, label, icon }) => (
                 <button
-                  key={i}
-                  className="flex items-center py-1 flex-nowrap"
-                  onClick={() => {
-                    accountInstance.switchChainId(supportedChain.chainId);
-                    switchChain({
-                      chainId: supportedChain.chainId,
-                    });
-                  }}
+                  key={id}
+                  className="flex items-center py-1.5 px-2 flex-nowrap hover:bg-terciary"
+                  onClick={handleChainSelect(id)}
                 >
                   <Image
-                    src={supportedChain.icon}
+                    src={icon}
                     width={20}
                     height={20}
-                    className="h-5 w-5 object-cover rounded-full mr-2"
+                    className="h-5 w-5 object-cover rounded-full mr-2.5"
                     alt="Chain logo"
                   />
                   <p
-                    className={`w-full text-start text-xs ${
-                      parseInt(supportedChain.id, 16) === chainId
-                        ? "text-white"
-                        : "text-font-60"
-                    } `}
+                    className={`w-full text-start text-[13px] ${
+                      id === connectedChain?.id ? "text-white" : "text-font-60"
+                    } transition-all duration-150 ease-in-out`}
                   >
-                    {supportedChain.label}
+                    {
+                      supportedChains.find(({ id: chainId }) => chainId === id)
+                        ?.label
+                    }
                   </p>
                 </button>
               ))}
@@ -120,6 +140,12 @@ type PageContentType = {
   image_bot: string;
 };
 
+enum SettleStatus {
+  INITIAL = 0,
+  LOADING = 1,
+  VALIDATE = 2,
+}
+
 export const TemplateDisplay = ({
   balance,
   amount,
@@ -128,20 +154,18 @@ export const TemplateDisplay = ({
   children,
   depositFee,
   unsettledPnL,
-}: // dst,
-TemplateDisplayProps) => {
-  const { state, account } = useOrderlyAccount();
+}: TemplateDisplayProps) => {
+  const { account } = useOrderlyAccount();
   const { isDeposit } = useGeneralContext();
-  const { address, chainId, chain } = useAccount();
-  const accountInstance = useAccountInstance();
+  const [{ connectedChain }, setChain] = useSetChain();
+  const [{ wallet }] = useConnectWallet();
+  const [settleStatus, setSettleStatus] = useState(SettleStatus.INITIAL);
 
   const getPageContent = (): PageContentType => {
     if (isDeposit)
       return {
         title_top: "Your Wallet",
-        image_top:
-          connectorsToImage[state?.connectWallet?.name as ConnectorNameType] ||
-          "/veenox/veenox-logo.png",
+        image_top: wallet?.icon || "/veenox/veenox-logo.png",
         title_bot: "Your VeenoX account",
         image_bot: "/veenox/veenox-logo.png",
       };
@@ -149,16 +173,14 @@ TemplateDisplayProps) => {
       title_top: "Your VeenoX account ",
       image_top: "/veenox/veenox-logo.png",
       title_bot: "Your Wallet",
-      image_bot:
-        connectorsToImage[state?.connectWallet?.name as ConnectorNameType] ||
-        "/veenox/veenox-logo.png",
+      image_bot: wallet?.icon || "/veenox/veenox-logo.png",
     };
   };
 
   const pageContent = getPageContent();
   const formattedDepositFee = utils.formatByUnits(
     depositFee as never,
-    chain?.nativeCurrency.decimals
+    18 // TODO
   );
 
   useSettleSubscription({
@@ -179,7 +201,7 @@ TemplateDisplayProps) => {
 
   return (
     <>
-      <div className="flex items-center w-full justify-between mb-2">
+      <div className="flex items-center w-full justify-between mb-3">
         <p>{pageContent.title_top}</p>
         <Image
           src={pageContent.image_top}
@@ -194,8 +216,9 @@ TemplateDisplayProps) => {
         <div className="w-full flex items-center justify-between">
           <input
             type="number"
-            placeholder={amount?.toString() || "Quantity"}
-            className="h-[30px] pr-2.5 w-full max-w-[280px] text-sm placeholder:text-white"
+            placeholder={"Quantity"}
+            value={amount?.toString()}
+            className="h-[30px] pr-2.5 w-full max-w-[240px] text-sm placeholder:text-white"
             onChange={(e) => {
               const newValue = filterAllowedCharacters(e.target.value);
               setAmount(newValue as any);
@@ -206,9 +229,8 @@ TemplateDisplayProps) => {
             <button
               className="text-sm font-medium text-base_color uppercase"
               onClick={() => {
-                const newBalance = Number(balance).toFixed(3);
-                setAmount(newBalance as never);
-                setQuantity(newBalance);
+                setAmount(balance as never);
+                setQuantity(balance);
               }}
             >
               MAX
@@ -255,10 +277,22 @@ TemplateDisplayProps) => {
             USDC
           </p>
           <button
-            onClick={() => {
-              if (unsettledPnL !== 0 && accountInstance) {
-                if (chainId === account.chainId) {
-                  accountInstance?.settle();
+            onClick={async () => {
+              if (unsettledPnL !== 0 && account) {
+                const connectedChainID = parseChainId(
+                  connectedChain?.id as string
+                );
+                if (connectedChainID === account.chainId) {
+                  setSettleStatus(SettleStatus.LOADING);
+                  try {
+                    await account.settle();
+                    setSettleStatus(SettleStatus.VALIDATE);
+                    setTimeout(() => {
+                      setSettleStatus(SettleStatus.INITIAL);
+                    }, 2000);
+                  } catch (e) {
+                    setSettleStatus(SettleStatus.INITIAL);
+                  }
                 }
               }
             }}
@@ -266,6 +300,12 @@ TemplateDisplayProps) => {
               unsettledPnL !== 0 ? "" : "opacity-40 pointer-events-none"
             } flex items-center bg-terciary border border-borderColor-DARK rounded px-2 py-1 text-xs text-white`}
           >
+            {settleStatus === SettleStatus.VALIDATE ? (
+              <FaCheck className="text-green text-xs  mr-2" />
+            ) : null}
+            {settleStatus === SettleStatus.LOADING ? (
+              <AiOutlineLoading3Quarters className="animate-spin text-white text-xs mr-2" />
+            ) : null}
             <span>Settle PnL</span>
           </button>
         </div>
@@ -274,7 +314,7 @@ TemplateDisplayProps) => {
       <div className="flex flex-col w-full">
         <div
           className={`flex items-center w-full justify-between ${
-            isDeposit ? "mb-0" : "mb-2"
+            isDeposit ? "mb-0" : "mb-3"
           }`}
         >
           <p>{pageContent.title_bot}</p>
@@ -289,7 +329,7 @@ TemplateDisplayProps) => {
         {isDeposit ? null : <InputQuantity />}
         <div
           className={`bg-terciary ${
-            isDeposit ? "mt-2" : "mt-0"
+            isDeposit ? "mt-3" : "mt-0"
           } h-[35px] border rounded w-full border-borderColor-DARK mr-2`}
         >
           <input

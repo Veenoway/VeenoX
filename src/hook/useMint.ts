@@ -1,9 +1,6 @@
-import { config } from "@/lib/wallet-connect/config";
-import { NFT_SOULBOUND_ABI, NFT_SOULBOUND_ADDRESS } from "@/utils/veenox";
+import { NFT_SOULBOUND_ADDRESS } from "@/utils/veenox";
 import axios from "axios";
 import { useCallback, useState } from "react";
-import { simulateContract, writeContract } from "viem/actions";
-import { useAccount, useClient, useWalletClient } from "wagmi";
 
 const JWT = "..";
 const contractAddress = NFT_SOULBOUND_ADDRESS;
@@ -11,14 +8,13 @@ const contractAddress = NFT_SOULBOUND_ADDRESS;
 type TradeDataType = { pair: string; profit: number; date: number; id: number };
 
 export const useTradePosterContract = () => {
-  const { address, chain } = useAccount();
+  // const { address, chain } = useAccount();
   const [isMintLoading, setIsMintLoading] = useState(false);
   const [isMintSuccess, setIsMintSuccess] = useState(false);
   const [mintError, setMintError] = useState<string | null>(null);
-  const publicClient = useClient({ config });
-  const walletClient = useWalletClient();
+  // const publicClient = useClient({ config });
+  // const walletClient = useWalletClient();
 
-  console.log("publicClient", publicClient);
   const uploadImageToPinata = async (imageData: string) => {
     const formData = new FormData();
     const blob = await fetch(imageData).then((r) => r.blob());
@@ -69,9 +65,9 @@ export const useTradePosterContract = () => {
 
   const mintToken = useCallback(
     async (imageData: string, tradeData: TradeDataType) => {
-      if (!walletClient || !address) {
-        throw new Error("Client or address not properly initialized");
-      }
+      // if (!walletClient || !address) {
+      //   throw new Error("Client or address not properly initialized");
+      // }
 
       setIsMintLoading(true);
       setMintError(null);
@@ -91,14 +87,14 @@ export const useTradePosterContract = () => {
           }
         );
         const tokenURI = `ipfs://${metadataRes.data.IpfsHash}`;
-        const { request } = await simulateContract(publicClient as any, {
-          account: address,
-          address: "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8",
-          abi: NFT_SOULBOUND_ABI,
-          functionName: "mintTradePoster",
-          args: [address, tokenURI],
-        });
-        await writeContract(publicClient as any, request);
+        // const { request } = await simulateContract(publicClient as any, {
+        //   account: address,
+        //   address: "0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8",
+        //   abi: NFT_SOULBOUND_ABI,
+        //   functionName: "mintTradePoster",
+        //   args: [address, tokenURI],
+        // });
+        // await writeContract(publicClient as any, request);
 
         // @ts-ignore
         const receipt = await transaction?.wait();
@@ -113,7 +109,8 @@ export const useTradePosterContract = () => {
         setIsMintLoading(false);
       }
     },
-    [address, walletClient]
+    []
+    // [address, walletClient]
   );
 
   return {

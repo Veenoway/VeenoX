@@ -199,7 +199,10 @@ export const Orderbook = ({
               <tbody>
                 {(asks || [])?.map((ask: number[], i: number) => {
                   return (
-                    <tr key={i} className="text-font-80 text-xs relative">
+                    <tr
+                      key={i}
+                      className="text-font-80 text-xs relative my-0.5"
+                    >
                       {Array.from({ length: 4 }).map((_, j) => {
                         const className = getStyleFromDevice(j, "");
                         const value =
@@ -235,7 +238,7 @@ export const Orderbook = ({
                       })}
 
                       <td
-                        className="absolute left-0 h-[90%] max-h-[20px] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute left-0 h-full bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${asksWidth[i]}%` }}
                       />
                     </tr>
@@ -298,7 +301,7 @@ export const Orderbook = ({
                       })}
 
                       <td
-                        className="absolute left-0 h-[90%] max-h-[20px] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute left-0 h-full bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${bidsWidth[i]}%` }}
                       />
                     </tr>

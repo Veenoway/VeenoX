@@ -6,26 +6,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/lib/shadcn/dialog";
+import { triggerAlert } from "@/lib/toaster";
 import { useAccount as useOrderlyAccount } from "@orderly.network/hooks";
-import { useState } from "react";
+import React from "react";
 
-export const EnableTrading = () => {
+export const EnableTrading: React.FC = () => {
   const { state, createOrderlyKey, createAccount } = useOrderlyAccount();
   const { isEnableTradingModalOpen, setIsEnableTradingModalOpen } =
     useGeneralContext();
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleCreateAccount = async () => {
     try {
       if (state.status === 2) await createAccount();
       await createOrderlyKey(true);
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsEnableTradingModalOpen(false);
-        setTimeout(() => {
-          setIsSuccess(false);
-        }, 1000);
-      }, 3000);
+      setIsEnableTradingModalOpen(false);
+      triggerAlert("Success", "Trading enabled.");
     } catch (e) {}
   };
   return (
@@ -83,17 +78,11 @@ export const EnableTrading = () => {
           </div>
           <span className="h-0" />
           <button
-            className={`${
-              isSuccess ? "bg-green" : "bg-base_color"
-            } w-full  h-[40px] rounded px-2.5 text-white text-sm
+            className={`bg-base_color w-full  h-[40px] rounded px-2.5 text-white text-sm
              flex items-center justify-center transition-all duration-200 ease-in-out`}
             onClick={handleCreateAccount}
           >
-            {isSuccess
-              ? "Successfully enable trading"
-              : state.status === 2
-              ? "Sign in"
-              : "Enable trading"}
+            {state.status === 2 ? "Sign in" : "Enable trading"}
           </button>
         </DialogHeader>
       </DialogContent>

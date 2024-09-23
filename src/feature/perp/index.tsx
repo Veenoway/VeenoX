@@ -1,16 +1,13 @@
 "use client";
 import { useGeneralContext } from "@/context";
+import { useResizer } from "@/hook/useResizer";
 import { EnableTrading } from "@/layouts/enable-trading";
 import { MaintenanceStatusModal } from "@/modals/maintenance";
 import { FavoriteProps, FuturesAssetProps } from "@/models";
-import {
-  useHoldingStream,
-  useMarkets,
-  useWalletConnector,
-} from "@orderly.network/hooks";
+import { useHoldingStream, useMarkets } from "@orderly.network/hooks";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Favorites } from "./layouts/favorites";
 import { MobileOpenTrade } from "./layouts/mobile-open-trade";
 import { MobilePnL } from "./layouts/mobile-pnl";
@@ -34,25 +31,13 @@ enum MarketsType {
 }
 
 export const Perp = ({ asset }: PerpProps) => {
-  const wallet = useWalletConnector();
   const chartRef = useRef<HTMLDivElement>(null);
-  const [colWidths, setColWidths] = useState([8, 2]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [topHeight, setTopHeight] = useState(70);
-  const { mobileActiveSection, setIsChartLoading } = useGeneralContext();
+  const { mobileActiveSection } = useGeneralContext();
   const rowUpRef = useRef<HTMLDivElement>(null);
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
   const useParam = useParams();
-  const [topHeightPx, setTopHeightPx] = useState(0);
-
-  const calculateInitialHeight = () => {
-    return Math.round(window.innerHeight * 0.7);
-  };
-
-  useEffect(() => {
-    setTopHeightPx(calculateInitialHeight());
-  }, []);
 
   const [
     data,
@@ -64,121 +49,20 @@ export const Perp = ({ asset }: PerpProps) => {
     },
   ]: any = useMarkets(MarketsType.ALL);
 
-  const handleMouseDown = (index: number, e: any) => {
-    if (window.innerWidth < 1268) return;
-
-    const startX = e.clientX;
-    const startWidths = [...colWidths];
-    const containerWidth = (
-      containerRef?.current as any
-    ).getBoundingClientRect().width;
-
-    const onMouseMove = (e: any) => {
-      const dx = e.clientX - startX;
-      const deltaFraction = (dx / containerWidth) * 10;
-      const newWidths = [...startWidths];
-
-      if (index === 0) {
-        newWidths[0] = Math.max(startWidths[0] + deltaFraction, 1);
-        newWidths[1] = Math.max(startWidths[1] - deltaFraction, 1);
-      } else if (index === 1) {
-        newWidths[1] = Math.max(startWidths[1] + deltaFraction, 1);
-        newWidths[2] = Math.max(startWidths[2] - deltaFraction, 1);
-      }
-      setColWidths(newWidths);
-    };
-
-    const onMouseUp = () => {
-      (chartRef?.current as any).style.pointerEvents = "auto";
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-
-    (chartRef?.current as any).style.pointerEvents = "none";
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  };
-
-  const handleMouse = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (window.innerWidth < 1268) return;
-    const startY = e.clientY;
-    const startTopHeight = topHeightPx;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaY = e.clientY - startY;
-      const newTopHeight = startTopHeight + deltaY;
-      const containerHeight =
-        containerRef.current?.clientHeight || window.innerHeight;
-
-      const minHeight = Math.round(containerHeight * 0.55);
-      const maxHeight = Math.round(containerHeight * 0.9);
-
-      setTopHeightPx(Math.max(Math.min(newTopHeight, maxHeight), minHeight));
-    };
-
-    const handleMouseUp = () => {
-      if (chartRef.current) chartRef.current.style.pointerEvents = "auto";
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    if (chartRef.current) chartRef.current.style.pointerEvents = "none";
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-  };
-
-  useEffect(() => {
-    setTimeout(() => setIsChartLoading(false), 3000);
-    const handleResize = () => {
-      if (window.innerWidth <= 600) {
-        setColWidths([1, 1]);
-      } else if (window.innerWidth <= 1200) {
-        setColWidths([3, 1]);
-      } else {
-        setColWidths([8, 2]);
-      }
-      setTopHeightPx((prevHeight) => {
-        const minHeight = Math.round(window.innerHeight * 0.6);
-        const maxHeight = Math.round(window.innerHeight * 0.9);
-        return Math.min(Math.max(prevHeight, minHeight), maxHeight);
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [topHeightPx]);
-
-  const [widths, setWidths] = useState([90, 10]);
-  const resizerRef = useRef(null);
-
-  const handleLastBoxResize = (e: any) => {
-    e.preventDefault();
-    document.addEventListener("mousemove", handleLastBoxMove);
-    document.addEventListener("mouseup", handleMLastBoxouseUp);
-  };
-
-  const handleLastBoxMove = (e: any) => {
-    const container = containerRef.current;
-    const resizer = resizerRef.current;
-    if (!container || !resizer) return;
-
-    const containerRect = container.getBoundingClientRect();
-
-    const newWidth1 =
-      ((e.clientX - containerRect.left) / containerRect.width) * 100;
-    const newWidth2 = 100 - newWidth1;
-
-    if (newWidth1 >= 10 && newWidth1 <= 90 && newWidth2 <= 25) {
-      setWidths([newWidth1, newWidth2]);
-    }
-  };
-
-  const handleMLastBoxouseUp = () => {
-    document.removeEventListener("mousemove", handleLastBoxMove);
-    document.removeEventListener("mouseup", handleMLastBoxouseUp);
-  };
+  const {
+    colWidths,
+    topHeightPx,
+    widths,
+    resizerRef,
+    handleMouseDown,
+    handleMouse,
+    handleLastBoxResize,
+  } = useResizer({
+    initialColWidths: [8, 2],
+    initialTopHeight: Math.round(window.innerHeight * 0.7),
+    containerRef,
+    chartRef,
+  });
 
   const params = {
     addToHistory,

@@ -17,10 +17,10 @@ import {
   usePrivateQuery,
   useWithdraw,
 } from "@orderly.network/hooks";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { MdOutlineContentCopy } from "react-icons/md";
-import { useAccount } from "wagmi";
 import { TimeSeriesChart } from "./components/chart";
 
 const thStyle =
@@ -52,13 +52,12 @@ type QueryResult<T> = {
 type TransactionHistoryQueryResult = QueryResult<DepositWithdrawTx[]>;
 
 export const Dashboard = () => {
-  const { address } = useAccount();
+  const [{ wallet }, connectWallet] = useConnectWallet();
   const { state } = useOrderlyAccount();
   const { data: daily } = useDaily();
   const [activeSection, setActiveSection] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { setIsDeposit, setOpenWithdraw, setIsWalletConnectorOpen } =
-    useGeneralContext();
+  const { setIsDeposit, setOpenWithdraw } = useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
     left: string;
@@ -112,8 +111,8 @@ export const Dashboard = () => {
           <div className="flex items-center w-fit justify-start">
             <button
               className="mr-4 h-[40px] px-2.5 rounded-full mx-auto text-base_color text-lg cursor-pointer border border-base_color"
-              onClick={() => {
-                if (!address) setIsWalletConnectorOpen(true);
+              onClick={async () => {
+                if (!wallet) await connectWallet();
                 else {
                   setIsDeposit(false);
                   setOpenWithdraw(true);
@@ -125,8 +124,8 @@ export const Dashboard = () => {
               </div>
             </button>
             <button
-              onClick={() => {
-                if (!address) setIsWalletConnectorOpen(true);
+              onClick={async () => {
+                if (!wallet) await connectWallet();
                 else {
                   setIsDeposit(true);
                   setOpenWithdraw(true);
@@ -150,7 +149,9 @@ export const Dashboard = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <p className="">
-                    {address ? addressSlicer(address) : "0x00..0000"}
+                    {wallet
+                      ? addressSlicer(wallet?.accounts?.[0]?.address)
+                      : "0x00..0000"}
                   </p>
                   <div
                     className="flex items-center cursor-pointer text-font-80"

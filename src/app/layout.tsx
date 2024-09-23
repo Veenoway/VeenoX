@@ -1,7 +1,6 @@
 import { DynamicHeader } from "@/layouts/dynamic-header";
 import { Footer } from "@/layouts/footer";
-import { config } from "@/lib/wallet-connect/config";
-import WagmiProvider from "@/lib/wallet-connect/provider";
+import Web3OnBoardProvider from "@/lib/web3onBoard/provider";
 import { Providers } from "@/provider/wrapper";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -9,10 +8,8 @@ import dotenv from "dotenv";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
-import { headers } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import "react-toastify/dist/ReactToastify.css";
-import { cookieToInitialState } from "wagmi";
 import "./globals.css";
 dotenv.config();
 
@@ -37,9 +34,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialState = cookieToInitialState(config, headers().get("cookie"));
-  const headersList = headers();
-  const isHomePage = headersList.get("x-is-home-page") === "true";
   return (
     <html lang="en">
       <head>
@@ -54,7 +48,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <WagmiProvider initialState={initialState}>
+        <Web3OnBoardProvider>
           <OrderlyProvider>
             <Providers>
               <NextTopLoader
@@ -79,7 +73,7 @@ export default function RootLayout({
               <Footer />
             </Providers>{" "}
           </OrderlyProvider>
-        </WagmiProvider>
+        </Web3OnBoardProvider>
       </body>
     </html>
   );
