@@ -8,19 +8,17 @@ import {
 } from "@/lib/shadcn/dialog";
 import { triggerAlert } from "@/lib/toaster";
 import { useAccount as useOrderlyAccount } from "@orderly.network/hooks";
-import { useState } from "react";
+import React from "react";
 
-export const EnableTrading = () => {
+export const EnableTrading: React.FC = () => {
   const { state, createOrderlyKey, createAccount } = useOrderlyAccount();
   const { isEnableTradingModalOpen, setIsEnableTradingModalOpen } =
     useGeneralContext();
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleCreateAccount = async () => {
     try {
       if (state.status === 2) await createAccount();
       await createOrderlyKey(true);
-      setIsSuccess(true);
       setIsEnableTradingModalOpen(false);
       triggerAlert("Success", "Trading enabled.");
     } catch (e) {}
@@ -84,11 +82,7 @@ export const EnableTrading = () => {
              flex items-center justify-center transition-all duration-200 ease-in-out`}
             onClick={handleCreateAccount}
           >
-            {isSuccess
-              ? "Successfully enable trading"
-              : state.status === 2
-              ? "Sign in"
-              : "Enable trading"}
+            {state.status === 2 ? "Sign in" : "Enable trading"}
           </button>
         </DialogHeader>
       </DialogContent>
