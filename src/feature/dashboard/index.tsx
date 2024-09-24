@@ -10,8 +10,8 @@ import {
 } from "@/utils/misc";
 import { chainsImage } from "@/utils/network";
 import {
+  useAccountInfo,
   useCollateral,
-  useDaily,
   useHoldingStream,
   useAccount as useOrderlyAccount,
   usePrivateQuery,
@@ -24,10 +24,16 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { MdContentCopy, MdOutlineContentCopy } from "react-icons/md";
 import { TimeSeriesChart } from "./components/chart";
 
-const thStyle =
-  "text-sm text-font-60 font-normal py-1.5 border-b border-borderColor-DARK text-end";
-const tdStyle =
-  "text-sm text-white font-normal py-3.5 border-b border-borderColor-DARK text-end";
+type TradingAPI = {
+  accountID: string | undefined;
+  orderlySecret: string | undefined;
+  orderlyKey: string | undefined;
+};
+
+interface ContentInterface {
+  title: string;
+  content: string | undefined;
+}
 
 type DepositWithdrawTx = {
   id: string;
@@ -52,10 +58,14 @@ type QueryResult<T> = {
 
 type TransactionHistoryQueryResult = QueryResult<DepositWithdrawTx[]>;
 
+const thStyle =
+  "text-sm text-font-60 font-normal py-1.5 border-b border-borderColor-DARK text-end";
+const tdStyle =
+  "text-sm text-white font-normal py-3.5 border-b border-borderColor-DARK text-end";
+
 export const Dashboard = () => {
   const [{ wallet }, connectWallet] = useConnectWallet();
   const { state, account } = useOrderlyAccount();
-  const { data: daily } = useDaily();
   const [activeSection, setActiveSection] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const { setIsDeposit, setOpenWithdraw } = useGeneralContext();
@@ -64,29 +74,17 @@ export const Dashboard = () => {
     width: string;
     left: string;
   }>({ width: "20%", left: "0%" });
-  const {
-    totalCollateral,
-    freeCollateral,
-    totalValue,
-    availableBalance,
-    unsettledPnL,
-  } = useCollateral({
+  const { totalValue, unsettledPnL } = useCollateral({
     dp: 2,
   });
-
   const { usdc } = useHoldingStream();
-  const {
-    withdraw,
-    isLoading: isWithdrawLoading,
-    availableWithdraw,
-  } = useWithdraw();
+  const { availableWithdraw } = useWithdraw();
 
-  const {
-    data: history,
-    isLoading,
-    error,
-  } = usePrivateQuery<TransactionHistoryQueryResult>("/v1/asset/history");
-
+  const { data: history } =
+    usePrivateQuery<TransactionHistoryQueryResult>("/v1/asset/history");
+  const { data: volume } = usePrivateQuery<TransactionHistoryQueryResult>(
+    "/v1/client/statistics"
+  );
   useEffect(() => {
     const updateUnderline = () => {
       const button = buttonRefs.current[activeSection];
@@ -103,17 +101,6 @@ export const Dashboard = () => {
     window.addEventListener("resize", updateUnderline);
     return () => window.removeEventListener("resize", updateUnderline);
   }, [activeSection]);
-
-  type TradingAPI = {
-    accountID: string | undefined;
-    orderlySecret: string | undefined;
-    orderlyKey: string | undefined;
-  };
-
-  interface ContentInterface {
-    title: string;
-    content: string | undefined;
-  }
 
   const fetchAPITrading = async (): Promise<TradingAPI> => {
     const orderlyKey =
@@ -171,6 +158,7 @@ export const Dashboard = () => {
   }, [account, wallet]);
 
   const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const { data: accountInfo } = useAccountInfo();
 
   return (
     <div className="w-full flex flex-col items-center text-white pt-[50px] pb-[100px] min-h-[90vh]">
@@ -408,30 +396,55 @@ export const Dashboard = () => {
                 <p className="text-xl mb-2.5">Volume</p>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">24h Vol.</p>
-                  <p className="text-base">0</p>
+                  <p className="text-base">
+                    $
+                    {getFormattedAmount(
+                      volume?.perp_trading_volume_last_24_hours
+                    ) || "--"}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">7d Vol.</p>
-                  <p className="text-base">0</p>
+                  <p className="text-base">
+                    $
+                    {getFormattedAmount(
+                      volume?.perp_trading_volume_last_7_days
+                    ) || "--"}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">30d Vol.</p>
-                  <p className="text-base">0</p>
+                  <p className="text-base">
+                    $
+                    {getFormattedAmount(
+                      volume?.perp_trading_volume_last_30_days
+                    ) || "--"}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">Total Vol.</p>
-                  <p className="text-base">0</p>
+                  <p className="text-base">
+                    $
+                    {getFormattedAmount(volume?.perp_trading_volume_ytd) ||
+                      "--"}
+                  </p>
                 </div>
               </div>
               <div className="rounded-2xl ml-2.5 w-[40%] p-5 min-w-[300px] mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <p className="text-xl mb-2.5">Trading Fee</p>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">Maker fee</p>
-                  <p className="text-base">0.025%</p>
+                  <p className="text-base">
+                    {`${accountInfo?.futures_maker_fee_rate / 100 + "%"}` ||
+                      "0.025%"}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">Taker fee</p>
-                  <p className="text-base">0.05%</p>
+                  <p className="text-base">
+                    {`${accountInfo?.futures_taker_fee_rate / 100 + "%"}` ||
+                      "0.050%"}
+                  </p>
                 </div>
               </div>
             </div>
