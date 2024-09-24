@@ -17,10 +17,10 @@ export const Favorites = ({ props }: FavoriteProps) => {
   };
 
   return (
-    <div className="hidden sm:flex items-center justify-between w-full min-h-[38px] sm:min-h-[41px] relative py-1 border-b border-borderColor ">
+    <div className="hidden sm:flex items-center justify-between w-full min-h-[38px] sm:min-h-[41px] relative py-1 border-b border-borderColor overflow-x-scroll no-scrollbar">
       <div className="flex items-center px-3 ">
         <FaStar className="text-yellow text-sm mr-1" />
-        <div className="h-full flex items-center whitespace-nowrap overflow-x-scroll no-scrollbar">
+        <div className="h-full flex items-center whitespace-nowrap">
           {favorites.map((item, index) => {
             const change = get24hChange(item["24h_close"], item["24h_open"]);
             return (

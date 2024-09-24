@@ -40,7 +40,6 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateOnFocus: true,
       refreshWhenOffline: true,
       revalidateIfStale: true,
-      dedupingInterval: 0,
     }
   );
   const [orders, { cancelOrder, refresh }] = useOrderStream(
@@ -107,9 +106,11 @@ export const Position = ({ asset }: PositionProps) => {
   const filterSide = (entry: any) => {
     if (activeSection === Sections.PENDING) {
       return (
-        entry.total_executed_quantity < entry.quantity &&
-        entry.type === "LIMIT" &&
-        (entry.status === "REPLACED" || entry.status === "NEW")
+        (entry.total_executed_quantity < entry.quantity &&
+          entry.type === "LIMIT" &&
+          (entry.status === "REPLACED" || entry.status === "NEW")) ||
+        ((entry.algo_status === "REPLACED" || entry.algo_status === "NEW") &&
+          entry.trigger_price)
       );
     } else if (activeSection === Sections.TP_SL) {
       if (entry.algo_order_id) {

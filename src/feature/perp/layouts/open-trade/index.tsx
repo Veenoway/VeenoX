@@ -25,7 +25,7 @@ import {
   useSymbolPriceRange,
   useSymbolsInfo,
 } from "@orderly.network/hooks";
-import { OrderEntity, OrderSide } from "@orderly.network/types";
+import { OrderEntity, OrderSide, OrderType } from "@orderly.network/types";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -44,7 +44,7 @@ const marketType = ["Market", "Limit"];
 
 type Inputs = {
   direction: "BUY" | "SELL";
-  type: "MARKET" | "LIMIT" | "STOPLIMIT";
+  type: OrderType;
   triggerPrice?: string;
   price?: string;
   quantity?: string;
@@ -60,7 +60,7 @@ type ButtonStatusType = {
 
 const defaultValues: Inputs = {
   direction: "BUY",
-  type: "MARKET",
+  type: OrderType.MARKET,
   triggerPrice: undefined,
   price: undefined,
   quantity: undefined,
@@ -115,7 +115,6 @@ export const OpenTrade = ({
     estLiqPrice,
     estLeverage,
     onSubmit,
-
     helper: { calculate, validator },
   } = useOrderEntry(
     {
@@ -132,7 +131,6 @@ export const OpenTrade = ({
   });
 
   const newMaxQty = useMaxQty(asset?.symbol, values.direction as OrderSide);
-  // const isAlgoOrder = values?.algo_order_id !== undefined;
 
   const rangeInfo = useSymbolPriceRange(
     asset.symbol,
@@ -154,7 +152,7 @@ export const OpenTrade = ({
   const submitForm = async () => {
     if (rangeInfo?.max && Number(values?.price) > rangeInfo?.max) return;
     if (rangeInfo?.min && Number(values?.price) < rangeInfo?.min) return;
-    if (values.type === "LIMIT") {
+    if (values.type === OrderType.LIMIT) {
       if (values.direction === "BUY") {
         if (parseFloat(values.price as string) > markPrice) {
           triggerAlert(
@@ -214,7 +212,7 @@ export const OpenTrade = ({
       values?.quantity
     );
     try {
-      await onSubmit(val as OrderEntity);
+      const res = await onSubmit(val as OrderEntity);
       toast.update(id, {
         render: "Order executed",
         type: "success",
@@ -249,8 +247,8 @@ export const OpenTrade = ({
   const style = getStyleFromType();
 
   const getSectionBarPosition = () => {
-    if (values.type === "MARKET") return "left-0";
-    else if (values.type === "LIMIT") return "left-1/3";
+    if (values.type === OrderType.MARKET) return "left-0";
+    else if (values.type === OrderType.LIMIT) return "left-1/3";
     else return "left-2/3";
   };
   const barPosition = getSectionBarPosition();
@@ -260,7 +258,7 @@ export const OpenTrade = ({
     else if (state.status >= 1 && state.status <= 4)
       setIsEnableTradingModalOpen(true);
     else {
-      if (values.type === "LIMIT") {
+      if (values.type === OrderType.LIMIT) {
         if (Number(values.price) > (rangeInfo?.max as number)) {
           setInputErrors((prev) => ({
             ...prev,
@@ -544,7 +542,7 @@ export const OpenTrade = ({
             key={i}
             className="w-1/3 h-full text-white text-xs font-medium"
             onClick={() => {
-              if (values.price && values.type === "LIMIT")
+              if (values.price && values.type === OrderType.LIMIT)
                 setValues((prev) => ({
                   ...prev,
                   price: undefined,
@@ -559,7 +557,7 @@ export const OpenTrade = ({
           className="w-1/3 h-full text-white text-xs opacity-50 cursor-not-allowed font-medium flex items-center justify-center"
           // onClick={() => setIsTooltipMarketTypeOpen((prev) => !prev)}
         >
-          {values.type !== "MARKET" && values.type !== "LIMIT"
+          {values.type !== OrderType.MARKET && values.type !== OrderType.LIMIT
             ? values.type
             : "Pro"}
           <IoChevronDown
@@ -575,7 +573,7 @@ export const OpenTrade = ({
           <button
             className="w-full text-white text-xs pb-1 text-start"
             onClick={() => {
-              handleValueChange("type", "StopLimit");
+              handleValueChange("type", "STOP_LIMIT");
               setIsTooltipMarketTypeOpen(false);
             }}
           >
@@ -625,7 +623,7 @@ export const OpenTrade = ({
             </p>
           </div>
 
-          {values.type === "STOPLIMIT" ? (
+          {values.type === "STOP_LIMIT" ? (
             <div className="flex items-center h-[35px] bg-terciary justify-between w-full border border-borderColor-DARK rounded mt-3">
               <input
                 name="size"
@@ -639,7 +637,7 @@ export const OpenTrade = ({
               <p className="px-2 text-white text-sm">USD</p>
             </div>
           ) : null}
-          {values.type !== "MARKET" ? (
+          {values.type !== OrderType.MARKET ? (
             <>
               <div
                 className={`flex items-center h-[35px] bg-terciary justify-between w-full border ${
@@ -862,16 +860,47 @@ export const OpenTrade = ({
               </div>
             </div>
           </button>
-          {/* <button
-            onClick={() => handleBooleanChange("tp_sl")}
+          <button
+            className="text-xs text-white mt-3  flex items-center justify-between w-full"
+            // onClick={() => {
+            //   setValues((prev) => ({
+            //     ...prev,
+            //     reduce_only: !prev.reduce_only,
+            //   }));
+            // }}
           >
-            <p>Take profit / Stop loss</p>
-            <div className="w-[15px] h-[15px] rounded border border-borderColor-DARK bg-terciary flex items-center jusitfy-center">
-              {values.tp_sl ? (
-                <IoCheckmarkOutline className="text-blue-400" />
-              ) : null}
+            <div className="flex items-center justify-between w-full">
+              <TooltipProvider>
+                <ShadTooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <p className="underline w-fit text-white opacity-30 ">
+                      Take profit / Stop Loss
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="h-fit overflow-clip max-w-[200px] w-full p-2 bg-secondary border border-borderColor shadow-xl whitespace-pre-wrap"
+                  >
+                    Upcoming: Configure TP & SL before trade execution
+                  </TooltipContent>
+                </ShadTooltip>
+              </TooltipProvider>
+
+              <div
+                className={`w-[15px] p-0.5 h-[15px] rounded opacity-40 border ${
+                  values.tp_trigger_price
+                    ? "border-base_color"
+                    : "border-[rgba(255,255,255,0.3)]"
+                } transition-all duration-100 ease-in-out`}
+              >
+                <div
+                  className={`w-full h-full rounded-[1px] bg-base_color ${
+                    values.tp_trigger_price ? "opacity-100" : "opacity-0"
+                  } transition-all duration-100 ease-in-out`}
+                />
+              </div>
             </div>
-          </button> */}
+          </button>
         </div>
         <div className={`${isMobile ? "hidden" : "flex"} h-[100px] w-full`} />
         <button

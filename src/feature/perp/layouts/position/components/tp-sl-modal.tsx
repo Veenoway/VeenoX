@@ -2,14 +2,19 @@ import { useGeneralContext } from "@/context";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/lib/shadcn/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
-import { useOrderStream, useTPSLOrder } from "@orderly.network/hooks";
+import { formatSymbol } from "@/utils/misc";
+import {
+  useMarkPrice,
+  useOrderStream,
+  useTPSLOrder,
+} from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import { useState } from "react";
-import { GrPowerReset } from "react-icons/gr";
 import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -24,6 +29,12 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { TPSLOpenOrder, setTPSLOpenOrder } = useGeneralContext();
+  const { data: markPrice } = useMarkPrice(TPSLOpenOrder?.symbol);
+  const { setOrderPositions } = useGeneralContext();
+  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(order, {
+    defaultOrder: TPSLOpenOrder.algo_order,
+  });
+
   const position = {
     symbol: TPSLOpenOrder.symbol,
     average_open_price: TPSLOpenOrder.average_open_price,
@@ -33,20 +44,9 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
   };
 
-  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(order, {
-    defaultOrder: TPSLOpenOrder.algo_order,
+  const [_, { cancelAllTPSLOrders }] = useOrderStream(position, {
+    stopOnUnmount: false,
   });
-  const [data, { cancelAllTPSLOrders, loadMore, refresh, submitting }] =
-    useOrderStream(position, {
-      stopOnUnmount: false,
-    });
-  const { setOrderPositions, setShouldRefresh } = useGeneralContext();
-
-  const findTpSl = data?.find(
-    (entry) =>
-      entry?.quantity === TPSLOpenOrder?.position_qty &&
-      entry?.average_executed_price === TPSLOpenOrder?.average_open_price
-  );
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -89,31 +89,6 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     }
   };
 
-  const handleRemoveTPSL = async (): Promise<void> => {
-    const idToast = toast.loading("Reseting TP/SL");
-
-    try {
-      await cancelAllTPSLOrders();
-      setOrderPositions([]);
-      setTPSLOpenOrder(null);
-      toast.update(idToast, {
-        render: "TP/SL reset",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-      });
-      await Promise.all([refreshPosition()]);
-    } catch (e) {
-      toast.update(idToast, {
-        render: "Error while cancelling tp/sl",
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
-      setTPSLOpenOrder(null);
-    }
-  };
-
   const handleChange = (field: string, value: string): void => {
     if (error) setError([""]);
     setValue(field, value);
@@ -123,37 +98,62 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     <Dialog open={TPSLOpenOrder}>
       <DialogContent
         close={() => setTPSLOpenOrder(null)}
-        className="max-w-[440px] w-[90%] h-auto max-h-auto flex flex-col gap-0"
+        className="max-w-[440px] w-[90%] h-auto max-h-auto flex flex-col gap-0 select-none"
       >
         <DialogHeader>
-          <DialogTitle className="pb-5">Edit TP/SL</DialogTitle>
+          <DialogTitle className="pb-5">Position TP/SL</DialogTitle>
+          <DialogDescription>
+            <div className="flex items-center justify-between">
+              <p className="text-font-80 text-sm">Asset</p>
+              <div className="flex items-center text-sm">
+                <img
+                  className="w-[16px] h-[16px] bg-gray-500 mr-2 rounded-full"
+                  src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
+                    TPSLOpenOrder?.symbol,
+                    true
+                  )}.png`}
+                />
+                <p className="font-medium">
+                  {formatSymbol(TPSLOpenOrder?.symbol, true)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mt-2 text-sm">
+              <p className="text-font-80">Position qty</p>
+              <p
+                className={`font-bold ${
+                  TPSLOpenOrder?.position_qty > 0 ? "text-green" : "text-red"
+                }`}
+              >
+                {TPSLOpenOrder?.position_qty}
+              </p>
+            </div>
+            <div className="flex items-center justify-between my-2  text-sm">
+              <p className="text-font-80">Avg. Open Price</p>
+              <p>{TPSLOpenOrder?.average_open_price}</p>
+            </div>
+            <div className="flex items-center justify-between mb-5  text-sm">
+              <p className="text-font-80">Mark Price</p>
+              <p className="font-bold">{markPrice}</p>
+            </div>
+          </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-white mb-2">Take profit:</p>
-          {order?.tp_trigger_price || order?.sl_trigger_price ? (
-            <button
-              className="flex items-center font-medium justify-center text-xs text-white"
-              onClick={handleRemoveTPSL}
-            >
-              <GrPowerReset className="mr-1" />
-              Reset TP/SL
-            </button>
-          ) : null}
-        </div>
+
         <div className="flex items-center justify-between gap-2">
-          <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor rounded h-[35px] text-sm">
+          <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
+            <p className="text-sm text-font-60 mr-2.5 font-medium">TP</p>
             <input
               type="number"
-              className="h-full w-full"
+              className="h-full w-full select-none"
               placeholder="TP Price"
               value={algoOrder.tp_trigger_price}
               onChange={(e) => handleChange("tp_trigger_price", e.target.value)}
             />
           </div>
-          <div className="flex pl-2.5 items-center bg-terciary border border-borderColor rounded h-[35px] text-sm">
+          <div className="flex pl-2.5 items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <input
               type="number"
-              className={`h-full w-full ${
+              className={`h-full w-full select-none ${
                 Number(algoOrder.tp_pnl) > 0
                   ? "text-green"
                   : Number(algoOrder.tp_pnl) < 0
@@ -186,7 +186,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
               </PopoverTrigger>
               <PopoverContent
                 sideOffset={0}
-                className="md:transform-x-[10px] flex flex-col w-fit p-2.5  bg-secondary border border-borderColor shadow-2xl "
+                className="md:transform-x-[10px] flex flex-col w-fit p-2.5  bg-secondary border border-borderColor-DARK shadow-2xl "
               >
                 <button
                   onClick={() => setActivePnlOrOffset("$")}
@@ -209,9 +209,9 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
             {error.find((entry) => entry.includes("TP"))}
           </p>
         ) : null}
-        <p className="text-sm text-white mb-2 mt-2.5">Stop loss:</p>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor rounded h-[35px] text-sm">
+        <div className="flex items-center justify-between gap-2 mt-2.5">
+          <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
+            <p className="text-sm text-font-60 mr-2.5 font-medium">SL</p>
             <input
               type="number"
               className="h-full w-full"
@@ -220,7 +220,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
               onChange={(e) => handleChange("sl_trigger_price", e.target.value)}
             />
           </div>
-          <div className="flex pl-2.5 items-center bg-terciary border border-borderColor rounded h-[35px] text-sm">
+          <div className="flex pl-2.5 items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <input
               type="number"
               className={`h-full w-full ${
@@ -252,7 +252,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
               </PopoverTrigger>
               <PopoverContent
                 sideOffset={0}
-                className="md:transform-x-[10px] flex flex-col w-fit p-2.5  bg-secondary border border-borderColor shadow-2xl "
+                className="md:transform-x-[10px] flex flex-col w-fit p-2.5  bg-secondary border border-borderColor-DARK shadow-2xl "
               >
                 <button
                   onClick={() => setActivePnlOrOffset("$")}
@@ -297,7 +297,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
                 wrapperClass=""
               />
             )}
-            Create TP & SL Order
+            Confirm
           </button>
         </div>
       </DialogContent>

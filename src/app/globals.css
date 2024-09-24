@@ -179,7 +179,17 @@ body {
   animation-duration: 30s;
 }
 
-/* Effet de scintillement en vague subtile */
+.custom-scrollbar {
+  overflow-x: scroll;
+  /* scrollbar-width: none;
+  -ms-overflow-style: none; */
+  background-color: red;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  /* display: none; */
+}
+
 .background .sparkles {
   position: absolute;
   top: 0;
@@ -426,7 +436,7 @@ input[type="number"] {
 }
 
 .chart {
-  height: calc(100% - 108px);
+  height: calc(100% - 70px);
 }
 
 @media (max-width: 1168px) {

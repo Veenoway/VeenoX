@@ -112,7 +112,7 @@ export const TimeSeriesChart = () => {
   }, [data]);
 
   return (
-    <div className="relative h-[280px]">
+    <div className="relative h-[240px]">
       <canvas ref={chartRef} />
       {(data?.length || 0) < 2 ? (
         <div className="absolute backdrop-blur-sm left-0 flex items-center justify-center top-0 h-full w-full">
