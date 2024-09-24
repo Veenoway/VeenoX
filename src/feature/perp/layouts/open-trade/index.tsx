@@ -10,7 +10,7 @@ import {
 import { triggerAlert } from "@/lib/toaster";
 import { Leverage } from "@/modals/leverage";
 import { FuturesAssetProps } from "@/models";
-import { getFormattedAmount, truncatePrice } from "@/utils/misc";
+import { getFormattedAmount } from "@/utils/misc";
 import {
   useAccountInstance,
   useCollateral,
@@ -714,7 +714,7 @@ export const OpenTrade = ({
               }}
               type="number"
               disabled={!freeCollateral || !wallet}
-              value={truncatePrice(values.quantity as string)}
+              value={values.quantity as string}
             />
             <button
               className="rounded text-[12px] flex items-center

@@ -100,7 +100,6 @@ export const Deposit = () => {
           setIsApprovalDepositLoading(true);
           try {
             await deposit();
-
             setIsDepositSuccess(true);
             setIsApprovalDepositLoading(false);
             // @ts-ignore
@@ -110,8 +109,10 @@ export const Deposit = () => {
             setNewOrderlyBalance(undefined);
             setOpenWithdraw(false);
             triggerAlert("Success", "Deposit executed.");
-          } catch (err) {
-            triggerAlert("Error", "Deposit failed.");
+          } catch (err: any) {
+            if (err?.context === "INSUFFICIENT_FUNDS") {
+              triggerAlert("Error", "Insufficient funds to pay gas fees");
+            } else triggerAlert("Error", "Deposit failed.");
             setIsApprovalDepositLoading(false);
           }
         }
@@ -139,7 +140,9 @@ export const Deposit = () => {
           console.log("Withdraw error: ", err);
           if (err?.message?.include("settle") || err?.message?.include("pnl"))
             triggerAlert("Error", "Settle PnL First");
-          else triggerAlert("Error", "Withdraw failed.");
+          else if (err?.context === "INSUFFICIENT_FUNDS") {
+            triggerAlert("Error", "Insufficient funds to pay gas fees");
+          } else triggerAlert("Error", "Withdraw failed.");
         }
       }
     } else {
