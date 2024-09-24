@@ -105,7 +105,12 @@ export const Perp = ({ asset }: PerpProps) => {
                 {!mobileActiveSection ? (
                   <>
                     <Favorites props={params as FavoriteProps as never} />
-                    <div className="overflow-x-hidden h-full w-full no-scrollbar">
+                    <div
+                      className="overflow-x-hidden w-full no-scrollbar"
+                      style={{
+                        height: "calc(100% - 41px)",
+                      }}
+                    >
                       <TokenInfo params={params} asset={asset} />
                       <MobilePnL />
                       <MobileSectionSelector />
