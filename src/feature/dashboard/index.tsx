@@ -23,6 +23,7 @@ import { FaCheck } from "react-icons/fa6";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { MdContentCopy, MdOutlineContentCopy } from "react-icons/md";
 import { TimeSeriesChart } from "./components/chart";
+import { feeTiers } from "./constant";
 
 type TradingAPI = {
   accountID: string | undefined;
@@ -174,6 +175,8 @@ export const Dashboard = () => {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const { data: accountInfo } = useAccountInfo();
 
+  console.log("accountInfo", accountInfo);
+
   return (
     <div className="w-full flex flex-col items-center text-white pt-[50px] pb-[100px] min-h-[90vh]">
       <div className="max-w-[1350px] w-[90%] ">
@@ -212,74 +215,79 @@ export const Dashboard = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
           <div className="col-span-3">
-            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col ">
-                  <p className="text-base mb-0.5 text-font-80">Total Value:</p>
-                  <p className="text-2xl">{totalValue || 0}</p>
-                </div>
-                <div className="flex flex-col items-end">
-                  <p className="">
-                    {wallet
-                      ? addressSlicer(wallet?.accounts?.[0]?.address)
-                      : "0x00..0000"}
-                  </p>
-                  <div
-                    className="flex items-center cursor-pointer text-font-80"
-                    onClick={() =>
-                      copyToClipboard((state?.userId as string) || "")
-                    }
-                  >
-                    <p>UID: {state.userId || "N/A"}</p>
-                    {isCopied === state.userId ? (
-                      <FaCheck className="ml-2 text-green" />
-                    ) : (
-                      <MdOutlineContentCopy className="ml-2" />
-                    )}
+            <div className="flex w-full">
+              <div className="rounded-2xl p-5 border w-full border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col ">
+                    <p className="text-base mb-0.5 text-font-80">
+                      Total Value:
+                    </p>
+                    <p className="text-2xl">{totalValue || 0}</p>
                   </div>
-                </div>{" "}
-              </div>
-              <div className="flex items-center justify-between gap-2.5 mt-2.5">
-                <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
-                  <p className="text-xs text-font-60 text-center">Coin</p>
-                  <p className="text-lg text-center">{usdc?.token || "--"}</p>
+                  <div className="flex flex-col items-end">
+                    <p className="">
+                      {wallet
+                        ? addressSlicer(wallet?.accounts?.[0]?.address)
+                        : "0x00..0000"}
+                    </p>
+                    <div
+                      className="flex items-center cursor-pointer text-font-80"
+                      onClick={() =>
+                        copyToClipboard((state?.userId as string) || "")
+                      }
+                    >
+                      <p>UID: {state.userId || "N/A"}</p>
+                      {isCopied === state.userId ? (
+                        <FaCheck className="ml-2 text-green" />
+                      ) : (
+                        <MdOutlineContentCopy className="ml-2" />
+                      )}
+                    </div>
+                  </div>{" "}
                 </div>
-                <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
-                  <p className="text-xs text-font-60 text-center">Holding</p>
-                  <p className="text-lg text-center">
-                    {getFormattedAmount(usdc?.holding.toFixed(2)) || "--"}
-                  </p>
-                </div>
-                <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
-                  <p className="text-xs text-font-60 text-center">
-                    Avbl. Withdraw
-                  </p>
-                  <p className="text-lg text-center">
-                    {availableWithdraw > 0
-                      ? getFormattedAmount(availableWithdraw?.toFixed(2)) ||
-                        "--"
-                      : "0.00"}
-                  </p>
-                </div>
-                <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
-                  <p className="text-xs text-font-60 text-center">
-                    Unsettled PnL
-                  </p>
-                  <p
-                    className={`text-lg text-center ${
-                      unsettledPnL > 0
-                        ? "text-green"
-                        : unsettledPnL < 0
-                        ? "text-red"
-                        : "text-white"
-                    }`}
-                  >
-                    ${getFormattedAmount(unsettledPnL?.toFixed(2)) || "--"}
-                  </p>
+                <div className="flex items-center justify-between gap-2.5 mt-2.5">
+                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                    <p className="text-xs text-font-60 text-center">Coin</p>
+                    <p className="text-lg text-center">{usdc?.token || "--"}</p>
+                  </div>
+                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                    <p className="text-xs text-font-60 text-center">Holding</p>
+                    <p className="text-lg text-center">
+                      {getFormattedAmount(usdc?.holding.toFixed(2)) || "--"}
+                    </p>
+                  </div>
+                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                    <p className="text-xs text-font-60 text-center">
+                      Avbl. Withdraw
+                    </p>
+                    <p className="text-lg text-center">
+                      {availableWithdraw > 0
+                        ? getFormattedAmount(availableWithdraw?.toFixed(2)) ||
+                          "--"
+                        : "0.00"}
+                    </p>
+                  </div>
+                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                    <p className="text-xs text-font-60 text-center">
+                      Unsettled PnL
+                    </p>
+                    <p
+                      className={`text-lg text-center ${
+                        unsettledPnL > 0
+                          ? "text-green"
+                          : unsettledPnL < 0
+                          ? "text-red"
+                          : "text-white"
+                      }`}
+                    >
+                      ${getFormattedAmount(unsettledPnL?.toFixed(2)) || "--"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
+              <p className="text-xl mb-2">Withdraw / Deposit history</p>
               <div className="w-full flex flex-col border-b border-borderColor-DARK">
                 <div className="flex items-center relative  border-b border-borderColor-DARK">
                   {["Deposit", "Withdraw"].map((section, index) => (
@@ -389,7 +397,40 @@ export const Dashboard = () => {
                 </div>
               </div>
             </div>
+            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
+              <p className="text-xl mb-2">Fee tier</p>
+              <table className="mt-2.5 w-full">
+                <thead>
+                  <tr>
+                    <th className={cn(thStyle, "pl-2.5 text-start")}>Tier</th>
+                    <th className={thStyle}>30d Volume</th>
+                    <th className={thStyle}>Maker Fee</th>
+                    <th className={cn(thStyle, "pr-2.5")}>Taker Fee</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {feeTiers?.map((item) => (
+                    <tr
+                      key={item.tier}
+                      className={`${
+                        item.maker_fee === accountInfo?.futures_maker_fee_rate
+                          ? "bg-terciary"
+                          : ""
+                      }`}
+                    >
+                      <td className={cn(tdStyle, "pl-2.5 text-start")}>
+                        {item.tier}
+                      </td>
+                      <td className={tdStyle}>{item.volume_30d}</td>
+                      <td className={tdStyle}>{item.maker}</td>
+                      <td className={cn(tdStyle, "pr-2.5")}>{item.taker}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+          {/* RIGHT PART */}
           <div className="col-span-2">
             <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between">
@@ -398,10 +439,10 @@ export const Dashboard = () => {
               <TimeSeriesChart />
             </div>
             <div className="flex">
-              <div className="rounded-2xl w-full mr-2.5 p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <div className="rounded-2xl w-full p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <p className="text-xl">Edit Leverage</p>
                 <div className="flex items-center justify-between w-full">
-                  <LeverageContent className="w-full mr-0" />
+                  <LeverageContent className="w-full mr-0 mt-0 h-full" />
                 </div>
               </div>
             </div>
@@ -444,20 +485,24 @@ export const Dashboard = () => {
                   </p>
                 </div>
               </div>
-              <div className="rounded-2xl ml-2.5 w-[40%] p-5 min-w-[300px] mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <div className="rounded-2xl ml-2.5 w-[40%] p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <p className="text-xl mb-2.5">Trading Fee</p>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">Maker fee</p>
                   <p className="text-base">
-                    {`${accountInfo?.futures_maker_fee_rate / 100 + "%"}` ||
-                      "0.025%"}
+                    {`${
+                      (accountInfo?.futures_maker_fee_rate as number) / 100 +
+                      "%"
+                    }` || "0.025%"}
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-base text-font-60 mb-0.5">Taker fee</p>
                   <p className="text-base">
-                    {`${accountInfo?.futures_taker_fee_rate / 100 + "%"}` ||
-                      "0.050%"}
+                    {`${
+                      (accountInfo?.futures_taker_fee_rate as number) / 100 +
+                      "%"
+                    }` || "0.050%"}
                   </p>
                 </div>
               </div>
