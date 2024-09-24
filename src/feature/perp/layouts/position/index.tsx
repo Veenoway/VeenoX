@@ -102,7 +102,7 @@ export const Position = ({ asset }: PositionProps) => {
       });
     }
   };
-  console.log("orders", orders);
+
   const filterSide = (entry: any) => {
     if (activeSection === Sections.PENDING) {
       return (

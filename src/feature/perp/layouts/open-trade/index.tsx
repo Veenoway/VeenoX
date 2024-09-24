@@ -212,9 +212,7 @@ export const OpenTrade = ({
       values?.quantity
     );
     try {
-      console.log("val", val);
       const res = await onSubmit(val as OrderEntity);
-      console.log(res);
       toast.update(id, {
         render: "Order executed",
         type: "success",
@@ -862,16 +860,47 @@ export const OpenTrade = ({
               </div>
             </div>
           </button>
-          {/* <button
-            onClick={() => handleBooleanChange("tp_sl")}
+          <button
+            className="text-xs text-white mt-3  flex items-center justify-between w-full"
+            // onClick={() => {
+            //   setValues((prev) => ({
+            //     ...prev,
+            //     reduce_only: !prev.reduce_only,
+            //   }));
+            // }}
           >
-            <p>Take profit / Stop loss</p>
-            <div className="w-[15px] h-[15px] rounded border border-borderColor-DARK bg-terciary flex items-center jusitfy-center">
-              {values.tp_sl ? (
-                <IoCheckmarkOutline className="text-blue-400" />
-              ) : null}
+            <div className="flex items-center justify-between w-full">
+              <TooltipProvider>
+                <ShadTooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <p className="underline w-fit text-white opacity-30 ">
+                      Take profit / Stop Loss
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="h-fit overflow-clip max-w-[200px] w-full p-2 bg-secondary border border-borderColor shadow-xl whitespace-pre-wrap"
+                  >
+                    Upcoming: Configure TP & SL before trade execution
+                  </TooltipContent>
+                </ShadTooltip>
+              </TooltipProvider>
+
+              <div
+                className={`w-[15px] p-0.5 h-[15px] rounded opacity-40 border ${
+                  values.tp_trigger_price
+                    ? "border-base_color"
+                    : "border-[rgba(255,255,255,0.3)]"
+                } transition-all duration-100 ease-in-out`}
+              >
+                <div
+                  className={`w-full h-full rounded-[1px] bg-base_color ${
+                    values.tp_trigger_price ? "opacity-100" : "opacity-0"
+                  } transition-all duration-100 ease-in-out`}
+                />
+              </div>
             </div>
-          </button> */}
+          </button>
         </div>
         <div className={`${isMobile ? "hidden" : "flex"} h-[100px] w-full`} />
         <button

@@ -175,10 +175,8 @@ export const Dashboard = () => {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const { data: accountInfo } = useAccountInfo();
 
-  console.log("accountInfo", accountInfo);
-
   return (
-    <div className="w-full flex flex-col items-center text-white pt-[50px] pb-[100px] min-h-[90vh]">
+    <div className="w-full flex flex-col items-center text-white pt-[30px] pb-[100px] min-h-[90vh]">
       <div className="max-w-[1350px] w-[90%] ">
         <div className="flex items-center justify-between mb-5 ">
           <h1 className="text-2xl text-white font-semibold">Dashboard</h1>
@@ -409,23 +407,57 @@ export const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {feeTiers?.map((item) => (
-                    <tr
-                      key={item.tier}
-                      className={`${
-                        item.maker_fee === accountInfo?.futures_maker_fee_rate
-                          ? "bg-terciary"
-                          : ""
-                      }`}
-                    >
-                      <td className={cn(tdStyle, "pl-2.5 text-start")}>
-                        {item.tier}
-                      </td>
-                      <td className={tdStyle}>{item.volume_30d}</td>
-                      <td className={tdStyle}>{item.maker}</td>
-                      <td className={cn(tdStyle, "pr-2.5")}>{item.taker}</td>
-                    </tr>
-                  ))}
+                  {feeTiers?.map((item) => {
+                    const isActiveFeeTier =
+                      item.taker_fee === accountInfo?.futures_taker_fee_rate;
+                    return (
+                      <tr
+                        key={item.tier}
+                        className={`${isActiveFeeTier ? "bg-[#2b2f3649]" : ""}`}
+                      >
+                        <td
+                          className={cn(
+                            tdStyle,
+                            `pl-2.5 text-start ${
+                              isActiveFeeTier ? "text-base_color font-bold" : ""
+                            }`
+                          )}
+                        >
+                          {item.tier}
+                        </td>
+                        <td
+                          className={cn(
+                            tdStyle,
+                            `${
+                              isActiveFeeTier ? "text-base_color font-bold" : ""
+                            }`
+                          )}
+                        >
+                          {item.volume_30d}
+                        </td>
+                        <td
+                          className={cn(
+                            tdStyle,
+                            `${
+                              isActiveFeeTier ? "text-base_color font-bold" : ""
+                            }`
+                          )}
+                        >
+                          {item.maker}
+                        </td>
+                        <td
+                          className={cn(
+                            tdStyle,
+                            `pr-2.5 ${
+                              isActiveFeeTier ? "text-base_color font-bold" : ""
+                            }`
+                          )}
+                        >
+                          {item.taker}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
