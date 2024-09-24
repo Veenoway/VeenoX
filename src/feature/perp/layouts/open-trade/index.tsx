@@ -115,7 +115,6 @@ export const OpenTrade = ({
     estLiqPrice,
     estLeverage,
     onSubmit,
-
     helper: { calculate, validator },
   } = useOrderEntry(
     {
@@ -558,7 +557,7 @@ export const OpenTrade = ({
         ))}
         <button
           className="w-1/3 h-full text-white text-xs opacity-50 cursor-not-allowed font-medium flex items-center justify-center"
-          onClick={() => setIsTooltipMarketTypeOpen((prev) => !prev)}
+          // onClick={() => setIsTooltipMarketTypeOpen((prev) => !prev)}
         >
           {values.type !== OrderType.MARKET && values.type !== OrderType.LIMIT
             ? values.type
