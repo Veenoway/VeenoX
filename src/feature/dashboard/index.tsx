@@ -35,6 +35,20 @@ interface ContentInterface {
   content: string | undefined;
 }
 
+type VolumeStats = {
+  days_since_registration: number;
+  fees_paid_last_30_days: number;
+  perp_fees_paid_last_30_days: number;
+  perp_trading_volume_last_7_days: number;
+  perp_trading_volume_last_24_hours: number;
+  perp_trading_volume_last_30_days: number;
+  perp_trading_volume_ltd: number;
+  perp_trading_volume_ytd: number;
+  trading_volume_last_24_hours: number;
+  trading_volume_last_30_days: number;
+  trading_volume_ytd: number;
+};
+
 type DepositWithdrawTx = {
   id: string;
   tx_id: `0x${string}`;
@@ -82,7 +96,7 @@ export const Dashboard = () => {
 
   const { data: history } =
     usePrivateQuery<TransactionHistoryQueryResult>("/v1/asset/history");
-  const { data: volume } = usePrivateQuery<TransactionHistoryQueryResult>(
+  const { data: volume } = usePrivateQuery<VolumeStats>(
     "/v1/client/statistics"
   );
   useEffect(() => {
