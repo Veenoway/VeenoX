@@ -165,7 +165,11 @@ const renderAdditionalCells = (
     const percentageFilled = toPercentage();
     return (
       <>
-        <td className={tdStyle}>{trade?.type}</td>
+        <td className={tdStyle}>
+          {trade?.type === "LIMIT" && trade?.trigger_price
+            ? "STOP LIMIT"
+            : trade?.type}
+        </td>
         <td
           className={cn(
             tdStyle,
@@ -174,7 +178,7 @@ const renderAdditionalCells = (
         >
           {trade?.side}
         </td>
-        <td className={tdStyle}>--</td>
+        <td className={tdStyle}>{"--"}</td>
         <td className={tdStyle}>
           <div className="w-full h-full flex flex-col items-start">
             <div className="h-[5px] w-[100px] rounded bg-terciary">
@@ -194,7 +198,7 @@ const renderAdditionalCells = (
           </div>
         </td>
         <td className={tdStyle}>{trade?.price}</td>
-        <td className={tdStyle}>--</td>
+        <td className={tdStyle}>{trade?.trigger_price || "--"}</td>
         <td className={tdStyle}>
           {getFormattedAmount(trade?.quantity * trade?.price)}$
         </td>

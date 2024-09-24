@@ -102,13 +102,15 @@ export const Position = ({ asset }: PositionProps) => {
       });
     }
   };
-
+  console.log("orders", orders);
   const filterSide = (entry: any) => {
     if (activeSection === Sections.PENDING) {
       return (
-        entry.total_executed_quantity < entry.quantity &&
-        entry.type === "LIMIT" &&
-        (entry.status === "REPLACED" || entry.status === "NEW")
+        (entry.total_executed_quantity < entry.quantity &&
+          entry.type === "LIMIT" &&
+          (entry.status === "REPLACED" || entry.status === "NEW")) ||
+        ((entry.algo_status === "REPLACED" || entry.algo_status === "NEW") &&
+          entry.trigger_price)
       );
     } else if (activeSection === Sections.TP_SL) {
       if (entry.algo_order_id) {

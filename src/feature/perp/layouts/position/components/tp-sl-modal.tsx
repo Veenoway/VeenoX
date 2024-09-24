@@ -89,31 +89,6 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     }
   };
 
-  const handleRemoveTPSL = async (): Promise<void> => {
-    const idToast = toast.loading("Reseting TP/SL");
-
-    try {
-      await cancelAllTPSLOrders();
-      setOrderPositions([]);
-      setTPSLOpenOrder(null);
-      toast.update(idToast, {
-        render: "TP/SL reset",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-      });
-      await Promise.all([refreshPosition()]);
-    } catch (e) {
-      toast.update(idToast, {
-        render: "Error while cancelling tp/sl",
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
-      setTPSLOpenOrder(null);
-    }
-  };
-
   const handleChange = (field: string, value: string): void => {
     if (error) setError([""]);
     setValue(field, value);

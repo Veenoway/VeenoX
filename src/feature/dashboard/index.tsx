@@ -20,7 +20,8 @@ import {
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
-import { MdOutlineContentCopy } from "react-icons/md";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { MdContentCopy, MdOutlineContentCopy } from "react-icons/md";
 import { TimeSeriesChart } from "./components/chart";
 
 const thStyle =
@@ -53,11 +54,12 @@ type TransactionHistoryQueryResult = QueryResult<DepositWithdrawTx[]>;
 
 export const Dashboard = () => {
   const [{ wallet }, connectWallet] = useConnectWallet();
-  const { state } = useOrderlyAccount();
+  const { state, account } = useOrderlyAccount();
   const { data: daily } = useDaily();
   const [activeSection, setActiveSection] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const { setIsDeposit, setOpenWithdraw } = useGeneralContext();
+  const [showKeys, setShowKeys] = useState<string[]>([]);
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
     left: string;
@@ -72,7 +74,6 @@ export const Dashboard = () => {
     dp: 2,
   });
 
-  const { copyToClipboard, isCopied, error: copyError } = useCopyToClipboard();
   const { usdc } = useHoldingStream();
   const {
     withdraw,
@@ -102,6 +103,74 @@ export const Dashboard = () => {
     window.addEventListener("resize", updateUnderline);
     return () => window.removeEventListener("resize", updateUnderline);
   }, [activeSection]);
+
+  type TradingAPI = {
+    accountID: string | undefined;
+    orderlySecret: string | undefined;
+    orderlyKey: string | undefined;
+  };
+
+  interface ContentInterface {
+    title: string;
+    content: string | undefined;
+  }
+
+  const fetchAPITrading = async (): Promise<TradingAPI> => {
+    const orderlyKey =
+      (await account?.keyStore
+        ?.getOrderlyKey(wallet?.accounts?.[0]?.address)
+        ?.getPublicKey()) || "No Orderly API Key found.";
+
+    const orderlySecret =
+      account?.keyStore?.getOrderlyKey(wallet?.accounts?.[0]?.address)
+        ?.secretKey || "No Orderly Secret Key found.";
+
+    const accountID =
+      account?.keyStore?.getAccountId(
+        wallet?.accounts?.[0]?.address as string
+      ) || "No account ID found.";
+
+    return { accountID, orderlySecret, orderlyKey };
+  };
+
+  const [content, setContent] = useState<ContentInterface[]>([
+    {
+      title: "Account ID",
+      content: "No account ID found.",
+    },
+    {
+      title: "Orderly API Key",
+      content: "No Orderly API Key found.",
+    },
+    {
+      title: "Orderly Secret Key",
+      content: "No Orderly Secret Key found.",
+    },
+  ] as ContentInterface[]);
+
+  useEffect(() => {
+    if (wallet && account) {
+      fetchAPITrading().then((r) => {
+        const { accountID, orderlySecret, orderlyKey } = r;
+        setContent([
+          {
+            title: "Account ID",
+            content: accountID,
+          },
+          {
+            title: "Orderly API Key",
+            content: orderlyKey,
+          },
+          {
+            title: "Orderly Secret Key",
+            content: orderlySecret,
+          },
+        ]);
+      });
+    }
+  }, [account, wallet]);
+
+  const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   return (
     <div className="w-full flex flex-col items-center text-white pt-[50px] pb-[100px] min-h-[90vh]">
@@ -139,8 +208,8 @@ export const Dashboard = () => {
             </button>
           </div>
         </div>
-        <div className="flex gap-[2%]">
-          <div className="w-[54%]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
+          <div className="col-span-3">
             <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col ">
@@ -168,7 +237,7 @@ export const Dashboard = () => {
                   </div>
                 </div>{" "}
               </div>
-              <div className="flex items-center justify-between gap-2.5 mt-5">
+              <div className="flex items-center justify-between gap-2.5 mt-2.5">
                 <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
                   <p className="text-xs text-font-60 text-center">Coin</p>
                   <p className="text-lg text-center">{usdc?.token || "--"}</p>
@@ -208,7 +277,7 @@ export const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-7 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
+            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
               <div className="w-full flex flex-col border-b border-borderColor-DARK">
                 <div className="flex items-center relative  border-b border-borderColor-DARK">
                   {["Deposit", "Withdraw"].map((section, index) => (
@@ -319,18 +388,117 @@ export const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="w-[44%]">
+          <div className="col-span-2">
             <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between">
                 <p className="text-xl mb-4">Volume history</p>
               </div>
               <TimeSeriesChart />
             </div>
-            <div className="rounded-2xl p-5  mt-7 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <p className="text-xl">Edit Leverage</p>
-              <div className="flex items-center justify-between w-full ">
-                <LeverageContent className="w-full" />
+            <div className="flex">
+              <div className="rounded-2xl w-full mr-2.5 p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <p className="text-xl">Edit Leverage</p>
+                <div className="flex items-center justify-between w-full">
+                  <LeverageContent className="w-full mr-0" />
+                </div>
               </div>
+            </div>
+            <div className="flex">
+              <div className="rounded-2xl w-[60%] p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <p className="text-xl mb-2.5">Volume</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">24h Vol.</p>
+                  <p className="text-base">0</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">7d Vol.</p>
+                  <p className="text-base">0</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">30d Vol.</p>
+                  <p className="text-base">0</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">Total Vol.</p>
+                  <p className="text-base">0</p>
+                </div>
+              </div>
+              <div className="rounded-2xl ml-2.5 w-[40%] p-5 min-w-[300px] mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <p className="text-xl mb-2.5">Trading Fee</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">Maker fee</p>
+                  <p className="text-base">0.025%</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-base text-font-60 mb-0.5">Taker fee</p>
+                  <p className="text-base">0.05%</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl w-full p-5 min-w-[300px] mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <p className="text-xl mb-5">API Trading</p>
+              {content.map((key, i) => {
+                const isEven: boolean = i % 2 === 0;
+                return (
+                  <div
+                    className={`flex items-center justify-between ${
+                      isEven ? "my-6" : ""
+                    }`}
+                    key={i}
+                  >
+                    <div>
+                      <p className="text-base text-start text-font-60 mb-0.5">
+                        {key.title}
+                      </p>
+                      <p
+                        className={`text-base text-start break-all ${
+                          !showKeys.includes(key.content as string) && i !== 0
+                            ? "blur-[3px]"
+                            : ""
+                        } transition-all duration-150 ease-in-out`}
+                      >
+                        {key.content}
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      {i !== 0 ? (
+                        <button
+                          className="min-w-fit text-end pl-8"
+                          onClick={() => {
+                            if (showKeys.includes(key.content as string))
+                              setShowKeys((prev) =>
+                                prev.filter((entry) => entry !== key.content)
+                              );
+                            else
+                              setShowKeys((prev) => [
+                                ...prev,
+                                key.content as string,
+                              ]);
+                          }}
+                        >
+                          {showKeys.includes(key.content as string) ? (
+                            <IoEyeOutline className="text-white text-lg" />
+                          ) : (
+                            <IoEyeOffOutline className="text-white text-lg" />
+                          )}
+                        </button>
+                      ) : null}
+                      <button
+                        className={`min-w-fit text-end ${
+                          i === 0 ? "pl-[55px]" : "pl-2.5"
+                        }`}
+                        onClick={() => copyToClipboard(key.content as string)}
+                      >
+                        {isCopied === key.content ? (
+                          <FaCheck className="text-green" />
+                        ) : (
+                          <MdContentCopy className="text-white" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
