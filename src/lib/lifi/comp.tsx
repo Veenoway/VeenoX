@@ -76,9 +76,9 @@ export function Widget() {
             <Image
               src="/assets/lifi.png"
               alt="lifi logo"
-              className="h-[40px]"
-              height={40}
-              width={100}
+              className="h-[35px]"
+              height={35}
+              width={85}
             />
           </div>
           <LiFiWidget config={config} integrator="VeenoX" />
