@@ -3,6 +3,7 @@
 import type { WidgetConfig } from "@lifi/widget";
 import { LiFiWidget, WidgetSkeleton } from "@lifi/widget";
 import { useConnectWallet } from "@web3-onboard/react";
+import Image from "next/image";
 import Web3OnBoardProvider from "../web3onBoard/provider";
 import { ClientOnly } from "./clientOnly";
 
@@ -12,7 +13,7 @@ export function Widget() {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
-    // hiddenUI: ["walletMenu"],
+    hiddenUI: ["walletMenu", "poweredBy"],
     fromChain: 137,
     toChain: 10,
     fromToken: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
@@ -47,9 +48,11 @@ export function Widget() {
       },
       container: {
         boxShadow:
-          "0 0 0 1px rgba(200, 200, 200, 0.2), 1px 2px 15px 3px #453a847e",
-        borderRadius: "16px",
+          "0 0 0 1px rgba(200, 200, 200, 0.2), 1px 2px 12px 3px #453a847e",
+        borderRadius: "15px",
         borderColor: "#FFF",
+        minWidth: "440px",
+        padding: "8px",
       },
       shape: {
         borderRadius: 8,
@@ -68,6 +71,16 @@ export function Widget() {
     <main className="">
       <Web3OnBoardProvider>
         <ClientOnly fallback={<WidgetSkeleton config={config} />}>
+          <div className="flex items-center justify-center mb-[50px]">
+            <h1 className="text-white text-2xl mr-5">Powered by </h1>
+            <Image
+              src="/assets/lifi.png"
+              alt="lifi logo"
+              className="h-[40px]"
+              height={40}
+              width={100}
+            />
+          </div>
           <LiFiWidget config={config} integrator="VeenoX" />
         </ClientOnly>{" "}
       </Web3OnBoardProvider>
