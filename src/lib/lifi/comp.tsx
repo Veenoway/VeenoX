@@ -46,7 +46,8 @@ export function Widget() {
         fontFamily: "Inter, sans-serif",
       },
       container: {
-        boxShadow: "0 0 0 1px #836EF9, 1px 2px 13px 3px #836ef969",
+        boxShadow:
+          "0 0 0 1px rgba(200, 200, 200, 0.2), 1px 2px 15px 3px #453a847e",
         borderRadius: "16px",
         borderColor: "#FFF",
       },
