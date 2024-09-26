@@ -12,7 +12,7 @@ export function Widget() {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
-    hiddenUI: ["walletMenu"],
+    // hiddenUI: ["walletMenu"],
     fromChain: 137,
     toChain: 10,
     fromToken: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
@@ -46,7 +46,7 @@ export function Widget() {
         fontFamily: "Inter, sans-serif",
       },
       container: {
-        boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.2)",
+        boxShadow: "0 0 0 1px #836EF9, 1px 2px 13px 3px #836ef969",
         borderRadius: "16px",
         borderColor: "#FFF",
       },

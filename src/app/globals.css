@@ -593,11 +593,11 @@ a[href]:active {
 
 .glowing-background {
   background: radial-gradient(
-      circle at 20% 800px,
-      #453a843c 0%,
-      rgba(255, 0, 0, 0) 50%
+      circle at 0% 0px,
+      #453a847e 0%,
+      rgba(255, 0, 0, 0) 30%
     ),
-    radial-gradient(circle at 100% 100%, #453a847e 0%, rgba(0, 0, 255, 0) 50%),
+    radial-gradient(circle at 100% 100%, #816cea68 0%, rgba(0, 0, 255, 0) 30%),
     #1b1d22;
 }
 
