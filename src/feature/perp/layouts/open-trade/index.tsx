@@ -403,6 +403,15 @@ export const OpenTrade = ({
     }).format(value / 100);
   };
 
+  useEffect(() => {
+    if (values.price && values.type === OrderType.MARKET) {
+      setValues((prev) => ({
+        ...prev,
+        price: undefined,
+      }));
+    }
+  }, [values.price, values.type]);
+
   return (
     <section className="h-full w-full text-white">
       <div className="flex flex-col sm:px-4 px-2 border-b border-borderColor">
@@ -542,11 +551,6 @@ export const OpenTrade = ({
             key={i}
             className="w-1/3 h-full text-white text-xs font-medium"
             onClick={() => {
-              if (values.price && values.type === OrderType.LIMIT)
-                setValues((prev) => ({
-                  ...prev,
-                  price: undefined,
-                }));
               handleValueChange("type", type.toUpperCase());
             }}
           >
