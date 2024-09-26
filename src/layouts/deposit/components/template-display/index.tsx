@@ -317,9 +317,9 @@ export const TemplateDisplay = ({
             isDeposit ? "mb-0" : "mb-3"
           }`}
         >
-          <p>{pageContent.title_bot}</p>
+          <p>{pageContent.title_bot || "Ethereum"}</p>
           <Image
-            src={pageContent.image_bot}
+            src={pageContent.image_bot || "/assets/ETH.png"}
             height={20}
             width={20}
             alt="VeenoX logo"

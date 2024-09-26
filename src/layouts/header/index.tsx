@@ -33,9 +33,7 @@ export const Header = () => {
               <li>
                 <Link href="/portfolio">Portfolio</Link>
               </li>
-              <li>
-                <Link href="/dashboard">Doc</Link>
-              </li>
+              <li className="cursor-not-allowed text-font-40">Doc</li>
             </ul>
           </nav>
         </div>
