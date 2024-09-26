@@ -28,15 +28,13 @@ export const Header = () => {
                 <Link href="/perp/PERP_BTC_USDC">Trade</Link>
               </li>
               <li>
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/bridge">Swap</Link>
               </li>
               <li>
-                <Link href="/bridge">Bridge</Link>
+                <Link href="/portfolio">Portfolio</Link>
               </li>
-              <li className="text-font-40 cursor-not-allowed">Swap</li>
-
-              <li className="text-font-40 cursor-not-allowed">
-                Learn Trading & Earn
+              <li>
+                <Link href="/dashboard">Doc</Link>
               </li>
             </ul>
           </nav>

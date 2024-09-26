@@ -326,7 +326,7 @@ export const OpenTrade = ({
   const handleValueChange = (name: string, value: string) => {
     setValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "quantity" ? getFormattedAmount(value || 0) : value,
     }));
     if (name === "quantity") setSliderValue(toPercentage(value));
   };
@@ -354,7 +354,7 @@ export const OpenTrade = ({
     if (newMaxQty) {
       setValues((prev) => ({
         ...prev,
-        quantity: newMaxQty.toString(),
+        quantity: getFormattedAmount(newMaxQty).toString(),
       }));
       setSliderValue(100);
     }
@@ -701,14 +701,15 @@ export const OpenTrade = ({
               className={`w-full pl-2 text-white text-sm h-full`}
               placeholder="Quantity"
               onChange={(e) => {
-                if (e.target.value === "") {
+                const value = e.target.value;
+                if (value === "" && e.target.value !== "0") {
                   handleInputErrors(false, "input_quantity");
-                  handleValueChange("quantity", "");
-                } else if (Number(e.target.value) > maxQty) {
-                  handleValueChange("quantity", e.target.value);
+                  handleValueChange("quantity", value);
+                } else if (Number(value) > maxQty) {
+                  handleValueChange("quantity", value);
                   handleInputErrors(true, "input_quantity");
                 } else {
-                  handleValueChange("quantity", e.target.value);
+                  handleValueChange("quantity", value);
                   handleInputErrors(false, "input_quantity");
                 }
               }}

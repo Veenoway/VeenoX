@@ -7,7 +7,7 @@ import React, { PropsWithChildren } from "react";
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule({
-  projectId: "5f4e967f02cf92c8db957c56e877e149",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   requiredChains: [10, 42161],
   optionalChains: [421614, 11155420],
   dappUrl: "https://orderly-dex.pages.dev",

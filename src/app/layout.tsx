@@ -4,14 +4,13 @@ import Web3OnBoardProvider from "@/lib/web3onBoard/provider";
 import { Providers } from "@/provider/wrapper";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import dotenv from "dotenv";
+import "dotenv/config";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-dotenv.config();
 
 const OrderlyProvider = dynamic(() => import("../lib/orderly/"), {
   ssr: true,
