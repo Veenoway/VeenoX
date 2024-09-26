@@ -84,13 +84,13 @@ const InputQuantity = () => {
           <PopoverTrigger className="h-full min-w-fit">
             <button className="h-full whitespace-nowrap text-sm px-2.5 text-white w-full flex-nowrap flex items-center justify-center">
               <Image
-                src={chainLogo}
+                src={chainLogo || "/assets/ETH.png"}
                 width={18}
                 height={18}
                 className="ml-2 object-cover rounded-full mr-2"
                 alt="Chain logo"
               />
-              {chainName}
+              {chainName || "Ethereum"}
               <IoChevronDown className="min-w-[18px] text-xs ml-[1px] mr-2" />
             </button>
           </PopoverTrigger>
@@ -317,9 +317,9 @@ export const TemplateDisplay = ({
             isDeposit ? "mb-0" : "mb-3"
           }`}
         >
-          <p>{pageContent.title_bot || "Ethereum"}</p>
+          <p>{pageContent.title_bot}</p>
           <Image
-            src={pageContent.image_bot || "/assets/ETH.png"}
+            src={pageContent.image_bot}
             height={20}
             width={20}
             alt="VeenoX logo"
