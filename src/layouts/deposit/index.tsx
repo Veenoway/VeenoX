@@ -36,8 +36,6 @@ export const Deposit = () => {
   const [newOrderlyBalance, setNewOrderlyBalance] = useState<FixedNumber>();
   const [isApprovalDepositLoading, setIsApprovalDepositLoading] =
     useState<boolean>(false);
-  const [isDepositSuccess, setIsDepositSuccess] = useState(false);
-  const [isWithdrawSuccess, setIsWithdrawSuccess] = useState(false);
   const {
     isDeposit,
     setIsDeposit,
@@ -100,18 +98,18 @@ export const Deposit = () => {
           setIsApprovalDepositLoading(true);
           try {
             await deposit();
-
-            setIsDepositSuccess(true);
             setIsApprovalDepositLoading(false);
             // @ts-ignore
-            setDepositAmount(usdc?.holding);
+            setDepositAmount(amount);
             setAmount(undefined);
             setNewWalletBalance(undefined);
             setNewOrderlyBalance(undefined);
             setOpenWithdraw(false);
             triggerAlert("Success", "Deposit executed.");
-          } catch (err) {
-            triggerAlert("Error", "Deposit failed.");
+          } catch (err: any) {
+            if (err?.context === "INSUFFICIENT_FUNDS") {
+              triggerAlert("Error", "Insufficient funds to pay gas fees");
+            } else triggerAlert("Error", "Deposit failed.");
             setIsApprovalDepositLoading(false);
           }
         }
@@ -128,7 +126,6 @@ export const Deposit = () => {
               token: "USDC",
               allowCrossChainWithdraw: true,
             });
-            setIsWithdrawSuccess(true);
             setAmount(undefined);
             setNewWalletBalance(undefined);
             setNewOrderlyBalance(undefined);
@@ -139,7 +136,9 @@ export const Deposit = () => {
           console.log("Withdraw error: ", err);
           if (err?.message?.include("settle") || err?.message?.include("pnl"))
             triggerAlert("Error", "Settle PnL First");
-          else triggerAlert("Error", "Withdraw failed.");
+          else if (err?.context === "INSUFFICIENT_FUNDS") {
+            triggerAlert("Error", "Insufficient funds to pay gas fees");
+          } else triggerAlert("Error", "Withdraw failed.");
         }
       }
     } else {

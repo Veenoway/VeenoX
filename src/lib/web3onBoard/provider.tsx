@@ -7,7 +7,7 @@ import React, { PropsWithChildren } from "react";
 
 const injected = injectedModule();
 const walletConnect = walletConnectModule({
-  projectId: "5f4e967f02cf92c8db957c56e877e149",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   requiredChains: [10, 42161],
   optionalChains: [421614, 11155420],
   dappUrl: "https://orderly-dex.pages.dev",
@@ -21,19 +21,18 @@ const web3Onboard = init({
     label,
     rpcUrl,
   })),
-  // theme: {
-  //   "--w3o-background-color": "#2C3E50", // Couleur de fond principale
-  //   "--w3o-foreground-color": "#ECF0F1", // Couleur de texte principale
-  //   "--w3o-text-color": "#ECF0F1", // Couleur de texte
-  //   "--w3o-border-color": "#34495E", // Couleur de bordure
-  //   "--w3o-action-color": "#3498DB", // Couleur des boutons et actions
-  //   "--w3o-border-radius": "8px", // Rayon de bordure
-  //   // Vous pouvez ajouter d'autres variables CSS ici
-  // },
-  theme: "dark",
+  theme: {
+    "--w3o-background-color": "#1B1D22",
+    "--w3o-foreground-color": "#2b2f36e6",
+    "--w3o-text-color": "#FFF",
+    "--w3o-border-color": "rgba(140, 140, 140, 0.1)",
+    "--w3o-action-color": "#836EF9",
+    "--w3o-border-radius": "8px",
+  },
   appMetadata: {
     name: "VeenoX",
-    description: "Fully fledged example DEX using Orderly Network",
+    description: "VeenoX powered by Monad & Orderly Network",
+    icon: "/veenox/v-icon.png",
   },
   accountCenter: {
     desktop: { enabled: false },

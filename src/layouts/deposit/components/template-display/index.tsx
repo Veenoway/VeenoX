@@ -84,13 +84,13 @@ const InputQuantity = () => {
           <PopoverTrigger className="h-full min-w-fit">
             <button className="h-full whitespace-nowrap text-sm px-2.5 text-white w-full flex-nowrap flex items-center justify-center">
               <Image
-                src={chainLogo}
+                src={chainLogo || "/assets/ETH.png"}
                 width={18}
                 height={18}
                 className="ml-2 object-cover rounded-full mr-2"
                 alt="Chain logo"
               />
-              {chainName}
+              {chainName || "Ethereum"}
               <IoChevronDown className="min-w-[18px] text-xs ml-[1px] mr-2" />
             </button>
           </PopoverTrigger>

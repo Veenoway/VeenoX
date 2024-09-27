@@ -10,7 +10,7 @@ import {
 import { triggerAlert } from "@/lib/toaster";
 import { Leverage } from "@/modals/leverage";
 import { FuturesAssetProps } from "@/models";
-import { getFormattedAmount, truncatePrice } from "@/utils/misc";
+import { getFormattedAmount } from "@/utils/misc";
 import {
   useAccountInstance,
   useCollateral,
@@ -326,7 +326,7 @@ export const OpenTrade = ({
   const handleValueChange = (name: string, value: string) => {
     setValues((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "quantity" ? getFormattedAmount(value || 0) : value,
     }));
     if (name === "quantity") setSliderValue(toPercentage(value));
   };
@@ -354,7 +354,7 @@ export const OpenTrade = ({
     if (newMaxQty) {
       setValues((prev) => ({
         ...prev,
-        quantity: newMaxQty.toString(),
+        quantity: getFormattedAmount(newMaxQty).toString(),
       }));
       setSliderValue(100);
     }
@@ -402,6 +402,15 @@ export const OpenTrade = ({
       maximumFractionDigits: 2,
     }).format(value / 100);
   };
+
+  useEffect(() => {
+    if (values.price && values.type === OrderType.MARKET) {
+      setValues((prev) => ({
+        ...prev,
+        price: undefined,
+      }));
+    }
+  }, [values.price, values.type]);
 
   return (
     <section className="h-full w-full text-white">
@@ -542,11 +551,6 @@ export const OpenTrade = ({
             key={i}
             className="w-1/3 h-full text-white text-xs font-medium"
             onClick={() => {
-              if (values.price && values.type === OrderType.LIMIT)
-                setValues((prev) => ({
-                  ...prev,
-                  price: undefined,
-                }));
               handleValueChange("type", type.toUpperCase());
             }}
           >
@@ -701,20 +705,21 @@ export const OpenTrade = ({
               className={`w-full pl-2 text-white text-sm h-full`}
               placeholder="Quantity"
               onChange={(e) => {
-                if (e.target.value === "") {
+                const value = e.target.value;
+                if (value === "" && e.target.value !== "0") {
                   handleInputErrors(false, "input_quantity");
-                  handleValueChange("quantity", "");
-                } else if (Number(e.target.value) > maxQty) {
-                  handleValueChange("quantity", e.target.value);
+                  handleValueChange("quantity", value);
+                } else if (Number(value) > maxQty) {
+                  handleValueChange("quantity", value);
                   handleInputErrors(true, "input_quantity");
                 } else {
-                  handleValueChange("quantity", e.target.value);
+                  handleValueChange("quantity", value);
                   handleInputErrors(false, "input_quantity");
                 }
               }}
               type="number"
               disabled={!freeCollateral || !wallet}
-              value={truncatePrice(values.quantity as string)}
+              value={values.quantity as string}
             />
             <button
               className="rounded text-[12px] flex items-center
