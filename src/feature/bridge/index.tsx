@@ -28,7 +28,7 @@ export const Bridge = () => {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
-    hiddenUI: ["walletMenu", "poweredBy"],
+    hiddenUI: ["", "poweredBy"],
     theme: {
       palette: {
         primary: {
@@ -62,7 +62,7 @@ export const Bridge = () => {
         borderRadius: "30px",
         borderColor: "#FFF",
         minWidth: "404px",
-        padding: "8px",
+        zIndex: 0,
       },
       shape: {
         borderRadius: 12,
@@ -79,7 +79,7 @@ export const Bridge = () => {
 
   return (
     <main className="">
-      <div className="flex flex-col items-center h-[95vh] pt-[50px] glowing-background relative">
+      <div className="flex flex-col items-center h-[95vh] pt-[50px] bg-[url(/veenox/test.png)] bg-cover relative">
         <Web3OnBoardProvider>
           <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
             <button
@@ -106,7 +106,7 @@ export const Bridge = () => {
               }`}
             />
           </div>
-          <div className="relative w-full max-w-[420px] h-[606px] mt-[50px]">
+          <div className="relative w-full max-w-[420px] h-[606px] mt-[50px] z-0">
             <div
               className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
                 activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"

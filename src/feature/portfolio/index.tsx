@@ -78,7 +78,7 @@ const thStyle =
 const tdStyle =
   "text-sm text-white font-normal py-3.5 border-b border-borderColor-DARK text-end";
 
-export const Dashboard = () => {
+export const Portfolio = () => {
   const [{ wallet }, connectWallet] = useConnectWallet();
   const { state, account } = useOrderlyAccount();
   const [activeSection, setActiveSection] = useState(0);
@@ -179,7 +179,7 @@ export const Dashboard = () => {
     <div className="w-full flex flex-col items-center text-white pt-[30px] pb-[100px] min-h-[90vh]">
       <div className="max-w-[1350px] w-[90%] ">
         <div className="flex items-center justify-between mb-5 ">
-          <h1 className="text-2xl text-white font-semibold">Dashboard</h1>
+          <h1 className="text-2xl text-white font-semibold">Portfolio</h1>
           <div className="flex items-center w-fit justify-start">
             <button
               className="mr-4 h-[40px] px-2.5 rounded-full mx-auto text-base_color text-lg cursor-pointer border border-base_color"
