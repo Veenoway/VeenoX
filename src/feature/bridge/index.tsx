@@ -28,7 +28,7 @@ export const Bridge = () => {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
-    hiddenUI: ["", "poweredBy"],
+    hiddenUI: ["walletMenu", "poweredBy"],
     theme: {
       palette: {
         primary: {
@@ -130,9 +130,12 @@ export const Bridge = () => {
                 ref={iframeRef}
                 src="https://9c48238032ba950c.demos.rollbridge.app/"
                 title="Hyperlane"
-                className="w-full h-full rounded-[24px] md:rounded-[32px] shadow-lg"
+                className="w-full h-full rounded-[24px] md:rounded-[32px] shadow-lg "
                 onLoad={handleIframeLoad}
-                style={{ display: isHyperlaneLoading ? "none" : "block" }}
+                style={{
+                  display: isHyperlaneLoading ? "none" : "block",
+                  boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
+                }}
               />
             </div>
           </div>
