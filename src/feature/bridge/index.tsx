@@ -29,11 +29,6 @@ export const Bridge = () => {
     subvariant: "default",
     appearance: "dark",
     hiddenUI: ["walletMenu", "poweredBy"],
-    fromChain: 137,
-    toChain: 10,
-    fee: 0.03,
-    fromToken: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-    toToken: "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
     theme: {
       palette: {
         primary: {
@@ -63,8 +58,7 @@ export const Bridge = () => {
         fontFamily: "Inter, sans-serif",
       },
       container: {
-        boxShadow:
-          "0 0 0 1px rgba(200, 200, 200, 0.2), 1px 2px 12px 3px #453a847e",
+        boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
         borderRadius: "30px",
         borderColor: "#FFF",
         minWidth: "404px",
@@ -85,11 +79,11 @@ export const Bridge = () => {
 
   return (
     <main className="">
-      <div className="flex flex-col items-center h-[95vh] pt-[100px] glowing-background relative">
+      <div className="flex flex-col items-center h-[95vh] pt-[50px] glowing-background relative">
         <Web3OnBoardProvider>
-          <div className="flex items-center w-full h-[64px] relative max-w-[400px] mx-auto">
+          <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
             <button
-              className={`w-1/2 h-full text-2xl ${
+              className={`w-1/2 h-full text-xl ${
                 activeBridge === "LiFi" ? "text-white" : "text-font-60"
               }`}
               onClick={() => setActiveBridge("LiFi")}
@@ -97,7 +91,7 @@ export const Bridge = () => {
               LiFi
             </button>
             <button
-              className={`w-1/2 h-full text-2xl ${
+              className={`w-1/2 h-full text-xl ${
                 activeBridge === "Hyperlane" ? "text-white" : "text-font-60"
               }`}
               onClick={() => setActiveBridge("Hyperlane")}
@@ -105,7 +99,7 @@ export const Bridge = () => {
               Hyperlane
             </button>
           </div>
-          <div className="bg-terciary h-[2px] rounded w-full relative max-w-[400px] mx-auto">
+          <div className="bg-terciary h-[2px] rounded w-full relative max-w-[300px] mx-auto">
             <div
               className={`h-[1px] w-1/2 bottom-0 transition-all duration-200 ease-in-out bg-font-80 absolute ${
                 activeBridge === "LiFi" ? "left-0" : "left-1/2"
