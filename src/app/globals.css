@@ -597,7 +597,6 @@ a[href]:active {
       #453a847e 0%,
       rgba(255, 0, 0, 0) 30%
     ),
-    radial-gradient(circle at 30% 100%, #453a847e 0%, rgba(255, 0, 0, 0) 30%),
     radial-gradient(circle at 100% 100%, #816cea68 0%, rgba(0, 0, 255, 0) 30%),
     #15171b;
 }
