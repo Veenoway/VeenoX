@@ -593,12 +593,16 @@ a[href]:active {
 
 .glowing-background {
   background: radial-gradient(
-      circle at 0% 0px,
+      circle at 0% 30%,
       #453a847e 0%,
       rgba(255, 0, 0, 0) 30%
     ),
     radial-gradient(circle at 100% 100%, #816cea68 0%, rgba(0, 0, 255, 0) 30%),
     #15171b;
+}
+
+.svelte-7ee2g7 {
+  z-index: 1000 !important;
 }
 
 /* Option 2: Lueurs avec animation */

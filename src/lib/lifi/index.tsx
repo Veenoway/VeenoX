@@ -11,6 +11,11 @@ export default function PagesWidget() {
       },
     },
   } as Partial<WidgetConfig>;
-
-  return <LiFiWidget config={config} integrator="nextjs-example" />;
+  console.log("NEXT_PUBLIC_INTEGRATOR", process.env.NEXT_PUBLIC_INTEGRATOR);
+  return (
+    <LiFiWidget
+      config={config}
+      integrator={process.env.NEXT_PUBLIC_INTEGRATOR as string}
+    />
+  );
 }

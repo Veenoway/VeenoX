@@ -4,7 +4,6 @@ import type { WidgetConfig } from "@lifi/widget";
 import { LiFiWidget } from "@lifi/widget";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useRef, useState } from "react";
-import Web3OnBoardProvider from "../../lib/web3onBoard/provider";
 
 export const Bridge = () => {
   const [{ wallet }, connectWallet] = useConnectWallet();
@@ -62,7 +61,7 @@ export const Bridge = () => {
         borderRadius: "30px",
         borderColor: "#FFF",
         minWidth: "404px",
-        padding: "8px",
+        zIndex: 0,
       },
       shape: {
         borderRadius: 12,
@@ -80,63 +79,68 @@ export const Bridge = () => {
   return (
     <main className="">
       <div className="flex flex-col items-center h-[95vh] pt-[50px] glowing-background relative">
-        <Web3OnBoardProvider>
-          <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
-            <button
-              className={`w-1/2 h-full text-xl ${
-                activeBridge === "LiFi" ? "text-white" : "text-font-60"
-              }`}
-              onClick={() => setActiveBridge("LiFi")}
-            >
-              LiFi
-            </button>
-            <button
-              className={`w-1/2 h-full text-xl ${
-                activeBridge === "Hyperlane" ? "text-white" : "text-font-60"
-              }`}
-              onClick={() => setActiveBridge("Hyperlane")}
-            >
-              Hyperlane
-            </button>
-          </div>
-          <div className="bg-terciary h-[2px] rounded w-full relative max-w-[300px] mx-auto">
-            <div
-              className={`h-[1px] w-1/2 bottom-0 transition-all duration-200 ease-in-out bg-font-80 absolute ${
-                activeBridge === "LiFi" ? "left-0" : "left-1/2"
-              }`}
+        <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
+          <button
+            className={`w-1/2 h-full text-xl ${
+              activeBridge === "LiFi" ? "text-white" : "text-font-60"
+            }`}
+            onClick={() => setActiveBridge("LiFi")}
+          >
+            LiFi
+          </button>
+          <button
+            className={`w-1/2 h-full text-xl ${
+              activeBridge === "Hyperlane" ? "text-white" : "text-font-60"
+            }`}
+            onClick={() => setActiveBridge("Hyperlane")}
+          >
+            Hyperlane
+          </button>
+        </div>
+        <div className="bg-terciary h-[2px] rounded w-full relative max-w-[300px] mx-auto">
+          <div
+            className={`h-[1px] w-1/2 bottom-0 transition-all duration-200 ease-in-out bg-font-80 absolute ${
+              activeBridge === "LiFi" ? "left-0" : "left-1/2"
+            }`}
+          />
+        </div>
+        <div className="relative w-full max-w-[420px] h-[606px] mt-[50px] z-0">
+          <div
+            className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
+              activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <LiFiWidget
+              config={config}
+              integrator={process.env.NEXT_PUBLIC_INTEGRATOR as string}
             />
           </div>
-          <div className="relative w-full max-w-[420px] h-[606px] mt-[50px]">
-            <div
-              className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
-                activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"
-              }`}
-            >
-              <LiFiWidget config={config} integrator="VeenoX" />
-            </div>
-            <div
-              className={`absolute inset-0 transition-opacity duration-300 ${
-                activeBridge === "Hyperlane"
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0"
-              }`}
-            >
-              {isHyperlaneLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-secondary border border-borderColor rounded-[24px] md:rounded-[32px] shadow-lg">
-                  <Loader />
-                </div>
-              )}
-              <iframe
-                ref={iframeRef}
-                src="https://9c48238032ba950c.demos.rollbridge.app/"
-                title="Hyperlane"
-                className="w-full h-full rounded-[24px] md:rounded-[32px] shadow-lg"
-                onLoad={handleIframeLoad}
-                style={{ display: isHyperlaneLoading ? "none" : "block" }}
-              />
-            </div>
+          <div
+            className={`absolute inset-0 transition-opacity duration-300 ${
+              activeBridge === "Hyperlane"
+                ? "opacity-100 z-10"
+                : "opacity-0 z-0"
+            }`}
+          >
+            {isHyperlaneLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-secondary border border-borderColor rounded-[24px] md:rounded-[32px] shadow-lg">
+                <Loader />
+              </div>
+            )}
+            <iframe
+              ref={iframeRef}
+              src="https://9c48238032ba950c.demos.rollbridge.app/"
+              title="Hyperlane"
+              className="w-full h-full rounded-[24px] md:rounded-[32px] shadow-lg "
+              onLoad={handleIframeLoad}
+              style={{
+                display: isHyperlaneLoading ? "none" : "block",
+                boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
+              }}
+            />
           </div>
-          {/* <div className="flex items-center justify-center ">
+        </div>
+        {/* <div className="flex items-center justify-center ">
             {activeBridge === "LiFi" ? (
               <>
                 <h1 className="text-white text-2xl mr-5 mt-[30px]">
@@ -160,7 +164,6 @@ export const Bridge = () => {
               />
             )}
           </div> */}
-        </Web3OnBoardProvider>
       </div>
     </main>
   );
