@@ -43,9 +43,7 @@ export const Position = ({ asset }: PositionProps) => {
     }
   );
   const [orders, { cancelOrder, refresh }] = useOrderStream(
-    {
-      symbol: asset.symbol,
-    },
+    {},
     { keeplive: true, stopOnUnmount: false }
   );
   const { currentLeverage } = useMarginRatio();
