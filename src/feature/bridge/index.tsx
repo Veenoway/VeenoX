@@ -112,7 +112,10 @@ export const Bridge = () => {
                 activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
             >
-              <LiFiWidget config={config} integrator="VeenoX" />
+              <LiFiWidget
+                config={config}
+                integrator={process.env.NEXT_PUBLIC_INTEGRATOR as string}
+              />
             </div>
             <div
               className={`absolute inset-0 transition-opacity duration-300 ${

@@ -10,7 +10,7 @@ const walletConnect = walletConnectModule({
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   requiredChains: [10, 42161],
   optionalChains: [421614, 11155420],
-  dappUrl: "https://orderly-dex.pages.dev",
+  dappUrl: "https://veenox.xyz",
 });
 
 const web3Onboard = init({
