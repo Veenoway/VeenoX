@@ -129,9 +129,17 @@ export const Orderbook = ({
       data?.[type]?.map(([price, sizeBTC, totalBTC, totalUSDC]) => {
         if (affichageEnUSDC) {
           const sizeUSDC = sizeBTC * price;
-          return [price, sizeUSDC, totalUSDC];
+          return [
+            price,
+            getFormattedAmount(sizeUSDC) as string,
+            getFormattedAmount(totalUSDC) as string,
+          ];
         } else {
-          return [price, sizeBTC, totalBTC];
+          return [
+            price,
+            getFormattedAmount(sizeBTC) as string,
+            getFormattedAmount(totalBTC) as string,
+          ];
         }
       }) || [];
 
