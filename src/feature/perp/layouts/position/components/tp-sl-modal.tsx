@@ -20,20 +20,22 @@ import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
 type TPSLModalType = {
-  order: API.PositionTPSLExt;
   refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
 };
 
-export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
+export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { TPSLOpenOrder, setTPSLOpenOrder } = useGeneralContext();
   const { data: markPrice } = useMarkPrice(TPSLOpenOrder?.symbol);
   const { setOrderPositions } = useGeneralContext();
-  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(order, {
-    defaultOrder: TPSLOpenOrder.algo_order,
-  });
+  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(
+    TPSLOpenOrder,
+    {
+      defaultOrder: TPSLOpenOrder.algo_order,
+    }
+  );
 
   const position = {
     symbol: TPSLOpenOrder.symbol,
@@ -44,9 +46,12 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
   };
 
-  const [_, { cancelAllTPSLOrders }] = useOrderStream(position, {
-    stopOnUnmount: false,
-  });
+  const [_, { cancelTPSLChildOrder, cancelAllTPSLOrders }] = useOrderStream(
+    position,
+    {
+      stopOnUnmount: false,
+    }
+  );
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -89,16 +94,62 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
     }
   };
 
+  const closeTPSL = async (type: string) => {
+    const activeChild = TPSLOpenOrder?.algo_order?.child_orders?.find(
+      (algo: { algo_type: string }) => algo.algo_type === type
+    );
+    const childs = TPSLOpenOrder?.algo_order?.child_orders;
+    const tpSlFormated = activeChild?.algo_type === "TAKE_PROFIT" ? "TP" : "SL";
+    const idToast = toast.loading(`Canceling ${tpSlFormated}`);
+    const shouldResetOnlyOne =
+      childs?.[0]?.trigger_price && childs?.[1]?.trigger_price;
+    try {
+      if (shouldResetOnlyOne)
+        await cancelTPSLChildOrder(
+          activeChild.algo_order_id,
+          activeChild.root_algo_order_id
+        );
+      else {
+        await cancelAllTPSLOrders();
+      }
+      setTPSLOpenOrder(null);
+      toast.update(idToast, {
+        render: `${tpSlFormated} canceled.`,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      await refreshPosition();
+    } catch (e) {
+      console.log("err", e);
+      toast.update(idToast, {
+        render: `Error while closing ${tpSlFormated}.`,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    }
+  };
+
   const handleChange = (field: string, value: string): void => {
     if (error) setError([""]);
     setValue(field, value);
   };
 
+  const isOrderSlExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
+    (entry: { algo_type: string; trigger_price: number }) =>
+      entry.algo_type === "STOP_LOSS" && entry.trigger_price
+  );
+  const isOrderTpExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
+    (entry: { algo_type: string; trigger_price: number }) =>
+      entry.algo_type === "STOP_LOSS" && entry.trigger_price
+  );
+
   return (
     <Dialog open={TPSLOpenOrder}>
       <DialogContent
         close={() => setTPSLOpenOrder(null)}
-        className="max-w-[440px] w-[90%] h-auto max-h-auto flex flex-col gap-0 select-none"
+        className="max-w-[400px] w-[90%] h-auto max-h-auto flex flex-col gap-0 select-none"
       >
         <DialogHeader>
           <DialogTitle className="pb-5">Position TP/SL</DialogTitle>
@@ -138,7 +189,27 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
             </div>
           </DialogDescription>
         </DialogHeader>
-
+        <div className="flex items-center jusity-start mb-2">
+          {isOrderTpExist ? (
+            <button
+              onClick={() => closeTPSL("TAKE_PROFIT")}
+              className="w-fit text-white flex items-center"
+            >
+              <p className="text-xs font-medium text-white">Reset TP</p>
+            </button>
+          ) : null}
+          {isOrderTpExist && isOrderSlExist ? (
+            <div className="mx-2.5 h-3.5 bg-font-40 w-0.5 rounded" />
+          ) : null}
+          {isOrderSlExist ? (
+            <button
+              onClick={() => closeTPSL("STOP_LOSS")}
+              className="w-fit text-white flex items-center"
+            >
+              <p className="text-xs font-medium text-white">Reset SL</p>
+            </button>
+          ) : null}
+        </div>
         <div className="flex items-center justify-between gap-2">
           <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <p className="text-sm text-font-60 mr-2.5 font-medium">TP</p>
@@ -209,7 +280,8 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
             {error.find((entry) => entry.includes("TP"))}
           </p>
         ) : null}
-        <div className="flex items-center justify-between gap-2 mt-2.5">
+
+        <div className="flex items-center justify-between gap-2 mt-2.5 ">
           <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <p className="text-sm text-font-60 mr-2.5 font-medium">SL</p>
             <input
@@ -278,7 +350,7 @@ export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
 
         <div className="flex items-center w-full gap-2.5 mt-5">
           <button
-            className="border-base_color border w-full rounded flex items-center justify-center h-[40px] text-sm text-white"
+            className="bg-base_color w-full rounded flex items-center justify-center h-[40px] text-sm text-white"
             onClick={handleSubmit}
           >
             {loading && (
