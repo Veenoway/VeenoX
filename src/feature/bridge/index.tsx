@@ -1,12 +1,12 @@
 "use client";
-import { Loader } from "@/components/loader";
+import Web3OnBoardProvider from "@/lib/web3onBoard/provider";
 import type { WidgetConfig } from "@lifi/widget";
 import { LiFiWidget } from "@lifi/widget";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useRef, useState } from "react";
 
 export const Bridge = () => {
-  const [{ wallet }, connectWallet] = useConnectWallet();
+  const [{ wallet }, connectWallet, disconnectWallet] = useConnectWallet();
   const [activeBridge, setActiveBridge] = useState("LiFi");
   const [isHyperlaneLoading, setIsHyperlaneLoading] = useState(true);
   const iframeRef = useRef(null);
@@ -27,6 +27,7 @@ export const Bridge = () => {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
+    fee: 0.02,
     hiddenUI: ["walletMenu", "poweredBy"],
     theme: {
       palette: {
@@ -77,7 +78,8 @@ export const Bridge = () => {
   return (
     <main className="">
       <div className="flex flex-col items-center h-[95vh] pt-[50px] glowing-background relative">
-        <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
+        <Web3OnBoardProvider>
+          {/* <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
           <button
             className={`w-1/2 h-full text-xl ${
               activeBridge === "LiFi" ? "text-white" : "text-font-60"
@@ -94,26 +96,51 @@ export const Bridge = () => {
           >
             Hyperlane
           </button>
-        </div>
-        <div className="bg-terciary h-[2px] rounded w-full relative max-w-[300px] mx-auto">
+        </div> 
+          <div className="bg-terciary h-[2px] rounded w-full relative max-w-[300px] mx-auto">
           <div
             className={`h-[1px] w-1/2 bottom-0 transition-all duration-200 ease-in-out bg-font-80 absolute ${
               activeBridge === "LiFi" ? "left-0" : "left-1/2"
             }`}
           />
         </div>
-        <div className="relative w-full max-w-[420px] h-[606px] mt-[50px] z-0">
-          <div
-            className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
-              activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"
-            }`}
-          >
-            <LiFiWidget
-              config={config}
-              integrator={process.env.NEXT_PUBLIC_INTEGRATOR as string}
-            />
+        */}
+          <div className="flex items-center justify-center gap-3">
+            {
+              activeBridge === "LiFi" ? (
+                <>
+                  <h1 className="text-white text-2xl mt-[20px]">Powered by </h1>
+                  <img
+                    src="/assets/lifi.png"
+                    alt="lifi logo"
+                    className="h-[35px] mt-[20px]"
+                    height={35}
+                    width={85}
+                  />
+                </>
+              ) : null
+              // <Image
+              //   src="/assets/hyperlane.svg"
+              //   alt="lifi logo"
+              //   className="h-[80px] mt-[30px]"
+              //   height={100}
+              //   width={150}
+              // />
+            }
           </div>
-          <div
+
+          <div className="relative w-full max-w-[420px] h-[606px] mt-[40px] z-0">
+            <div
+              className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
+                activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+            >
+              <LiFiWidget
+                config={config}
+                integrator={process.env.NEXT_PUBLIC_INTEGRATOR as string}
+              />
+            </div>
+            {/* <div
             className={`absolute inset-0 transition-opacity duration-300 ${
               activeBridge === "Hyperlane"
                 ? "opacity-100 z-10"
@@ -136,32 +163,9 @@ export const Bridge = () => {
                 boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
               }}
             />
-          </div>
-        </div>
-        {/* <div className="flex items-center justify-center ">
-            {activeBridge === "LiFi" ? (
-              <>
-                <h1 className="text-white text-2xl mr-5 mt-[30px]">
-                  Powered by{" "}
-                </h1>
-                <Image
-                  src="/assets/lifi.png"
-                  alt="lifi logo"
-                  className="h-[35px] mt-[30px]"
-                  height={35}
-                  width={85}
-                />
-              </>
-            ) : (
-              <Image
-                src="/assets/hyperlane.svg"
-                alt="lifi logo"
-                className="h-[80px] mt-[30px]"
-                height={100}
-                width={150}
-              />
-            )}
           </div> */}
+          </div>
+        </Web3OnBoardProvider>
       </div>
     </main>
   );
