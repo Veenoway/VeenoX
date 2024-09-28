@@ -58,15 +58,13 @@ export const Bridge = () => {
       },
       container: {
         boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
-        borderRadius: "30px",
-        borderColor: "#FFF",
+        borderRadius: "8px",
         minWidth: "404px",
         zIndex: 0,
       },
       shape: {
-        borderRadius: 12,
-        borderRadiusSecondary: 12,
-        borderBottom: "#FFF",
+        borderRadius: 4,
+        borderRadiusSecondary: 4,
       },
     },
     walletConfig: {
@@ -131,7 +129,7 @@ export const Bridge = () => {
               ref={iframeRef}
               src="https://9c48238032ba950c.demos.rollbridge.app/"
               title="Hyperlane"
-              className="w-full h-full rounded-[24px] md:rounded-[32px] shadow-lg "
+              className="w-full h-full rounded-[8px] md:rounded-[8px] shadow-lg"
               onLoad={handleIframeLoad}
               style={{
                 display: isHyperlaneLoading ? "none" : "block",
