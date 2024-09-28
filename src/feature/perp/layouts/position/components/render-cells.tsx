@@ -8,6 +8,7 @@ import {
 } from "@/utils/misc";
 import { useMarginRatio, useOrderEntry } from "@orderly.network/hooks";
 import { OrderEntity } from "@orderly.network/types";
+import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import { EditModal } from "./edit-modal";
@@ -66,9 +67,7 @@ export const RenderCells = ({
         refreshPosition
       )}
 
-      {TPSLOpenOrder ? (
-        <TPSLModal refreshPosition={refreshPosition} order={order} />
-      ) : null}
+      {TPSLOpenOrder ? <TPSLModal refreshPosition={refreshPosition} /> : null}
     </>
   );
 };
@@ -76,19 +75,23 @@ export const RenderCells = ({
 const renderCommonCells = (trade: any) => (
   <>
     <td className={cn(tdStyle, "text-start pl-5")}>
-      <div className="h-full w-full flex items-center">
-        <img
-          className="w-4 h-4 rounded-full mr-2"
-          height={16}
-          width={16}
-          alt={`${trade?.symbol} logo`}
-          src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
-            trade?.symbol ? trade?.symbol : "PERP_TEST_TECJ",
-            true
-          )}.png`}
-        />
-        {trade?.symbol ? formatSymbol(trade.symbol) : "TEST"}
-      </div>
+      <Link href={`/perp/${trade?.symbol}`}>
+        <div className="h-full w-full flex items-center">
+          <img
+            className="w-4 h-4 rounded-full mr-2"
+            height={16}
+            width={16}
+            alt={`${trade?.symbol} logo`}
+            src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
+              trade?.symbol ? trade?.symbol : "PERP_BTC_USDC",
+              true
+            )}.png`}
+          />
+          <p className="text-white hover:underline font-semibold">
+            {trade?.symbol ? formatSymbol(trade.symbol) : "--"}
+          </p>
+        </div>
+      </Link>
     </td>
   </>
 );

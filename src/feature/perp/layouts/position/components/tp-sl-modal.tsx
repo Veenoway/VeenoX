@@ -20,20 +20,22 @@ import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
 type TPSLModalType = {
-  order: API.PositionTPSLExt;
   refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
 };
 
-export const TPSLModal = ({ order, refreshPosition }: TPSLModalType) => {
+export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const [loading, setLoading] = useState(false);
   const { TPSLOpenOrder, setTPSLOpenOrder } = useGeneralContext();
   const { data: markPrice } = useMarkPrice(TPSLOpenOrder?.symbol);
   const { setOrderPositions } = useGeneralContext();
-  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(order, {
-    defaultOrder: TPSLOpenOrder.algo_order,
-  });
+  const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(
+    TPSLOpenOrder,
+    {
+      defaultOrder: TPSLOpenOrder.algo_order,
+    }
+  );
 
   const position = {
     symbol: TPSLOpenOrder.symbol,
