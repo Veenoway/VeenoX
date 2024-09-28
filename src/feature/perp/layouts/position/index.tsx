@@ -50,8 +50,8 @@ export const Position = ({ asset }: PositionProps) => {
   };
 
   useEffect(() => {
-    if (data?.rows && orders) triggerRefresh();
-  }, [data?.rows?.length, orders?.[0]]);
+    triggerRefresh();
+  }, [data?.rows?.length, orders?.length]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
