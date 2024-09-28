@@ -26,20 +26,15 @@ export const RenderCells = ({
   order,
   activeSection,
   closePendingOrder,
-  rows,
   refreshPosition,
-  refresh,
 }: any) => {
   const {
     TPSLOpenOrder,
     setTPSLOpenOrder,
     setOrderPositions,
-    editPendingPositionOpen,
     setEditPendingPositionOpen,
   } = useGeneralContext();
-
   const { currentLeverage } = useMarginRatio();
-
   const { onSubmit } = useOrderEntry(
     {
       symbol: order.symbol,
@@ -211,8 +206,9 @@ const renderAdditionalCells = (
           <div className="flex items-center justify-end w-full h-full">
             <EditModal order={trade} />
             <button
+              key={trade?.order_id}
               onClick={() => {
-                closePendingOrder(trade?.order_id);
+                closePendingOrder(trade?.order_id, trade?.symbol);
                 setOrderPositions([]);
               }}
               className="h-[25px] w-fit px-2 text-xs ml-2.5 text-white bg-base_color border-borderColor-DARK rounded"

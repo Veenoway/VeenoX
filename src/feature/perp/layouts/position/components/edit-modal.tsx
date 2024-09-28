@@ -59,7 +59,9 @@ export const EditModal = ({ order }: EditModalType) => {
       const symbol = cur();
       return symbol;
     });
+
   const currentAsset = symbols?.find((cur) => cur.symbol === order?.symbol);
+
   const [_, { updateOrder, refresh }] = useOrderStream({
     symbol: order?.symbol,
   });
@@ -115,7 +117,12 @@ export const EditModal = ({ order }: EditModalType) => {
     }
   };
   return (
-    <Popover open={editPendingPositionOpen?.order_id === order?.order_id}>
+    <Popover
+      open={
+        editPendingPositionOpen &&
+        editPendingPositionOpen?.order_id === order?.order_id
+      }
+    >
       <PopoverTrigger
         className="h-full min-w-fit"
         onClick={() => {
@@ -123,18 +130,18 @@ export const EditModal = ({ order }: EditModalType) => {
             !editPendingPositionOpen &&
             editPendingPositionOpen?.order_id !== order?.order_id
           ) {
-            setEditPendingPositionOpen(() => order);
+            setEditPendingPositionOpen(order);
             setOrderPositions([]);
           } else setEditPendingPositionOpen(null);
         }}
       >
-        <button
+        <div
           className="text-white bg-terciary border border-base_color text-bold font-poppins text-xs
               h-[25px] px-2 rounded flex items-center
           "
         >
           Edit
-        </button>
+        </div>
       </PopoverTrigger>
       <PopoverContent
         sideOffset={4}

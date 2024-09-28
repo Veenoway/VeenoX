@@ -42,10 +42,7 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateIfStale: true,
     }
   );
-  const [orders, { cancelOrder, refresh }] = useOrderStream(
-    {},
-    { keeplive: true, stopOnUnmount: false }
-  );
+  const [orders, { cancelOrder, refresh }] = useOrderStream({});
   const { currentLeverage } = useMarginRatio();
 
   const triggerRefresh = async () => {
@@ -53,8 +50,8 @@ export const Position = ({ asset }: PositionProps) => {
   };
 
   useEffect(() => {
-    triggerRefresh();
-  }, [data?.rows?.length, orders?.[0], shouldRefresh]);
+    if (data?.rows && orders) triggerRefresh();
+  }, [data?.rows?.length, orders?.[0]]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -79,10 +76,11 @@ export const Position = ({ asset }: PositionProps) => {
     return () => window.removeEventListener("resize", updateUnderline);
   }, [activeSection]);
 
-  const closePendingOrder = async (id: number) => {
+  const closePendingOrder = async (id: number, symbol: string) => {
     const idToast = toast.loading("Closing Order");
+    console.log(id);
     try {
-      await cancelOrder(id, asset?.symbol);
+      await cancelOrder(id, symbol);
       toast.update(idToast, {
         render: "Order closed",
         type: "success",
@@ -313,7 +311,7 @@ export const Position = ({ asset }: PositionProps) => {
                 );
               }
               return (
-                <tr key={i}>
+                <tr key={order?.order_id || i}>
                   <RenderCells
                     order={order}
                     activeSection={activeSection}
