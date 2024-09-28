@@ -139,11 +139,11 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
   const isOrderSlExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
     (entry: { algo_type: string; trigger_price: number }) =>
       entry.algo_type === "STOP_LOSS" && entry.trigger_price
-  );
+  )?.trigger_price;
   const isOrderTpExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
     (entry: { algo_type: string; trigger_price: number }) =>
-      entry.algo_type === "STOP_LOSS" && entry.trigger_price
-  );
+      entry.algo_type === "TAKE_PROFIT" && entry.trigger_price
+  )?.trigger_price;
 
   return (
     <Dialog open={TPSLOpenOrder}>
