@@ -15,7 +15,7 @@ import {
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import { useState } from "react";
-import { IoChevronDown } from "react-icons/io5";
+import { IoChevronDown, IoClose } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
@@ -46,9 +46,12 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
     quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
   };
 
-  const [_, { cancelAllTPSLOrders }] = useOrderStream(position, {
-    stopOnUnmount: false,
-  });
+  const [_, { cancelTPSLChildOrder, cancelAllTPSLOrders }] = useOrderStream(
+    position,
+    {
+      stopOnUnmount: false,
+    }
+  );
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -88,6 +91,43 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
       setLoading(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const closeTPSL = async (type: string) => {
+    const activeChild = TPSLOpenOrder?.algo_order?.child_orders?.find(
+      (algo: { algo_type: string }) => algo.algo_type === type
+    );
+    const childs = TPSLOpenOrder?.algo_order?.child_orders;
+    const tpSlFormated = activeChild?.algo_type === "TAKE_PROFIT" ? "TP" : "SL";
+    const idToast = toast.loading(`Canceling ${tpSlFormated}`);
+    const shouldResetOnlyOne =
+      childs?.[0]?.trigger_price && childs?.[1]?.trigger_price;
+    try {
+      if (shouldResetOnlyOne)
+        await cancelTPSLChildOrder(
+          activeChild.algo_order_id,
+          activeChild.root_algo_order_id
+        );
+      else {
+        await cancelAllTPSLOrders();
+      }
+      setTPSLOpenOrder(null);
+      toast.update(idToast, {
+        render: `${tpSlFormated} canceled.`,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      await refreshPosition();
+    } catch (e) {
+      console.log("err", e);
+      toast.update(idToast, {
+        render: `Error while closing ${tpSlFormated}.`,
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     }
   };
 
@@ -205,6 +245,12 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
               </PopoverContent>
             </Popover>
           </div>
+          <button
+            onClick={() => closeTPSL("TAKE_PROFIT")}
+            className="rounded h-full w-fit p-2 text-white  border border-base_color "
+          >
+            <IoClose />
+          </button>
         </div>
         {error && error.find((entry) => entry.includes("TP")) ? (
           <p className="text-xs text-red mt-2">
@@ -271,6 +317,12 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
               </PopoverContent>
             </Popover>
           </div>
+          <button
+            onClick={() => closeTPSL("STOP_LOSS")}
+            className="rounded h-full w-fit p-2 text-white  border border-base_color "
+          >
+            <IoClose />
+          </button>
         </div>
         {error && error.find((entry) => entry.includes("SL")) ? (
           <p className="text-xs text-red mt-2">
@@ -280,7 +332,7 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
 
         <div className="flex items-center w-full gap-2.5 mt-5">
           <button
-            className="border-base_color border w-full rounded flex items-center justify-center h-[40px] text-sm text-white"
+            className="bg-base_color w-full rounded flex items-center justify-center h-[40px] text-sm text-white"
             onClick={handleSubmit}
           >
             {loading && (
