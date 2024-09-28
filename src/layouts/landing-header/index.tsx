@@ -49,9 +49,8 @@ export const LandingHeader = () => {
             </Link>
           </li>
           <li>
-            {" "}
             <Link
-              href="https://discord.com/invite/vwjQ24yZ"
+              href="https://discord.gg/bM4t5AdMQF"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full hover:text-base_color"

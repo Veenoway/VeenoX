@@ -46,12 +46,12 @@ export const Position = ({ asset }: PositionProps) => {
   const { currentLeverage } = useMarginRatio();
 
   const triggerRefresh = async () => {
-    await Promise.all([refresh(), refreshPosition()]);
+    await Promise.all([refreshPosition(), refresh()]);
   };
 
   useEffect(() => {
     triggerRefresh();
-  }, [data?.rows?.length, orders?.length]);
+  }, [data?.rows?.length, orders?.[0]]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
