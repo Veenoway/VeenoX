@@ -15,7 +15,7 @@ import {
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import { useState } from "react";
-import { IoChevronDown, IoClose } from "react-icons/io5";
+import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
@@ -136,11 +136,20 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
     setValue(field, value);
   };
 
+  const isOrderSlExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
+    (entry: { algo_type: string; trigger_price: number }) =>
+      entry.algo_type === "STOP_LOSS" && entry.trigger_price
+  );
+  const isOrderTpExist = TPSLOpenOrder?.algo_order?.child_orders?.find(
+    (entry: { algo_type: string; trigger_price: number }) =>
+      entry.algo_type === "STOP_LOSS" && entry.trigger_price
+  );
+
   return (
     <Dialog open={TPSLOpenOrder}>
       <DialogContent
         close={() => setTPSLOpenOrder(null)}
-        className="max-w-[440px] w-[90%] h-auto max-h-auto flex flex-col gap-0 select-none"
+        className="max-w-[400px] w-[90%] h-auto max-h-auto flex flex-col gap-0 select-none"
       >
         <DialogHeader>
           <DialogTitle className="pb-5">Position TP/SL</DialogTitle>
@@ -180,7 +189,27 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
             </div>
           </DialogDescription>
         </DialogHeader>
-
+        <div className="flex items-center jusity-start mb-2">
+          {isOrderTpExist ? (
+            <button
+              onClick={() => closeTPSL("TAKE_PROFIT")}
+              className="w-fit text-white flex items-center"
+            >
+              <p className="text-xs font-medium text-white">Reset TP</p>
+            </button>
+          ) : null}
+          {isOrderTpExist && isOrderSlExist ? (
+            <div className="mx-2.5 h-3.5 bg-font-40 w-0.5 rounded" />
+          ) : null}
+          {isOrderSlExist ? (
+            <button
+              onClick={() => closeTPSL("STOP_LOSS")}
+              className="w-fit text-white flex items-center"
+            >
+              <p className="text-xs font-medium text-white">Reset SL</p>
+            </button>
+          ) : null}
+        </div>
         <div className="flex items-center justify-between gap-2">
           <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <p className="text-sm text-font-60 mr-2.5 font-medium">TP</p>
@@ -245,19 +274,14 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
               </PopoverContent>
             </Popover>
           </div>
-          <button
-            onClick={() => closeTPSL("TAKE_PROFIT")}
-            className="rounded h-full w-fit p-2 text-white  border border-base_color "
-          >
-            <IoClose />
-          </button>
         </div>
         {error && error.find((entry) => entry.includes("TP")) ? (
           <p className="text-xs text-red mt-2">
             {error.find((entry) => entry.includes("TP"))}
           </p>
         ) : null}
-        <div className="flex items-center justify-between gap-2 mt-2.5">
+
+        <div className="flex items-center justify-between gap-2 mt-2.5 ">
           <div className="flex px-2.5 w-full items-center bg-terciary border border-borderColor-DARK rounded h-[35px] text-sm">
             <p className="text-sm text-font-60 mr-2.5 font-medium">SL</p>
             <input
@@ -317,12 +341,6 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
               </PopoverContent>
             </Popover>
           </div>
-          <button
-            onClick={() => closeTPSL("STOP_LOSS")}
-            className="rounded h-full w-fit p-2 text-white  border border-base_color "
-          >
-            <IoClose />
-          </button>
         </div>
         {error && error.find((entry) => entry.includes("SL")) ? (
           <p className="text-xs text-red mt-2">
