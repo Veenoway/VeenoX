@@ -1,7 +1,7 @@
 "use client";
 import { useGeneralContext } from "@/context";
 import { useCopyToClipboard } from "@/hook/useCopy";
-import { LeverageContent } from "@/modals/leverage/leverage";
+import { Leverage } from "@/modals/leverage";
 import { cn } from "@/utils/cn";
 import {
   addressSlicer,
@@ -74,9 +74,9 @@ type QueryResult<T> = {
 type TransactionHistoryQueryResult = QueryResult<DepositWithdrawTx[]>;
 
 const thStyle =
-  "text-sm text-font-60 font-normal py-1.5 border-b border-borderColor-DARK text-end";
+  "text-xs text-font-60 font-normal py-1.5 border-b border-borderColor-DARK text-end";
 const tdStyle =
-  "text-sm text-white font-normal py-3.5 border-b border-borderColor-DARK text-end";
+  "text-xs text-white font-normal py-2.5 border-b border-borderColor-DARK text-end";
 
 export const Portfolio = () => {
   const [{ wallet }, connectWallet] = useConnectWallet();
@@ -176,60 +176,28 @@ export const Portfolio = () => {
   const { data: accountInfo } = useAccountInfo();
 
   return (
-    <div className="w-full flex flex-col items-center text-white pt-[30px] pb-[100px] min-h-[90vh]">
-      <div className="max-w-[1350px] w-[90%] ">
-        <div className="flex items-center justify-between mb-5 ">
-          <h1 className="text-2xl text-white font-semibold">Portfolio</h1>
-          <div className="flex items-center w-fit justify-start">
-            <button
-              className="mr-4 h-[40px] px-2.5 rounded-full mx-auto text-base_color text-lg cursor-pointer border border-base_color"
-              onClick={async () => {
-                if (!wallet) await connectWallet();
-                else {
-                  setIsDeposit(false);
-                  setOpenWithdraw(true);
-                }
-              }}
-            >
-              <div className="flex items-center justify-center w-full text-base h-full px-4 py-2">
-                Withdraw
-              </div>
-            </button>
-            <button
-              onClick={async () => {
-                if (!wallet) await connectWallet();
-                else {
-                  setIsDeposit(true);
-                  setOpenWithdraw(true);
-                }
-              }}
-              className="h-[40px] px-2.5 rounded-full mx-auto text-white text-lg mr-auto cursor-pointer bg-base_color"
-            >
-              <div className="flex items-center justify-center w-full text-base h-full px-4 py-2">
-                Deposit
-              </div>
-            </button>
-          </div>
-        </div>
+    <div className="w-full flex flex-col items-center bg-[#15171b] text-white pt-[10px] pb-[100px] min-h-[90vh]">
+      <div className="px-2.5 w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
           <div className="col-span-3">
             <div className="flex w-full">
-              <div className="rounded-2xl p-5 border w-full border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <div className="rounded-md p-5 border w-full border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col ">
-                    <p className="text-base mb-0.5 text-font-80">
-                      Total Value:
+                    <p className="text-sm text-font-80">Total Value:</p>
+                    <p className="text-lg">
+                      {totalValue || 0}{" "}
+                      <span className="text-font-60 font-medium">USDC</span>
                     </p>
-                    <p className="text-2xl">{totalValue || 0}</p>
                   </div>
                   <div className="flex flex-col items-end">
-                    <p className="">
+                    <p className="text-base">
                       {wallet
                         ? addressSlicer(wallet?.accounts?.[0]?.address)
                         : "0x00..0000"}
                     </p>
                     <div
-                      className="flex items-center cursor-pointer text-font-80"
+                      className="flex items-center cursor-pointer text-font-80 text-base"
                       onClick={() =>
                         copyToClipboard((state?.userId as string) || "")
                       }
@@ -244,17 +212,16 @@ export const Portfolio = () => {
                   </div>{" "}
                 </div>
                 <div className="flex items-center justify-between gap-2.5 mt-2.5">
-                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
-                    <p className="text-xs text-font-60 text-center">Coin</p>
-                    <p className="text-lg text-center">{usdc?.token || "--"}</p>
+                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
+                    <Leverage />
                   </div>
-                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">Holding</p>
                     <p className="text-lg text-center">
                       {getFormattedAmount(usdc?.holding.toFixed(2)) || "--"}
                     </p>
                   </div>
-                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">
                       Avbl. Withdraw
                     </p>
@@ -265,7 +232,7 @@ export const Portfolio = () => {
                         : "0.00"}
                     </p>
                   </div>
-                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-xl bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">
                       Unsettled PnL
                     </p>
@@ -284,15 +251,14 @@ export const Portfolio = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
-              <p className="text-xl mb-2">Withdraw / Deposit history</p>
+            <div className="rounded-md p-3 border border-borderColor bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
               <div className="w-full flex flex-col border-b border-borderColor-DARK">
                 <div className="flex items-center relative  border-b border-borderColor-DARK">
                   {["Deposit", "Withdraw"].map((section, index) => (
                     <button
                       key={index}
                       ref={(el) => (buttonRefs.current[index] = el) as any}
-                      className={`text-lg p-2.5 ${
+                      className={`text-base px-2.5 pb-2.5 ${
                         activeSection === index ? "text-white" : "text-font-60"
                       }`}
                       onClick={() => setActiveSection(index)}
@@ -301,14 +267,14 @@ export const Portfolio = () => {
                     </button>
                   ))}
                   <div
-                    className="h-[1px] w-[20%] absolute bottom-[-1px] bg-base_color transition-all duration-200 ease-in-out"
+                    className="h-[1px] w-[20%] absolute bottom-[-1px] bg-white transition-all duration-200 ease-in-out"
                     style={{
                       width: underlineStyle.width,
                       left: underlineStyle.left,
                     }}
                   />
                 </div>
-                <div className="max-h-[500px] min-h-[500px] relative w-full overflow-y-scroll no-scrollbar">
+                <div className="max-h-[350px] min-h-[350px] relative w-full overflow-y-scroll no-scrollbar">
                   <table className="mt-2.5 w-full">
                     <thead>
                       <tr>
@@ -341,7 +307,7 @@ export const Portfolio = () => {
                                     />
                                     <img
                                       src="/assets/usdc.png"
-                                      className="h-7 w-7 rounded-full z-0"
+                                      className="h-6 w-6 rounded-full z-0"
                                     />
                                   </div>
                                   {item.token}
@@ -395,8 +361,8 @@ export const Portfolio = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
-              <p className="text-xl mb-2">Fee tier</p>
+            <div className="rounded-md p-3 border border-borderColor bg-secondary mt-2.5 shadow-[rgba(0,0,0,0.2)] shadow-xl ">
+              <p className="text-base mb-2">Fee tier</p>
               <table className="mt-2.5 w-full">
                 <thead>
                   <tr>
@@ -464,26 +430,19 @@ export const Portfolio = () => {
           </div>
           {/* RIGHT PART */}
           <div className="col-span-2">
-            <div className="rounded-2xl p-5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+            <div className="rounded-md p-3 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between">
-                <p className="text-xl mb-4">Volume history</p>
+                <p className="text-base mb-4">Volume history</p>
               </div>
               <TimeSeriesChart />
             </div>
+
             <div className="flex">
-              <div className="rounded-2xl w-full p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-                <p className="text-xl">Edit Leverage</p>
-                <div className="flex items-center justify-between w-full">
-                  <LeverageContent className="w-full mr-0 mt-0 h-full" />
-                </div>
-              </div>
-            </div>
-            <div className="flex">
-              <div className="rounded-2xl w-[60%] p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-                <p className="text-xl mb-2.5">Volume</p>
+              <div className="rounded-md w-[60%] p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <p className="text-base mb-2.5">Volume</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">24h Vol.</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">24h Vol.</p>
+                  <p className="text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_24_hours
@@ -491,8 +450,8 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">7d Vol.</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">7d Vol.</p>
+                  <p className="text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_7_days
@@ -500,8 +459,8 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">30d Vol.</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">30d Vol.</p>
+                  <p className="text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_30_days
@@ -509,19 +468,19 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">Total Vol.</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">Total Vol.</p>
+                  <p className="text-sm">
                     $
                     {getFormattedAmount(volume?.perp_trading_volume_ytd) ||
                       "--"}
                   </p>
                 </div>
               </div>
-              <div className="rounded-2xl ml-2.5 w-[40%] p-5 mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-                <p className="text-xl mb-2.5">Trading Fee</p>
+              <div className="rounded-md ml-2.5 w-[40%] p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+                <p className="text-base mb-2.5">Trading Fee</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">Maker fee</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">Maker fee</p>
+                  <p className="text-sm">
                     {`${
                       (accountInfo?.futures_maker_fee_rate as number) / 100 +
                       "%"
@@ -529,8 +488,8 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-base text-font-60 mb-0.5">Taker fee</p>
-                  <p className="text-base">
+                  <p className="text-sm text-font-60 mb-0.5">Taker fee</p>
+                  <p className="text-sm">
                     {`${
                       (accountInfo?.futures_taker_fee_rate as number) / 100 +
                       "%"
@@ -539,25 +498,25 @@ export const Portfolio = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl w-full p-5 min-w-[300px] mt-2.5 border border-borderColor-DARK bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <p className="text-xl mb-5">API Trading</p>
+            <div className="rounded-md w-full p-3 min-w-[300px] mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <p className="text-base">API Trading</p>
               {content.map((key, i) => {
                 const isEven: boolean = i % 2 === 0;
                 return (
                   <div
                     className={`flex items-center justify-between ${
-                      isEven ? "my-6" : ""
+                      isEven ? "my-4" : ""
                     }`}
                     key={i}
                   >
                     <div>
-                      <p className="text-base text-start text-font-60 mb-0.5">
+                      <p className="text-sm text-start text-font-60 mb-1">
                         {key.title}
                       </p>
                       <p
-                        className={`text-base text-start break-all ${
+                        className={`text-sm text-start break-all ${
                           !showKeys.includes(key.content as string) && i !== 0
-                            ? "blur-[3px]"
+                            ? "blur-[5px]"
                             : ""
                         } transition-all duration-150 ease-in-out`}
                       >
@@ -581,14 +540,14 @@ export const Portfolio = () => {
                           }}
                         >
                           {showKeys.includes(key.content as string) ? (
-                            <IoEyeOutline className="text-white text-lg" />
+                            <IoEyeOutline className="text-white text-sm" />
                           ) : (
-                            <IoEyeOffOutline className="text-white text-lg" />
+                            <IoEyeOffOutline className="text-white text-sm" />
                           )}
                         </button>
                       ) : null}
                       <button
-                        className={`min-w-fit text-end ${
+                        className={`min-w-fit text-end text-sm ${
                           i === 0 ? "pl-[55px]" : "pl-2.5"
                         }`}
                         onClick={() => copyToClipboard(key.content as string)}

@@ -19,21 +19,46 @@ export const TimeSeriesChart = () => {
 
     const ctx = (chartRef.current as any).getContext("2d");
 
+    const nowPlugin = {
+      id: "nowLabel",
+      afterDraw: (chart: any) => {
+        const {
+          ctx,
+          scales: { x, y },
+        } = chart;
+        const lastDataPoint =
+          chart.getDatasetMeta(0).data[chart.getDatasetMeta(0).data.length - 1];
+
+        if (lastDataPoint) {
+          ctx.save();
+          ctx.fillStyle = "#FFFFFF60";
+          ctx.font = "10px Arial";
+          ctx.textAlign = "right";
+          ctx.textBaseline = "top";
+          ctx.fillText("now", lastDataPoint.x, y.bottom + 13);
+          ctx.restore();
+        }
+      },
+    };
+
     (chartInstance.current as any) = new Chart(ctx, {
       type: "line",
       data: {
-        labels:
-          data?.map((entry) => new Date(entry.date).toLocaleDateString()) || [],
+        labels: labels,
         datasets: [
           {
             label: "Volume",
             data: data?.map((entry) => entry.perp_volume) || [],
             borderColor: "#836EF9",
+            borderWidth: 2,
             backgroundColor: "rgba(131, 110, 249, 0.1)",
-            tension: 0.4,
-            fill: true,
-            pointRadius: 4,
-            pointBackgroundColor: "#836EF9",
+            tension: 0.8,
+            fill: false,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            pointHoverBackgroundColor: "#836EF9",
+            pointHoverBorderColor: "#FFFFFF60",
+            pointHoverBorderWidth: 2,
           },
         ],
       },
@@ -75,21 +100,23 @@ export const TimeSeriesChart = () => {
         scales: {
           x: {
             grid: {
-              color: "rgba(255, 255, 255, 0.03)",
+              display: false,
             },
             ticks: {
-              color: "#FFFFFF",
-              maxTicksLimit: 7,
-              callback: function (value, index, ticks) {
-                const labelCount = labels.length;
-                if (
-                  index === 0 ||
-                  index === labelCount - 1 ||
-                  index % Math.ceil((labelCount - 2) / 5) === 0
-                ) {
-                  return labels[index];
-                }
+              color: "#FFFFFF60",
+              font: {
+                size: 10,
               },
+              padding: 5,
+              maxRotation: 0,
+              minRotation: 0,
+              callback: function (value, index, ticks) {
+                if (index === 0) return labels[0];
+                return "";
+              },
+            },
+            border: {
+              display: false,
             },
           },
           y: {
@@ -97,11 +124,22 @@ export const TimeSeriesChart = () => {
               color: "rgba(255, 255, 255, 0.03)",
             },
             ticks: {
-              color: "#FFFFFF",
+              color: "#FFFFFF60",
+              font: {
+                size: 10,
+              },
+            },
+            border: {
+              display: false,
             },
           },
         },
+        interaction: {
+          intersect: false,
+          mode: "index",
+        },
       },
+      plugins: [nowPlugin],
     });
 
     return () => {
@@ -109,10 +147,10 @@ export const TimeSeriesChart = () => {
         (chartInstance.current as any).destroy();
       }
     };
-  }, [data]);
+  }, [data, labels]);
 
   return (
-    <div className="relative h-[240px]">
+    <div className="relative h-[200px]">
       <canvas ref={chartRef} />
       {(data?.length || 0) < 2 ? (
         <div className="absolute backdrop-blur-sm left-0 flex items-center justify-center top-0 h-full w-full">
