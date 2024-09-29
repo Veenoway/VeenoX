@@ -177,31 +177,47 @@ export const Portfolio = () => {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const { data: accountInfo } = useAccountInfo();
   type timeframeType = "7D" | "30D" | "90D" | "ALL";
-  const [activeTimeframe, setActiveTimeframe] = useState<timeframeType>("30D");
-  const [startDate, setStartDate] = useState(Date.now());
-  const [endDate, setEndDate] = useState(Date.now());
+  const [activeTimeframe, setActiveTimeframe] = useState({
+    volume: "30D" as timeframeType,
+    pnl: "30D" as timeframeType,
+  });
+  const [startDate, setStartDate] = useState({
+    volume: Date.now(),
+    pnl: Date.now(),
+  });
+  const [endDate, setEndDate] = useState({
+    volume: Date.now(),
+    pnl: Date.now(),
+  });
 
   useEffect(() => {
-    const end = Date.now();
-    let start;
-    switch (activeTimeframe) {
-      case "7D":
-        start = end - 7 * 24 * 60 * 60 * 1000;
-        break;
-      case "30D":
-        start = end - 30 * 24 * 60 * 60 * 1000;
-        break;
-      case "90D":
-        start = end - 90 * 24 * 60 * 60 * 1000;
-        break;
-      case "ALL":
-        start = new Date(2020, 0, 1).getTime();
-        break;
-      default:
-        start = end - 30 * 24 * 60 * 60 * 1000;
-    }
-    setStartDate(start);
-    setEndDate(end);
+    const calculateDates = (timeframe: timeframeType) => {
+      const end = Date.now();
+      let start;
+      switch (timeframe) {
+        case "7D":
+          start = end - 7 * 24 * 60 * 60 * 1000;
+          break;
+        case "30D":
+          start = end - 30 * 24 * 60 * 60 * 1000;
+          break;
+        case "90D":
+          start = end - 90 * 24 * 60 * 60 * 1000;
+          break;
+        case "ALL":
+          start = new Date(2020, 0, 1).getTime();
+          break;
+        default:
+          start = end - 30 * 24 * 60 * 60 * 1000;
+      }
+      return { start, end };
+    };
+
+    const volumeDates = calculateDates(activeTimeframe.volume);
+    const pnlDates = calculateDates(activeTimeframe.pnl);
+
+    setStartDate({ volume: volumeDates.start, pnl: pnlDates.start });
+    setEndDate({ volume: volumeDates.end, pnl: pnlDates.end });
   }, [activeTimeframe]);
 
   const formatDate = (date: number): string => {
@@ -210,16 +226,31 @@ export const Portfolio = () => {
   };
 
   const queryUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      start_date: formatDate(startDate),
-      end_date: formatDate(endDate),
+    const volumeParams = new URLSearchParams({
+      start_date: formatDate(startDate.volume),
+      end_date: formatDate(endDate.volume),
     });
-    return `/v1/client/statistics/daily?${params.toString()}`;
+    const pnlParams = new URLSearchParams({
+      start_date: formatDate(startDate.pnl),
+      end_date: formatDate(endDate.pnl),
+    });
+    return {
+      volume: `/v1/client/statistics/daily?${volumeParams.toString()}`,
+      pnl: `/v1/client/statistics/daily?${pnlParams.toString()}`,
+    };
   }, [startDate, endDate]);
 
-  const { data: pnlHistory, isLoading, error } = usePrivateQuery(queryUrl);
+  const { data: volumeHistory } = usePrivateQuery(queryUrl.volume);
+  const { data: pnlHistory } = usePrivateQuery(queryUrl.pnl);
+  const reversedVolumeHistory = useMemo(() => {
+    return volumeHistory ? [...(volumeHistory as UserHistory[])].reverse() : [];
+  }, [volumeHistory]);
 
+  const reversedPnlHistory = useMemo(() => {
+    return pnlHistory ? [...(pnlHistory as UserHistory[])].reverse() : [];
+  }, [pnlHistory]);
   const timeframes: timeframeType[] = ["7D", "30D", "90D", "ALL"];
+
   return (
     <div className="w-full flex flex-col items-center bg-[#15171b] text-white pt-[10px] pb-[100px] min-h-[90vh]">
       <div className="px-2.5 w-full">
@@ -476,24 +507,27 @@ export const Portfolio = () => {
           {/* RIGHT PART */}
           <div className="col-span-2">
             <div className="rounded-md p-3 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <div className="flex items-center justify-between">
-                <p className="text-base mb-4">Volume history</p>
-              </div>
-              <TimeSeriesChart
-                data={pnlHistory as UserHistory[]}
-                type="Volume"
-              />
-            </div>
-            <div className="rounded-md p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <div className="flex items-center justify-between">
-                <p className="text-base mb-4">PnL </p>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-base mb-0.5">Volume history</p>
+                  <p className="text-font-60 text-[10px]">
+                    Last update:{" "}
+                    {volumeHistory
+                      ? getFormattedDate(
+                          reversedVolumeHistory?.[
+                            reversedVolumeHistory?.length - 1
+                          ]?.snapshot_time
+                        )
+                      : "--/--/--"}
+                  </p>
+                </div>
                 <Popover>
                   <PopoverTrigger className="h-full min-w-fit">
                     <button
                       className="rounded text-[12px] flex items-center
              justify-center min-w-[50px] pl-1 text-white font-medium h-[24px] ml-1 w-fit"
                     >
-                      {activeTimeframe}
+                      {activeTimeframe.volume}
                       <IoChevronDown className="text-white text-xs min-w-[18px] ml-[1px]" />
                     </button>
                   </PopoverTrigger>
@@ -504,9 +538,14 @@ export const Portfolio = () => {
                     {timeframes.map((entry, i) => (
                       <button
                         key={i}
-                        onClick={() => setActiveTimeframe(entry)}
+                        onClick={() => {
+                          setActiveTimeframe((prev) => ({
+                            ...prev,
+                            volume: entry,
+                          }));
+                        }}
                         className={`h-[22px] ${
-                          activeTimeframe === entry
+                          activeTimeframe.volume === entry
                             ? "text-base_color font-bold"
                             : "text-white"
                         } w-fit px-1 text-xs`}
@@ -517,7 +556,58 @@ export const Portfolio = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <TimeSeriesChart data={pnlHistory as UserHistory[]} type="PnL" />
+              <TimeSeriesChart data={reversedVolumeHistory} type="Volume" />
+            </div>
+            <div className="rounded-md p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-base mb-0.5">PnL history</p>
+                  <p className="text-font-60 text-[10px]">
+                    Last update:{" "}
+                    {pnlHistory
+                      ? getFormattedDate(
+                          reversedPnlHistory?.[reversedPnlHistory?.length - 1]
+                            ?.snapshot_time
+                        )
+                      : "--/--/--"}
+                  </p>{" "}
+                </div>
+                <Popover>
+                  <PopoverTrigger className="h-full min-w-fit">
+                    <button
+                      className="rounded text-[12px] flex items-center
+             justify-center min-w-[50px] pl-1 text-white font-medium h-[24px] ml-1 w-fit"
+                    >
+                      {activeTimeframe.pnl}
+                      <IoChevronDown className="text-white text-xs min-w-[18px] ml-[1px]" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    sideOffset={0}
+                    className="flex flex-col p-1.5 z-[102] w-fit whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
+                  >
+                    {timeframes.map((entry, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setActiveTimeframe((prev) => ({
+                            ...prev,
+                            pnl: entry,
+                          }));
+                        }}
+                        className={`h-[22px] ${
+                          activeTimeframe.pnl === entry
+                            ? "text-base_color font-bold"
+                            : "text-white"
+                        } w-fit px-1 text-xs`}
+                      >
+                        {entry}
+                      </button>
+                    ))}
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <TimeSeriesChart data={reversedPnlHistory} type="PnL" />
             </div>
             <div className="flex">
               <div className="rounded-md w-[60%] p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">

@@ -44,7 +44,6 @@ export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
         }
       },
     };
-
     (chartInstance.current as any) = new Chart(ctx, {
       type: "line",
       data: {
