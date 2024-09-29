@@ -16,9 +16,10 @@ import { Oval } from "react-loader-spinner";
 
 type EditModalType = {
   order: OrderEntity | any;
+  refresh: any;
 };
 
-export const EditModal = ({ order }: EditModalType) => {
+export const EditModal = ({ order, refresh }: EditModalType) => {
   const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
   const [error, setError] = useState([""]);
   const params = useParams();
@@ -62,7 +63,7 @@ export const EditModal = ({ order }: EditModalType) => {
 
   const currentAsset = symbols?.find((cur) => cur.symbol === order?.symbol);
 
-  const [_, { updateOrder, refresh }] = useOrderStream({
+  const [_, { updateOrder }] = useOrderStream({
     symbol: order?.symbol,
   });
 

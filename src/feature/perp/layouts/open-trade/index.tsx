@@ -20,7 +20,6 @@ import {
   useMaxQty,
   useOrderEntry,
   useAccount as useOrderlyAccount,
-  useOrderStream,
   usePositionStream,
   useSymbolPriceRange,
   useSymbolsInfo,
@@ -39,6 +38,7 @@ type OpenTradeProps = {
   isMobile?: boolean;
   holding?: number;
   asset: FuturesAssetProps;
+  refresh: any;
 };
 const marketType = ["Market", "Limit"];
 
@@ -73,6 +73,7 @@ export const OpenTrade = ({
   isMobile = false,
   asset,
   holding,
+  refresh,
 }: OpenTradeProps) => {
   const accountInstance = useAccountInstance();
   const [isTooltipMarketTypeOpen, setIsTooltipMarketTypeOpen] = useState(false);
@@ -125,10 +126,6 @@ export const OpenTrade = ({
     },
     { watchOrderbook: true }
   );
-
-  const [_, { refresh }] = useOrderStream({
-    symbol: asset.symbol,
-  });
 
   const newMaxQty = useMaxQty(asset?.symbol, values.direction as OrderSide);
 

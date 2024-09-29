@@ -43,7 +43,7 @@ export const Perp = ({ asset }: PerpProps) => {
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
   const useParam = useParams();
-  const [orders, { cancelOrder, refresh }] = useOrderStream(
+  const [orders, { cancelOrder, refresh, updateOrder }] = useOrderStream(
     {},
     {
       keeplive: true,
@@ -195,6 +195,7 @@ export const Perp = ({ asset }: PerpProps) => {
                   orders={orders as API.Order[]}
                   refresh={refresh}
                   cancelOrder={cancelOrder}
+                  updateOrder={updateOrder}
                 />
               </div>
             </div>{" "}
@@ -213,7 +214,7 @@ export const Perp = ({ asset }: PerpProps) => {
               onMouseDown={(e) => handleLastBoxResize(e)}
             />
           )}
-          <OpenTrade asset={asset} holding={usdc?.holding} />
+          <OpenTrade asset={asset} holding={usdc?.holding} refresh={refresh} />
         </div>
       </div>
       <div className="flex items-center justify-center lg:hidden h-screen w-screen fixed top-0 bg-[rgba(0,0,0,0.4)] z-[120]">

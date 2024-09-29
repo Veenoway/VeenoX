@@ -17,6 +17,7 @@ type PositionProps = {
   orders: API.Order[];
   refresh: import("swr/_internal").KeyedMutator<any[]>;
   cancelOrder: (orderId: number, symbol?: string) => Promise<any>;
+  updateOrder: any;
 };
 
 enum Sections {
@@ -32,6 +33,7 @@ export const Position = ({
   refresh,
   cancelOrder,
   orders,
+  updateOrder,
 }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
   const account = useAccountInstance();
