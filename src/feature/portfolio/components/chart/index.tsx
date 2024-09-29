@@ -98,7 +98,6 @@ export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
             cornerRadius: 10,
             callbacks: {
               label: function (context) {
-                console.log(context.dataset);
                 let label = context.dataset.label || "";
                 if (label) {
                   label += ": $";
@@ -166,7 +165,7 @@ export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
   }, [data, labels]);
 
   return (
-    <div className="relative h-[193px]">
+    <div className="relative h-[177px]">
       <canvas ref={chartRef} />
     </div>
   );
