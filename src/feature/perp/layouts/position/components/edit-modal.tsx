@@ -113,7 +113,7 @@ export const EditModal = ({ order }: EditModalType) => {
     } catch (e) {
       setLoading(false);
       console.log("e", e);
-      triggerAlert("Error", JSON.stringify(e));
+      triggerAlert("Error", "Error while updating order");
     }
   };
   return (

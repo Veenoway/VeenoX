@@ -1,11 +1,14 @@
 import { useGeneralContext } from "@/context";
+import { triggerAlert } from "@/lib/toaster";
 import { FuturesAssetProps } from "@/models";
 import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
 import {
+  useAccountInstance,
   useMarginRatio,
   useOrderStream,
   usePositionStream,
 } from "@orderly.network/hooks";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { RenderCells } from "./components/render-cells";
@@ -25,9 +28,13 @@ enum Sections {
 
 export const Position = ({ asset }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
+  const account = useAccountInstance();
   const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { setOrderPositions, orderPositions, shouldRefresh, TPSLOpenOrder } =
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+  const prevLengthRef = useRef<number | null>(null);
+  const isFirstCallRef = useRef(true);
+  const { setOrderPositions, orderPositions, TPSLOpenOrder } =
     useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
@@ -44,14 +51,15 @@ export const Position = ({ asset }: PositionProps) => {
   );
   const [orders, { cancelOrder, refresh }] = useOrderStream({});
   const { currentLeverage } = useMarginRatio();
+  const [{ wallet }] = useConnectWallet();
 
   const triggerRefresh = async () => {
-    await Promise.all([refreshPosition(), refresh()]);
+    await refreshPosition(), refresh();
   };
 
-  useEffect(() => {
-    triggerRefresh();
-  }, [data?.rows?.length, orders?.[0]]);
+  // useEffect(() => {
+  //   if (wallet && data?.rows?.length) triggerRefresh();
+  // }, [wallet, data?.rows?.length]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -177,38 +185,32 @@ export const Position = ({ asset }: PositionProps) => {
 
   const noOrderMessage = getEmptyMessageFromActiveSection();
 
-  // const {
-  //   data: fetchAlgoOrder,
-  //   isLoading,
-  //   error: ooo,
-  // } = usePrivateQuery(
-  //   `/v1/algo/order/${TPSLOpenOrder.algo_order?.algo_order_id}`
-  // );
-  // const tpPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[0]
-  //   ?.trigger_price;
-  // const PositionTpPrice =
-  //   TPSLOpenOrder.algo_order?.child_orders?.[0]?.trigger_price;
-  // const slPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[1]
-  //   ?.trigger_price;
-  // const positionSlPrice =
-  //   TPSLOpenOrder.algo_order?.child_orders?.[1]?.trigger_price;
-  // console.log(
-  //   "tpPrice !== PositionTpPrice || slPrice !== positionSlPrice",
-  //   tpPrice,
-  //   PositionTpPrice,
-  //   ":::",
-  //   slPrice,
-  //   positionSlPrice
-  // );
-  // useEffect(() => {
-  //   // if ((fetchAlgoOrder as API.AlgoOrderExt)?.child_orders) {
+  useEffect(() => {
+    if (data?.rows) {
+      const currentLength = data.rows.length;
 
-  //   if (tpPrice !== PositionTpPrice || slPrice !== positionSlPrice) {
-  //     console.log("fjriof");
-  //     refreshPosition();
-  //   }
-  //   // }
-  // }, [order, fetchAlgoOrder, TPSLOpenOrder, refreshPosition]);
+      if (isFirstCallRef.current) {
+        prevLengthRef.current = currentLength;
+        isFirstCallRef.current = false;
+      } else {
+        if (
+          prevLengthRef.current !== null &&
+          currentLength !== prevLengthRef.current
+        ) {
+          setShouldRefresh(true);
+        }
+        prevLengthRef.current = currentLength;
+      }
+    }
+  }, [data?.rows]);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      refresh();
+      triggerAlert("Information", "REFRESHED");
+      setShouldRefresh(false);
+    }
+  }, [shouldRefresh]);
 
   return (
     <div className="w-full min-h-[320px] h-[320px] max-h-[320px]">
