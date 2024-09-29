@@ -1,11 +1,15 @@
-import { useDaily } from "@orderly.network/hooks";
 import Chart from "chart.js/auto";
 import { useEffect, useMemo, useRef } from "react";
+import { UserHistory } from "../../model";
 
-export const TimeSeriesChart = () => {
+interface TimeSeriesChartType {
+  data: UserHistory[];
+  type: "PnL" | "Volume" | "Cumulative PnL";
+}
+
+export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
-  const { data } = useDaily();
 
   const labels = useMemo(
     () => data?.map((entry) => new Date(entry.date).toLocaleDateString()) || [],
@@ -40,19 +44,30 @@ export const TimeSeriesChart = () => {
         }
       },
     };
-
     (chartInstance.current as any) = new Chart(ctx, {
       type: "line",
       data: {
         labels: labels,
         datasets: [
           {
-            label: "Volume",
-            data: data?.map((entry) => entry.perp_volume) || [],
+            label: type,
+            data:
+              data?.map((entry: { pnl: number; perp_volume: number }) => {
+                switch (type) {
+                  case "PnL":
+                    return entry.pnl;
+                  case "Cumulative PnL":
+                    return entry.pnl;
+                  case "Volume":
+                    return entry.perp_volume;
+                  default:
+                    return entry.pnl;
+                }
+              }) || [],
             borderColor: "#836EF9",
             borderWidth: 2,
             backgroundColor: "rgba(131, 110, 249, 0.1)",
-            tension: 0.8,
+            tension: 0.3,
             fill: false,
             pointRadius: 0,
             pointHoverRadius: 4,
@@ -150,13 +165,8 @@ export const TimeSeriesChart = () => {
   }, [data, labels]);
 
   return (
-    <div className="relative h-[200px]">
+    <div className="relative h-[177px]">
       <canvas ref={chartRef} />
-      {(data?.length || 0) < 2 ? (
-        <div className="absolute backdrop-blur-sm left-0 flex items-center justify-center top-0 h-full w-full">
-          <p className="text-lg font-medium">Not enough Volume</p>
-        </div>
-      ) : null}
     </div>
   );
 };
