@@ -176,8 +176,8 @@ export const Portfolio = () => {
 
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const { data: accountInfo } = useAccountInfo();
-  type timeframeType = "7D" | "30D" | "90D" | "ALL";
-  const timeframes: timeframeType[] = ["7D", "30D", "90D", "ALL"];
+  type timeframeType = "7D" | "3D" | "30D" | "90D" | "ALL";
+  const timeframes: timeframeType[] = ["3D", "7D", "30D", "90D", "ALL"];
   const [activeTimeframe, setActiveTimeframe] = useState({
     volume: "30D" as timeframeType,
     pnl: "30D" as timeframeType,
@@ -196,6 +196,9 @@ export const Portfolio = () => {
       const end = Date.now();
       let start;
       switch (timeframe) {
+        case "3D":
+          start = end - 3 * 24 * 60 * 60 * 1000;
+          break;
         case "7D":
           start = end - 7 * 24 * 60 * 60 * 1000;
           break;
