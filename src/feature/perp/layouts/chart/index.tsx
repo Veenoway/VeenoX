@@ -126,7 +126,13 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const prevPendingRef = useRef("");
   const [currentInterval, setCurrentInterval] = useState<string>("");
   const order = orders?.rows?.find((entry) => entry.symbol === asset?.symbol);
-  const [ordersData, { refresh }] = useOrderStream({ symbol: asset?.symbol });
+  const [ordersData, { refresh }] = useOrderStream(
+    { symbol: asset?.symbol },
+    {
+      keeplive: true,
+      stopOnUnmount: false,
+    }
+  );
 
   const pendingPosition = useMemo(() => {
     return (

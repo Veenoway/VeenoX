@@ -48,7 +48,13 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateIfStale: true,
     }
   );
-  const [orders, { cancelOrder, refresh }] = useOrderStream({});
+  const [orders, { cancelOrder, refresh }] = useOrderStream(
+    {},
+    {
+      keeplive: true,
+      stopOnUnmount: false,
+    }
+  );
   const { currentLeverage } = useMarginRatio();
   const [{ wallet }] = useConnectWallet();
 
