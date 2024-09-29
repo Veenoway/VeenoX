@@ -9,9 +9,14 @@ import { TriggerMobileTradeCreator } from "./trigger";
 type MobileOpenTradeProps = {
   asset: FuturesAssetProps;
   holding?: number;
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
 };
 
-export const MobileOpenTrade = ({ asset, holding }: MobileOpenTradeProps) => {
+export const MobileOpenTrade = ({
+  asset,
+  holding,
+  refresh,
+}: MobileOpenTradeProps) => {
   const { showMobileTradeCreator, setShowMobileTradeCreator } =
     useGeneralContext();
   const tradeCreatorRef = useRef<HTMLDivElement>(null);
@@ -32,7 +37,12 @@ export const MobileOpenTrade = ({ asset, holding }: MobileOpenTradeProps) => {
             ref={tradeCreatorRef}
             className={` h-fit w-full md:w-[350px] z-[100] left-0  transition-all duration-200 ease-in-out bg-secondary border-t border-borderColor shadow-2xl flex`}
           >
-            <OpenTrade asset={asset} isMobile holding={holding} />
+            <OpenTrade
+              asset={asset}
+              isMobile
+              holding={holding}
+              refresh={refresh}
+            />
             <Orderbook asset={asset} isMobileOpenTrade isMobile />
           </div>
         </DrawerContent>

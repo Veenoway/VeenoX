@@ -226,7 +226,11 @@ export const Perp = ({ asset }: PerpProps) => {
         </div>
       </div>
       <MaintenanceStatusModal />
-      <MobileOpenTrade asset={asset} holding={usdc?.holding} />
+      <MobileOpenTrade
+        asset={asset}
+        holding={usdc?.holding}
+        refresh={refresh}
+      />
     </div>
   );
 };
