@@ -38,7 +38,7 @@ type OpenTradeProps = {
   isMobile?: boolean;
   holding?: number;
   asset: FuturesAssetProps;
-  refresh: any;
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
 };
 const marketType = ["Market", "Limit"];
 
