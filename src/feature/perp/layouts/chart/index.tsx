@@ -145,7 +145,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         );
       }) || []
     );
-  }, [ordersData]);
+  }, [ordersData, orders]);
 
   const relevantPositions = useMemo(() => {
     return (
@@ -545,6 +545,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         (prevPositionsRef as any).current = relevantPositions;
         (prevPendingPriceRef as any).current = prices;
         (prevPendingRef as any).current = pendingPosition?.length;
+        refresh();
       } else updatePositions();
       prevTimeframe.current = timeframe;
     } catch (e) {}
