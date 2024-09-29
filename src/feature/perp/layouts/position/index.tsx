@@ -1,5 +1,4 @@
 import { useGeneralContext } from "@/context";
-import { triggerAlert } from "@/lib/toaster";
 import { FuturesAssetProps } from "@/models";
 import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
 import {
@@ -207,8 +206,8 @@ export const Position = ({ asset }: PositionProps) => {
   useEffect(() => {
     if (shouldRefresh) {
       refresh();
-      triggerAlert("Information", "REFRESHED");
       setShouldRefresh(false);
+      console.log("refreshed");
     }
   }, [shouldRefresh]);
 

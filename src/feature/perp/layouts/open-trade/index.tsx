@@ -212,13 +212,14 @@ export const OpenTrade = ({
       values?.quantity
     );
     try {
-      const res = await onSubmit(val as OrderEntity);
+      await onSubmit(val as OrderEntity);
       toast.update(id, {
         render: "Order executed",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
+      await Promise.all([refresh(), refreshPosition()]);
     } catch (err: any) {
       toast.update(id, {
         render: err?.message,
@@ -227,8 +228,6 @@ export const OpenTrade = ({
         autoClose: 2000,
       });
     } finally {
-      refresh();
-      refreshPosition();
       setOrderPositions(val as any);
       setValues({
         ...defaultValues,
