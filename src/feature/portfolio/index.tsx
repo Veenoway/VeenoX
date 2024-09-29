@@ -177,6 +177,7 @@ export const Portfolio = () => {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const { data: accountInfo } = useAccountInfo();
   type timeframeType = "7D" | "30D" | "90D" | "ALL";
+  const timeframes: timeframeType[] = ["7D", "30D", "90D", "ALL"];
   const [activeTimeframe, setActiveTimeframe] = useState({
     volume: "30D" as timeframeType,
     pnl: "30D" as timeframeType,
@@ -242,6 +243,7 @@ export const Portfolio = () => {
 
   const { data: volumeHistory } = usePrivateQuery(queryUrl.volume);
   const { data: pnlHistory } = usePrivateQuery(queryUrl.pnl);
+
   const reversedVolumeHistory = useMemo(() => {
     return volumeHistory ? [...(volumeHistory as UserHistory[])].reverse() : [];
   }, [volumeHistory]);
@@ -249,7 +251,25 @@ export const Portfolio = () => {
   const reversedPnlHistory = useMemo(() => {
     return pnlHistory ? [...(pnlHistory as UserHistory[])].reverse() : [];
   }, [pnlHistory]);
-  const timeframes: timeframeType[] = ["7D", "30D", "90D", "ALL"];
+
+  const calculateCumulativePnl = (history: UserHistory[]): UserHistory[] => {
+    let cumulativePnl = 0;
+    return history.map((entry) => {
+      cumulativePnl += entry.pnl;
+      return {
+        ...entry,
+        pnl: cumulativePnl,
+      };
+    });
+  };
+
+  const cumulativePnlHistory = useMemo(() => {
+    if (!reversedPnlHistory.length) return [];
+    const sortedHistory = [...reversedVolumeHistory].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    return calculateCumulativePnl(sortedHistory);
+  }, [reversedVolumeHistory]);
 
   return (
     <div className="w-full flex flex-col items-center bg-[#15171b] text-white pt-[10px] pb-[100px] min-h-[90vh]">
@@ -509,14 +529,13 @@ export const Portfolio = () => {
             <div className="rounded-md p-3 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-base mb-0.5">Volume history</p>
+                  <p className="text-base mb-0.5">Cumulative PnL</p>
                   <p className="text-font-60 text-[10px]">
                     Last update:{" "}
-                    {volumeHistory
+                    {cumulativePnlHistory.length
                       ? getFormattedDate(
-                          reversedVolumeHistory?.[
-                            reversedVolumeHistory?.length - 1
-                          ]?.snapshot_time
+                          cumulativePnlHistory[cumulativePnlHistory.length - 1]
+                            .snapshot_time
                         )
                       : "--/--/--"}
                   </p>
@@ -556,8 +575,12 @@ export const Portfolio = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <TimeSeriesChart data={reversedVolumeHistory} type="Volume" />
+              <TimeSeriesChart
+                data={cumulativePnlHistory}
+                type="Cumulative PnL"
+              />
             </div>
+
             <div className="rounded-md p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
               <div className="flex items-center justify-between mb-4">
                 <div>

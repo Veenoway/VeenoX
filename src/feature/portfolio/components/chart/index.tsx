@@ -4,7 +4,7 @@ import { UserHistory } from "../../model";
 
 interface TimeSeriesChartType {
   data: UserHistory[];
-  type: "PnL" | "Volume" | "Cumulative";
+  type: "PnL" | "Volume" | "Cumulative PnL";
 }
 
 export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
@@ -56,7 +56,7 @@ export const TimeSeriesChart = ({ data, type }: TimeSeriesChartType) => {
                 switch (type) {
                   case "PnL":
                     return entry.pnl;
-                  case "Cumulative":
+                  case "Cumulative PnL":
                     return entry.pnl;
                   case "Volume":
                     return entry.perp_volume;
