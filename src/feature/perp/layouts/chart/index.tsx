@@ -2,11 +2,8 @@ import { Loader } from "@/components/loader";
 import { useGeneralContext } from "@/context";
 import { FuturesAssetProps } from "@/models";
 import { cn } from "@/utils/cn";
-import {
-  useOrderStream,
-  usePositionStream,
-  useWS,
-} from "@orderly.network/hooks";
+import { usePositionStream, useWS } from "@orderly.network/hooks";
+import { API } from "@orderly.network/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
@@ -31,6 +28,8 @@ interface TradingViewChartProps {
   custom_css_url?: string;
   className?: string;
   params: any;
+  orders: API.Order[];
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
 }
 
 interface ChartElement {
@@ -111,6 +110,8 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   custom_css_url = "../themed.css",
   className = "",
   params,
+  refresh,
+  orders: ordersData,
 }) => {
   const { isChartLoading, setIsChartLoading } = useGeneralContext();
   const ref = useRef<HTMLDivElement>(null);
@@ -126,13 +127,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const prevPendingRef = useRef("");
   const [currentInterval, setCurrentInterval] = useState<string>("");
   const order = orders?.rows?.find((entry) => entry.symbol === asset?.symbol);
-  const [ordersData, { refresh }] = useOrderStream(
-    { symbol: asset?.symbol },
-    {
-      keeplive: true,
-      stopOnUnmount: false,
-    }
-  );
 
   const pendingPosition = useMemo(() => {
     return (
@@ -406,7 +400,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       const newPrices: number[] = [];
 
       pendingPosition?.forEach((entry) => {
-        newPrices.push(entry.price);
+        newPrices.push(entry.price as number);
       });
 
       if (
@@ -538,9 +532,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         setIsChartLoading(false);
         setChartLines(newChartLines);
         const prices: number[] = [];
-        pendingPosition?.forEach((entry) => {
-          prices.push(entry.price);
-        });
+        pendingPosition?.forEach((entry) => prices.push(entry.price as number));
 
         (prevPositionsRef as any).current = relevantPositions;
         (prevPendingPriceRef as any).current = prices;

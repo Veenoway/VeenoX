@@ -4,10 +4,9 @@ import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
 import {
   useAccountInstance,
   useMarginRatio,
-  useOrderStream,
   usePositionStream,
 } from "@orderly.network/hooks";
-import { useConnectWallet } from "@web3-onboard/react";
+import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { RenderCells } from "./components/render-cells";
@@ -15,6 +14,9 @@ import { thead } from "./constants";
 
 type PositionProps = {
   asset: FuturesAssetProps;
+  orders: API.Order[];
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
+  cancelOrder: (orderId: number, symbol?: string) => Promise<any>;
 };
 
 enum Sections {
@@ -25,7 +27,12 @@ enum Sections {
   ORDER_HISTORY = 4,
 }
 
-export const Position = ({ asset }: PositionProps) => {
+export const Position = ({
+  asset,
+  refresh,
+  cancelOrder,
+  orders,
+}: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
   const account = useAccountInstance();
   const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
@@ -33,6 +40,7 @@ export const Position = ({ asset }: PositionProps) => {
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const prevLengthRef = useRef<number | null>(null);
   const isFirstCallRef = useRef(true);
+  const { currentLeverage } = useMarginRatio();
   const { setOrderPositions, orderPositions, TPSLOpenOrder } =
     useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
@@ -48,23 +56,6 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateIfStale: true,
     }
   );
-  const [orders, { cancelOrder, refresh }] = useOrderStream(
-    {},
-    {
-      keeplive: true,
-      stopOnUnmount: false,
-    }
-  );
-  const { currentLeverage } = useMarginRatio();
-  const [{ wallet }] = useConnectWallet();
-
-  const triggerRefresh = async () => {
-    await refreshPosition(), refresh();
-  };
-
-  // useEffect(() => {
-  //   if (wallet && data?.rows?.length) triggerRefresh();
-  // }, [wallet, data?.rows?.length]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -299,9 +290,9 @@ export const Position = ({ asset }: PositionProps) => {
                 : Array.from({ length: 1 })
               : orders
                   ?.filter(filterSide)
-                  ?.sort((a, b) => b.updated_time - a.updated_time)
+                  ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
                   ?.filter((_, i) => i < 40)
-            )?.map((order, i) => {
+            )?.map((order: (API.PositionTPSLExt | API.Order) | any, i) => {
               if (
                 (activeSection === 0 && !data?.rows?.length) ||
                 (activeSection > 0 && !orders?.length)
