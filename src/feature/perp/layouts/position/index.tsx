@@ -2,10 +2,11 @@ import { useGeneralContext } from "@/context";
 import { FuturesAssetProps } from "@/models";
 import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
 import {
+  useAccountInstance,
   useMarginRatio,
-  useOrderStream,
   usePositionStream,
 } from "@orderly.network/hooks";
+import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { RenderCells } from "./components/render-cells";
@@ -13,6 +14,10 @@ import { thead } from "./constants";
 
 type PositionProps = {
   asset: FuturesAssetProps;
+  orders: API.Order[];
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
+  cancelOrder: (orderId: number, symbol?: string) => Promise<any>;
+  updateOrder: any;
 };
 
 enum Sections {
@@ -23,11 +28,22 @@ enum Sections {
   ORDER_HISTORY = 4,
 }
 
-export const Position = ({ asset }: PositionProps) => {
+export const Position = ({
+  asset,
+  refresh,
+  cancelOrder,
+  orders,
+  updateOrder,
+}: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
+  const account = useAccountInstance();
   const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { setOrderPositions, orderPositions, shouldRefresh, TPSLOpenOrder } =
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+  const prevLengthRef = useRef<number | null>(null);
+  const isFirstCallRef = useRef(true);
+  const { currentLeverage } = useMarginRatio();
+  const { setOrderPositions, orderPositions, TPSLOpenOrder } =
     useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
@@ -42,16 +58,6 @@ export const Position = ({ asset }: PositionProps) => {
       revalidateIfStale: true,
     }
   );
-  const [orders, { cancelOrder, refresh }] = useOrderStream({});
-  const { currentLeverage } = useMarginRatio();
-
-  const triggerRefresh = async () => {
-    await Promise.all([refresh(), refreshPosition()]);
-  };
-
-  useEffect(() => {
-    triggerRefresh();
-  }, [data?.rows?.length, orders?.length]);
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -177,38 +183,32 @@ export const Position = ({ asset }: PositionProps) => {
 
   const noOrderMessage = getEmptyMessageFromActiveSection();
 
-  // const {
-  //   data: fetchAlgoOrder,
-  //   isLoading,
-  //   error: ooo,
-  // } = usePrivateQuery(
-  //   `/v1/algo/order/${TPSLOpenOrder.algo_order?.algo_order_id}`
-  // );
-  // const tpPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[0]
-  //   ?.trigger_price;
-  // const PositionTpPrice =
-  //   TPSLOpenOrder.algo_order?.child_orders?.[0]?.trigger_price;
-  // const slPrice = (fetchAlgoOrder as API.AlgoOrderExt)?.child_orders?.[1]
-  //   ?.trigger_price;
-  // const positionSlPrice =
-  //   TPSLOpenOrder.algo_order?.child_orders?.[1]?.trigger_price;
-  // console.log(
-  //   "tpPrice !== PositionTpPrice || slPrice !== positionSlPrice",
-  //   tpPrice,
-  //   PositionTpPrice,
-  //   ":::",
-  //   slPrice,
-  //   positionSlPrice
-  // );
-  // useEffect(() => {
-  //   // if ((fetchAlgoOrder as API.AlgoOrderExt)?.child_orders) {
+  useEffect(() => {
+    if (data?.rows) {
+      const currentLength = data.rows.length;
 
-  //   if (tpPrice !== PositionTpPrice || slPrice !== positionSlPrice) {
-  //     console.log("fjriof");
-  //     refreshPosition();
-  //   }
-  //   // }
-  // }, [order, fetchAlgoOrder, TPSLOpenOrder, refreshPosition]);
+      if (isFirstCallRef.current) {
+        prevLengthRef.current = currentLength;
+        isFirstCallRef.current = false;
+      } else {
+        if (
+          prevLengthRef.current !== null &&
+          currentLength !== prevLengthRef.current
+        ) {
+          setShouldRefresh(true);
+        }
+        prevLengthRef.current = currentLength;
+      }
+    }
+  }, [data?.rows]);
+
+  useEffect(() => {
+    if (shouldRefresh) {
+      refresh();
+      setShouldRefresh(false);
+      console.log("refreshed");
+    }
+  }, [shouldRefresh]);
 
   return (
     <div className="w-full min-h-[320px] h-[320px] max-h-[320px]">
@@ -292,9 +292,9 @@ export const Position = ({ asset }: PositionProps) => {
                 : Array.from({ length: 1 })
               : orders
                   ?.filter(filterSide)
-                  ?.sort((a, b) => b.updated_time - a.updated_time)
+                  ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
                   ?.filter((_, i) => i < 40)
-            )?.map((order, i) => {
+            )?.map((order: (API.PositionTPSLExt | API.Order) | any, i) => {
               if (
                 (activeSection === 0 && !data?.rows?.length) ||
                 (activeSection > 0 && !orders?.length)

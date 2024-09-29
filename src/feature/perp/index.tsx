@@ -4,7 +4,12 @@ import { useResizer } from "@/hook/useResizer";
 import { EnableTrading } from "@/layouts/enable-trading";
 import { MaintenanceStatusModal } from "@/modals/maintenance";
 import { FavoriteProps, FuturesAssetProps } from "@/models";
-import { useHoldingStream, useMarkets } from "@orderly.network/hooks";
+import {
+  useHoldingStream,
+  useMarkets,
+  useOrderStream,
+} from "@orderly.network/hooks";
+import { API } from "@orderly.network/types";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
@@ -38,6 +43,12 @@ export const Perp = ({ asset }: PerpProps) => {
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
   const useParam = useParams();
+  const [orders, { cancelOrder, refresh, updateOrder }] = useOrderStream(
+    {},
+    {
+      keeplive: true,
+    }
+  );
 
   const [
     data,
@@ -118,6 +129,8 @@ export const Perp = ({ asset }: PerpProps) => {
                         params={useParam}
                         asset={asset}
                         className={""}
+                        refresh={refresh}
+                        orders={orders as API.Order[]}
                       />
                     </div>
                   </>
@@ -137,6 +150,8 @@ export const Perp = ({ asset }: PerpProps) => {
                         params={useParam}
                         asset={asset}
                         className={""}
+                        refresh={refresh}
+                        orders={orders as API.Order[]}
                       />
                     </div>
                     <div
@@ -175,7 +190,13 @@ export const Perp = ({ asset }: PerpProps) => {
             />
             <div className=" w-full min-h-[350px] h-[350px] ">
               <div className="no-scrollbar">
-                <Position asset={asset} />
+                <Position
+                  asset={asset}
+                  orders={orders as API.Order[]}
+                  refresh={refresh}
+                  cancelOrder={cancelOrder}
+                  updateOrder={updateOrder}
+                />
               </div>
             </div>{" "}
           </div>
@@ -193,7 +214,7 @@ export const Perp = ({ asset }: PerpProps) => {
               onMouseDown={(e) => handleLastBoxResize(e)}
             />
           )}
-          <OpenTrade asset={asset} holding={usdc?.holding} />
+          <OpenTrade asset={asset} holding={usdc?.holding} refresh={refresh} />
         </div>
       </div>
       <div className="flex items-center justify-center lg:hidden h-screen w-screen fixed top-0 bg-[rgba(0,0,0,0.4)] z-[120]">
@@ -205,7 +226,11 @@ export const Perp = ({ asset }: PerpProps) => {
         </div>
       </div>
       <MaintenanceStatusModal />
-      <MobileOpenTrade asset={asset} holding={usdc?.holding} />
+      <MobileOpenTrade
+        asset={asset}
+        holding={usdc?.holding}
+        refresh={refresh}
+      />
     </div>
   );
 };

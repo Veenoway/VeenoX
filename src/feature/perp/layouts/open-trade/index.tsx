@@ -20,7 +20,6 @@ import {
   useMaxQty,
   useOrderEntry,
   useAccount as useOrderlyAccount,
-  useOrderStream,
   usePositionStream,
   useSymbolPriceRange,
   useSymbolsInfo,
@@ -39,6 +38,7 @@ type OpenTradeProps = {
   isMobile?: boolean;
   holding?: number;
   asset: FuturesAssetProps;
+  refresh: import("swr/_internal").KeyedMutator<any[]>;
 };
 const marketType = ["Market", "Limit"];
 
@@ -73,6 +73,7 @@ export const OpenTrade = ({
   isMobile = false,
   asset,
   holding,
+  refresh,
 }: OpenTradeProps) => {
   const accountInstance = useAccountInstance();
   const [isTooltipMarketTypeOpen, setIsTooltipMarketTypeOpen] = useState(false);
@@ -125,10 +126,6 @@ export const OpenTrade = ({
     },
     { watchOrderbook: true }
   );
-
-  const [_, { refresh }] = useOrderStream({
-    symbol: asset.symbol,
-  });
 
   const newMaxQty = useMaxQty(asset?.symbol, values.direction as OrderSide);
 
@@ -212,13 +209,14 @@ export const OpenTrade = ({
       values?.quantity
     );
     try {
-      const res = await onSubmit(val as OrderEntity);
+      await onSubmit(val as OrderEntity);
       toast.update(id, {
         render: "Order executed",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
+      await Promise.all([refresh(), refreshPosition()]);
     } catch (err: any) {
       toast.update(id, {
         render: err?.message,
@@ -227,12 +225,10 @@ export const OpenTrade = ({
         autoClose: 2000,
       });
     } finally {
-      refresh();
-      refreshPosition();
       setOrderPositions(val as any);
       setValues({
         ...defaultValues,
-        quantity: newMaxQty.toString(),
+        quantity: newMaxQty ? getFormattedAmount(newMaxQty).toString() : "0",
         direction: values.direction,
       });
       setSliderValue(100);

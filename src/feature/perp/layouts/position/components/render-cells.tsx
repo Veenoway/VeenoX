@@ -28,6 +28,7 @@ export const RenderCells = ({
   activeSection,
   closePendingOrder,
   refreshPosition,
+  refresh,
 }: any) => {
   const {
     TPSLOpenOrder,
@@ -64,7 +65,8 @@ export const RenderCells = ({
         onSubmit,
         setEditPendingPositionOpen,
         currentLeverage,
-        refreshPosition
+        refreshPosition,
+        refresh
       )}
 
       {TPSLOpenOrder ? <TPSLModal refreshPosition={refreshPosition} /> : null}
@@ -105,7 +107,8 @@ const renderAdditionalCells = (
   onSubmit: any,
   setEditPendingPositionOpen: Dispatch<SetStateAction<boolean>>,
   currentLeverage: number | null,
-  refreshPosition: any
+  refreshPosition: any,
+  refresh: any
 ) => {
   if (section === Sections.FILLED) {
     let filledOrder =
@@ -207,7 +210,7 @@ const renderAdditionalCells = (
         </td>
         <td className={cn(tdStyle, "pr-5")}>
           <div className="flex items-center justify-end w-full h-full">
-            <EditModal order={trade} />
+            <EditModal order={trade} refresh={refresh} />
             <button
               key={trade?.order_id}
               onClick={() => {

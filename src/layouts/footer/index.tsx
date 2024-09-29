@@ -33,7 +33,7 @@ export const Footer = () => {
               Join our community
             </p>
             <Link
-              href="https://discord.com/invite/vwjQ24yZ"
+              href="https://discord.gg/bM4t5AdMQF"
               target="_blank"
               rel="noopener noreferrer"
             >
