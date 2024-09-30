@@ -40,7 +40,7 @@ export const LandingHeader = () => {
           <li>
             {" "}
             <Link
-              href="https://t.me/@veenox_xyz"
+              href="https://t.me/veenox_xyz"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full hover:text-base_color"
@@ -50,7 +50,7 @@ export const LandingHeader = () => {
           </li>
           <li>
             <Link
-              href="https://discord.gg/bM4t5AdMQF"
+              href="https://discord.gg/wPTSZXzUcN"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full h-full hover:text-base_color"
