@@ -105,7 +105,7 @@ export const Bridge = () => {
           />
         </div>
         */}
-          <div className="flex items-center justify-center gap-3">
+          {/* <div className="flex items-center justify-center gap-3">
             {
               activeBridge === "LiFi" ? (
                 <>
@@ -127,7 +127,7 @@ export const Bridge = () => {
               //   width={150}
               // />
             }
-          </div>
+          </div> */}
 
           <div className="relative w-full max-w-[420px] h-[606px] mt-[40px] z-0">
             <div

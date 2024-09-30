@@ -33,7 +33,15 @@ export const Header = () => {
               <li>
                 <Link href="/portfolio">Portfolio</Link>
               </li>
-              <li className="cursor-not-allowed text-font-40">Doc</li>
+              <li>
+                <Link
+                  href="https://veenox.gitbook.io/veenox/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Doc
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>

@@ -85,8 +85,10 @@ export const Portfolio = () => {
   const { state, account } = useOrderlyAccount();
   const [activeSection, setActiveSection] = useState(0);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const { setIsDeposit, setOpenWithdraw } = useGeneralContext();
+  const { setIsDeposit, setOpenWithdraw, setIsEnableTradingModalOpen } =
+    useGeneralContext();
   const [showKeys, setShowKeys] = useState<string[]>([]);
+
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
     left: string;
@@ -290,7 +292,7 @@ export const Portfolio = () => {
                     </p>
                   </div>
                   <div className="flex flex-col items-end">
-                    <p className="text-base">
+                    {/* <p className="text-base">
                       {wallet
                         ? addressSlicer(wallet?.accounts?.[0]?.address)
                         : "0x00..0000"}
@@ -307,6 +309,34 @@ export const Portfolio = () => {
                       ) : (
                         <MdOutlineContentCopy className="ml-2" />
                       )}
+                    </div> */}
+                    <div className="flex items-center">
+                      <button
+                        className="border border-base_color rounded-md px-3 ml-2 h-[35px] text-base_color text-sm"
+                        onClick={async () => {
+                          if (state.status >= 5) {
+                            setOpenWithdraw(true);
+                            setIsDeposit(false);
+                          } else if (state.status >= 2)
+                            setIsEnableTradingModalOpen(true);
+                          else await connectWallet();
+                        }}
+                      >
+                        Withdraw
+                      </button>
+                      <button
+                        className="bg-base_color border border-borderColor rounded-md px-3 ml-2 h-[35px] text-white text-sm"
+                        onClick={async () => {
+                          if (state.status >= 5) {
+                            setOpenWithdraw(true);
+                            setIsDeposit(true);
+                          } else if (state.status >= 2)
+                            setIsEnableTradingModalOpen(true);
+                          else await connectWallet();
+                        }}
+                      >
+                        Deposit
+                      </button>
                     </div>
                   </div>{" "}
                 </div>
@@ -697,7 +727,22 @@ export const Portfolio = () => {
               </div>
             </div>
             <div className="rounded-md w-full p-3 min-w-[300px] mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
-              <p className="text-base">API Trading</p>
+              <div className="flex items-center justify-between">
+                <p className="text-base">API Trading</p>
+                <div
+                  className="flex items-center cursor-pointer text-font-80 text-sm"
+                  onClick={() =>
+                    copyToClipboard((state?.userId as string) || "")
+                  }
+                >
+                  <p>UID: {state.userId || "N/A"}</p>
+                  {isCopied === state.userId ? (
+                    <FaCheck className="ml-2 text-green" />
+                  ) : (
+                    <MdOutlineContentCopy className="ml-2" />
+                  )}
+                </div>{" "}
+              </div>
               {content.map((key, i) => {
                 const isEven: boolean = i % 2 === 0;
                 return (
