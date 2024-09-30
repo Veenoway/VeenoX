@@ -14,7 +14,12 @@ export const LandingHeader = () => {
       <img
         src="/veenox/veenox-text.png"
         alt="Veeno Logo"
-        className="h-[30px] md:h-[35px] w-auto max-w-auto max-h-[25px] sm:max-w-auto md:max-h-[35px]"
+        className="h-[30px] md:h-[35px] md:block hidden w-auto max-w-auto max-h-[25px] sm:max-w-auto md:max-h-[35px]"
+      />
+      <img
+        src="/veenox/Logo-V-1.png"
+        alt="Veeno Logo"
+        className="h-[27px] md:hidden block w-auto max-w-auto max-h-[30px] sm:max-w-auto"
       />
       <nav className="h-full cursor-pointer">
         <ul className="text-white text-medium text-sm md:text-base flex items-center gap-2.5 md:gap-5 h-full">
@@ -56,6 +61,16 @@ export const LandingHeader = () => {
               className="w-full h-full hover:text-base_color"
             >
               Discord
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://veenox.gitbook.io/veenox"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-full hover:text-base_color"
+            >
+              Docs
             </Link>
           </li>
         </ul>

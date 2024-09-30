@@ -39,7 +39,7 @@ export const Header = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Doc
+                  Docs
                 </Link>
               </li>
             </ul>
