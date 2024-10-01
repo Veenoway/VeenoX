@@ -23,14 +23,6 @@ export const LandingHeader = () => {
       />
       <nav className="h-full cursor-pointer">
         <ul className="text-white text-medium text-sm md:text-base flex items-center gap-2.5 md:gap-5 h-full">
-          {/* <li>
-            <Link
-              href="/perp/PERP_BTC_USDC"
-              className="w-full h-full hover:text-base_color"
-            >
-              Perps
-            </Link>
-          </li> */}
           <li>
             {" "}
             <Link
