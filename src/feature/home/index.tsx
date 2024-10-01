@@ -173,7 +173,7 @@ export const Home = () => {
               className="overflow-hidden block relative md:whitespace-nowrap
                text-4xl lg:text-6xl font-extrabold w-auto text-white uppercase text-start lg:leading-[60px]"
             >
-              Unleash limitless
+              Unleash the limitless
               <br />
               trading with <br />
               <span className="text-base_color"> lowest fees</span>
@@ -276,7 +276,8 @@ export const Home = () => {
             className="overflow-hidden block relative lg:whitespace-nowrap
               text-4xl lg:text-5xl font-bold w-fit opacity-100 mr-auto text-white"
           >
-            <span className="text-base_color">Level up </span>trading experience
+            <span className="text-base_color">Level up </span> your trading
+            experience
           </h2>
           <Carousel items={cards} />
         </div>{" "}
