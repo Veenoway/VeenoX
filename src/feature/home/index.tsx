@@ -326,12 +326,12 @@ export const Home = () => {
                   exchange a wide variety of digital assets across different
                   blockchains.
                 </p>
-                <button className="mt-[30px] lg:mt-[40px] opacity-50 cursor-not-allowed h-[40px] lg:h-[50px] px-3 rounded-full text-white text-sm lg:text-lg mr-auto border border-base_color">
-                  {/* <Link href="/perp/PERP_BTC_USDC" className="w-full h-full"> */}
-                  <div className="flex items-center justify-center w-full font-semibold text-base text-base_color h-full px-4 py-2">
-                    Swap now
-                  </div>
-                  {/* </Link> */}
+                <button className="mt-[30px] lg:mt-[40px] h-[40px] lg:h-[50px] px-3 rounded-full text-white text-sm lg:text-lg mr-auto border border-base_color">
+                  <Link href="/bridge" className="w-full h-full">
+                    <div className="flex items-center justify-center w-full font-semibold text-base text-base_color h-full px-4 py-2">
+                      Swap now
+                    </div>
+                  </Link>
                 </button>
               </div>
             </div>
@@ -368,14 +368,17 @@ export const Home = () => {
               justify-center p-2 lg:p-5 text-white text-xl lg:text-3xl w-[60px] lg:w-[120px] h-[60px] lg:h-[120px] rounded-xl"
               >
                 <IoAddOutline className="-ml-2 text-lg lg:text-2xl" />
-                <p>11</p>
+                <p>24</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full h-fit flex flex-col items-center bg-[#15171B] py-[50px] lg:py-[150px]">
+      <div
+        id="faq"
+        className="w-full h-fit flex flex-col items-center bg-[#15171B] py-[50px] lg:py-[150px]"
+      >
         <div className="w-[90%] max-w-[1200px]">
           <h2
             className="overflow-hidden block relative lg:whitespace-nowrap

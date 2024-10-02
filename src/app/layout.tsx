@@ -1,5 +1,5 @@
+import { DynamicFooter } from "@/layouts/dynamic-footer";
 import { DynamicHeader } from "@/layouts/dynamic-header";
-import { Footer } from "@/layouts/footer";
 import Web3OnBoardProvider from "@/lib/web3onBoard/provider";
 import { Providers } from "@/provider/wrapper";
 import { Analytics } from "@vercel/analytics/react";
@@ -69,7 +69,7 @@ export default function RootLayout({
               {children}
               <Analytics />
               <SpeedInsights />
-              <Footer />
+              <DynamicFooter />
             </Providers>{" "}
           </OrderlyProvider>
         </Web3OnBoardProvider>
