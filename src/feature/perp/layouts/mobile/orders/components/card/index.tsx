@@ -30,7 +30,7 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
     { watchOrderbook: true }
   );
   return (
-    <div className="bg-secondary p-5 rounded-lg">
+    <div className="bg-secondary p-5 rounded-lg mt-2.5">
       <div className="flex items-center flex-wrap w-full gap-7">
         <div>
           <p className="text-font-60 text-xs mb-1">Symbol</p>
