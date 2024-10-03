@@ -20,7 +20,7 @@ export const MobileOrdersDrawer = ({
       <Drawer open={showActiveMobileOrders}>
         <DrawerContent close={() => setShowActiveMobileOrders(false)}>
           <div
-            className={` h-fit w-full md:w-[350px] max-h-[650px] overflow-y-scroll no-scrollbar p-2.5 z-[100] text-white left-0 transition-all duration-200 ease-in-out shadow-2xl`}
+            className={` h-fit w-full md:w-[350px] max-h-[50vh] overflow-y-scroll no-scrollbar p-2.5 z-[100] text-white left-0 transition-all duration-200 ease-in-out shadow-2xl`}
           >
             {orders?.map((order: API.PositionTPSLExt, i: number) => {
               const initialMargin =
