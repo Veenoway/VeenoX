@@ -8,6 +8,7 @@ import {
   useHoldingStream,
   useMarkets,
   useOrderStream,
+  usePositionStream,
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import dynamic from "next/dynamic";
@@ -44,6 +45,15 @@ export const Perp = ({ asset }: PerpProps) => {
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
   const useParam = useParams();
+  const [positions, _info, { refresh: refreshPosition }] = usePositionStream(
+    undefined,
+    {
+      refreshInterval: 1000,
+      revalidateOnFocus: true,
+      refreshWhenOffline: true,
+      revalidateIfStale: true,
+    }
+  );
   const [orders, { cancelOrder, refresh, updateOrder }] = useOrderStream(
     {},
     {
@@ -236,11 +246,11 @@ export const Perp = ({ asset }: PerpProps) => {
         asset={asset}
         holding={usdc?.holding}
         refresh={refresh}
+        ordersLength={positions?.rows?.length || 0}
       />
       <MobileOrdersDrawer
-        asset={asset}
-        holding={usdc?.holding}
-        refresh={refresh}
+        orders={positions?.rows as API.PositionTPSLExt[]}
+        refresh={refreshPosition}
       />
     </div>
   );

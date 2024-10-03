@@ -1,4 +1,3 @@
-import { Loader } from "@/components/loader";
 import { useGeneralContext } from "@/context";
 import { FuturesAssetProps } from "@/models";
 import { cn } from "@/utils/cn";
@@ -380,6 +379,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const [timeframe, setTimeframe] = useState("15");
 
   const updatePositions = useCallback(() => {
+    console.log("I CAME HERE");
     if (!tvWidget || !relevantPositions) {
       console.warn(
         "Chart or relevant positions not available. Skipping update."
@@ -582,7 +582,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
 
   return (
     <div className="relative w-full chart">
-      <div
+      {/* <div
         className={cn(
           `absolute z-10 bg-secondary w-full transition-all duration-200 ease-in-out h-full`,
           isChartLoading ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -591,7 +591,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         <div className="w-full h-full flex items-center justify-center">
           <Loader />
         </div>
-      </div>
+      </div> */}
       <div className={cn(`w-full h-full`, className)} ref={ref} />
     </div>
   );

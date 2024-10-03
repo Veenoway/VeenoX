@@ -1,39 +1,43 @@
 import { useGeneralContext } from "@/context";
 import { Drawer, DrawerContent } from "@/lib/shadcn/drawer";
-import { FuturesAssetProps } from "@/models";
-import { useEffect, useRef, useState } from "react";
+import { API } from "@orderly.network/types";
+import { Card } from "./components/card";
 
 type MobileOpenTradeProps = {
-  asset: FuturesAssetProps;
-  holding?: number;
-  refresh: import("swr/_internal").KeyedMutator<any[]>;
+  orders: API.PositionTPSLExt[];
+  refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>;
 };
 
 export const MobileOrdersDrawer = ({
-  asset,
-  holding,
+  orders,
   refresh,
 }: MobileOpenTradeProps) => {
   const { setShowActiveMobileOrders, showActiveMobileOrders } =
     useGeneralContext();
-  const tradeCreatorRef = useRef<HTMLDivElement>(null);
-  const { tradeInfo } = useGeneralContext();
-  const [position, setPosition] = useState("100%");
 
-  useEffect(() => {
-    if (showActiveMobileOrders) {
-      const clientHeight = tradeCreatorRef?.current?.clientHeight || 0;
-      setPosition(`calc(100vh - ${clientHeight}px)`);
-    }
-  }, [showActiveMobileOrders, tradeInfo.type, tradeInfo.tp_sl]);
   return (
     <>
       <Drawer open={showActiveMobileOrders}>
         <DrawerContent close={() => setShowActiveMobileOrders(false)}>
           <div
-            ref={tradeCreatorRef}
-            className={` h-fit w-full md:w-[350px] z-[100] left-0  transition-all duration-200 ease-in-out bg-secondary border-t border-borderColor shadow-2xl flex`}
-          ></div>
+            className={` h-fit w-full md:w-[350px] p-2.5 z-[100] text-white left-0  transition-all duration-200 ease-in-out  shadow-2xl flex`}
+          >
+            {orders?.map((order: API.PositionTPSLExt, i: number) => {
+              const initialMargin =
+                Math.abs(order.position_qty) *
+                order.mark_price *
+                order.IMR_withdraw_orders;
+              const totalMargin = initialMargin + order.unrealized_pnl;
+              return (
+                <Card
+                  key={i}
+                  order={order}
+                  totalMargin={totalMargin}
+                  refresh={refresh}
+                />
+              );
+            })}
+          </div>
         </DrawerContent>
       </Drawer>
     </>

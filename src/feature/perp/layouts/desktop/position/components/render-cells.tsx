@@ -225,7 +225,7 @@ const renderAdditionalCells = (
         </td>
       </>
     );
-  } else if (section === Sections.POSITION) {
+  } else if (section === Sections.POSITION && window.innerWidth > 768) {
     const initialMargin =
       Math.abs(trade.position_qty) *
       trade.mark_price *

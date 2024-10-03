@@ -10,15 +10,20 @@ type MobileOpenTradeProps = {
   asset: FuturesAssetProps;
   holding?: number;
   refresh: import("swr/_internal").KeyedMutator<any[]>;
+  ordersLength: number;
 };
 
 export const MobileOpenTrade = ({
   asset,
   holding,
   refresh,
+  ordersLength,
 }: MobileOpenTradeProps) => {
-  const { showMobileTradeCreator, setShowMobileTradeCreator } =
-    useGeneralContext();
+  const {
+    showMobileTradeCreator,
+    showActiveMobileOrders,
+    setShowMobileTradeCreator,
+  } = useGeneralContext();
   const tradeCreatorRef = useRef<HTMLDivElement>(null);
   const { tradeInfo } = useGeneralContext();
   const [position, setPosition] = useState("100%");
@@ -56,7 +61,9 @@ export const MobileOpenTrade = ({
         } transition-all duration-200 ease-in-out bg-secondary z-30`}
       />
 
-      {showMobileTradeCreator ? null : <TriggerMobileTradeCreator />}
+      {showMobileTradeCreator || showActiveMobileOrders ? null : (
+        <TriggerMobileTradeCreator ordersLength={ordersLength} />
+      )}
     </>
   );
 };
