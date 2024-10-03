@@ -21,7 +21,6 @@ import { Position } from "./layouts/desktop/position";
 import { TokenInfo } from "./layouts/desktop/token-info";
 import { MobileOpenTrade } from "./layouts/mobile/open-trade";
 import { MobileOrdersDrawer } from "./layouts/mobile/orders";
-import { MobilePnL } from "./layouts/mobile/pnl";
 import { MobileSectionSelector } from "./layouts/mobile/section-selector";
 
 const TradingViewChart = dynamic(() => import("./layouts/desktop/chart"), {
@@ -139,7 +138,6 @@ export const Perp = ({ asset }: PerpProps) => {
                       }}
                     >
                       <TokenInfo params={params} asset={asset} />
-                      <MobilePnL />
                       <MobileSectionSelector />
                       <TradingViewChart
                         params={useParam}
@@ -153,7 +151,6 @@ export const Perp = ({ asset }: PerpProps) => {
                 ) : (
                   <>
                     <TokenInfo params={params} asset={asset} />
-                    <MobilePnL />
                     <MobileSectionSelector />
                     <div
                       className={`${
