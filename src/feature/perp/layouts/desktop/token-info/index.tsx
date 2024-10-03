@@ -106,8 +106,14 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
   const [showMoreMobileInfo, setShowMoreMobileInfo] = useState(false);
 
   return (
-    <div className="h-[55px] sm:h-[65px]">
-      <div className="flex items-center w-full h-[55px] sm:h-[65px] px-3 border-b border-borderColor whitespace-nowrap overflow-x-scroll no-scrollbar">
+    <div
+      className={`${
+        showMoreMobileInfo ? "max-h-[300px]" : "max-h-[55px] sm:max-h-[65px]"
+      } h-full transition-all duration-200 ease-in-out overflow-hidden md:overflow-auto border-b border-borderColor`}
+    >
+      <div
+        className={`flex items-center w-full h-[55px] sm:h-[65px] px-3 whitespace-nowrap overflow-x-scroll no-scrollbar`}
+      >
         <div className="flex items-center md:justify-start md:w-auto w-full justify-between gap-3 relative text-white h-full">
           <Popover>
             <PopoverTrigger className="h-full min-w-fit">
@@ -139,7 +145,10 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
             >
               {getFormattedAmount(marketInfo?.mark_price) || "Loading..."}
             </p>
-            <button onClick={() => setShowMoreMobileInfo((prev) => !prev)}>
+            <button
+              className="flex md:hidden"
+              onClick={() => setShowMoreMobileInfo((prev) => !prev)}
+            >
               <IoChevronDown className="text-xl" />
             </button>
             <div className="hidden md:flex gap-6 ">
@@ -269,7 +278,8 @@ Used for margining, computing unrealized PnL, liquidations, and triggering TP/SL
           </div>
         </div>
       </div>
-      <div className="flex md:hidden gap-x-6 gap-y-3 p-5 flex-wrap border-y border-borderColor">
+
+      <div className={`flex md:hidden  gap-x-6 gap-y-3 px-5 pb-5 flex-wrap`}>
         <div>
           <p className="text-xs text-font-60">24h Change </p>
           <span className="text-xs flex items-center mt-1 text-font-60 font-medium">

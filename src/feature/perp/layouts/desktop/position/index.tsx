@@ -9,6 +9,7 @@ import {
 import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { Card } from "../../mobile/orders/components/card";
 import { RenderCells } from "./components/render-cells";
 import { thead } from "./constants";
 
@@ -261,7 +262,7 @@ export const Position = ({
           </div>
         </div>
       ) : null}
-      <div className="overflow-x-scroll min-h-[200px] max-h-[250px] overflow-y-scroll w-full no-scrollbar">
+      <div className="overflow-x-scroll min-h-[200px] max-h-[250px] overflow-y-scroll w-full no-scrollbar hidden md:block">
         <table className="w-full ">
           <thead>
             <tr>
@@ -332,6 +333,27 @@ export const Position = ({
             ) : null}
           </tbody>
         </table>
+      </div>
+      <div
+        className={`block md:hidden ${
+          activeSection === Sections.POSITION ? "" : "mt-2.5"
+        } w-full px-2.5 max-h-[500px] overflow-y-scroll no-scrollbar`}
+      >
+        {data?.rows?.map((order, i) => {
+          const initialMargin =
+            Math.abs(order.position_qty) *
+            order.mark_price *
+            order.IMR_withdraw_orders;
+          const totalMargin = initialMargin + order.unrealized_pnl;
+          return (
+            <Card
+              key={i}
+              order={order}
+              totalMargin={totalMargin}
+              refresh={refreshPosition}
+            />
+          );
+        })}
       </div>
     </div>
   );

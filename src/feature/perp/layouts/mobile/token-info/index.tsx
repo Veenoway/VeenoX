@@ -103,8 +103,16 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
     true
   );
 
+  const [showMobileDetails, setShowMobileDetails] = useState(false);
+
   return (
-    <div className="flex items-center w-full h-[55px] sm:h-[65px] px-3 border-b border-borderColor whitespace-nowrap overflow-x-scroll no-scrollbar">
+    <div
+      className={`flex items-center w-full ${
+        showMobileDetails
+          ? "max-h-[300px] sm:max-h-[300px]"
+          : "max-h-[55px] sm:max-h-[65px]"
+      } px-3 border-b border-borderColor whitespace-nowrap overflow-x-scroll no-scrollbar`}
+    >
       <div className="flex items-center gap-3 relative text-white h-full">
         <Popover>
           <PopoverTrigger className="h-full min-w-fit">
