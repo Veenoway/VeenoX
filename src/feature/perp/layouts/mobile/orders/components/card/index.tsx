@@ -31,22 +31,22 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
   );
   return (
     <div className="bg-secondary p-5 rounded-lg mt-2.5">
-      <div className="flex items-center flex-wrap w-full gap-7">
+      <div className="flex items-center flex-wrap w-full gap-7 gap-y-4">
         <div>
           <p className="text-font-60 text-xs mb-1">Symbol</p>
           <Link href={`/perp/${order?.symbol}`}>
             <div className="h-full w-full flex items-center">
               <img
-                className="w-4 h-4 rounded-full mr-2"
-                height={16}
-                width={16}
+                className="w-3.5 h-3.5 rounded-full mr-2"
+                height={14}
+                width={14}
                 alt={`${order?.symbol} logo`}
                 src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
                   order?.symbol ? order?.symbol : "PERP_BTC_USDC",
                   true
                 )}.png`}
               />
-              <p className="text-white hover:underline font-semibold">
+              <p className="text-white hover:underline text-xs font-medium">
                 {order?.symbol ? formatSymbol(order.symbol) : "--"}
               </p>
             </div>
@@ -61,18 +61,20 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
                 : order?.position_qty < 0
                 ? "text-red"
                 : "text-white"
-            } font-medium`}
+            } font-medium text-xs`}
           >
             {order?.position_qty} {formatSymbol(order?.symbol, true)}
           </div>
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Entry price</p>
-          <div>{getFormattedAmount(order?.average_open_price)}</div>
+          <div className="text-xs">
+            {getFormattedAmount(order?.average_open_price)}
+          </div>
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Mark price</p>
-          <div>{getFormattedAmount(order?.mark_price)}</div>
+          <div className="text-xs">{getFormattedAmount(order?.mark_price)}</div>
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">PnL</p>
@@ -83,7 +85,7 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
                 : order?.unrealized_pnl < 0
                 ? "text-red"
                 : "text-white"
-            }`}
+            } text-xs`}
           >
             <div className="flex items-center justify-start w-full h-full font-medium">
               <p className="mr-2">
@@ -103,7 +105,7 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">TP/SL</p>
-          <div className="flex items-center justify-start font-medium text-font-80">
+          <div className="flex items-center justify-start text-xs font-medium text-font-80">
             <p
               className={`${
                 order?.tp_trigger_price ? "text-green" : "text-white"
@@ -123,17 +125,19 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Liq. price</p>
-          <div className="text-orange-300">
+          <div className="text-orange-300 text-xs">
             {getFormattedAmount(order?.est_liq_price as number)}
           </div>
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Est. total</p>
-          <div>{getFormattedAmount(order?.cost_position)}</div>
+          <div className="text-xs">
+            {getFormattedAmount(order?.cost_position)}
+          </div>
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Margin</p>
-          <div>
+          <div className="text-xs">
             $
             {isNaN((totalMargin as any)?.toFixed(2))
               ? "N/A"
@@ -142,13 +146,13 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
         </div>
         <div>
           <p className="text-font-60 text-xs mb-1">Notional</p>
-          <div>{getFormattedAmount(order?.notional)}</div>
+          <div className="text-xs"> {getFormattedAmount(order?.notional)}</div>
         </div>
       </div>
-      <div className="items-center w-full flex mt-7">
+      <div className="items-center w-full flex mt-5">
         <button
           onClick={() => setTPSLOpenOrder(order)}
-          className="text-white border border-base_color text-bold font-poppins text-xs h-[30px] px-3 rounded flex items-center"
+          className="text-white border border-base_color text-bold font-poppins text-xs h-[25px] px-2 rounded flex items-center"
         >
           TP/SL
         </button>
@@ -189,7 +193,7 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
               });
             }
           }}
-          className="h-[30px] w-fit px-3 text-xs ml-2.5 text-white bg-base_color border-borderColor-DARK rounded"
+          className="h-[25px] w-fit px-2 text-xs ml-2.5 text-white bg-base_color border-borderColor-DARK rounded"
         >
           Close
         </button>
