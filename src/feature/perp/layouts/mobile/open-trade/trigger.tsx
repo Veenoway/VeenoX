@@ -6,6 +6,7 @@ export const TriggerMobileTradeCreator = () => {
     setShowMobileTradeCreator,
     tradeInfo,
     setTradeInfo,
+    setShowActiveMobileOrders,
   } = useGeneralContext();
 
   const handleClick = (isBuy: boolean) => {
@@ -18,8 +19,9 @@ export const TriggerMobileTradeCreator = () => {
       <button
         className="border border-borderColor-DARK rounded h-[35px] w-1/3 px-2 text-white bg-terciary text-xs mr-2"
         // onClick={() => handleClick(false)}
+        onClick={() => setShowActiveMobileOrders(true)}
       >
-        Deposit
+        Orders (1)
       </button>
       <button
         className="border border-borderColor-DARK rounded h-[35px] w-1/3 px-2 text-white bg-green text-xs"

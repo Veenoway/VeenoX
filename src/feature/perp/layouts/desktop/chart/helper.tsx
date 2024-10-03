@@ -1,7 +1,7 @@
 import {
   AvailableSaveloadVersions,
   ResolutionString,
-} from "../../../../../public/static/charting_library/charting_library";
+} from "../../../../../../public/static/charting_library/charting_library";
 import { TRADING_VIEW_DEFAULTS } from "./model";
 
 export const widgetOptionsDefault = {

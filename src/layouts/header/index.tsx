@@ -39,7 +39,7 @@ export const Header = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Docs
+                  Doc
                 </Link>
               </li>
             </ul>
@@ -48,8 +48,10 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-5">
         <div className="flex relative w-fit h-fit">
-          <OrderlyRewards />
-          <Deposit />
+          <div className="hidden relative h-fit w-fit sm:flex">
+            <OrderlyRewards />
+            <Deposit />
+          </div>
           <Chains />
           <ConnectWallet />
           <button

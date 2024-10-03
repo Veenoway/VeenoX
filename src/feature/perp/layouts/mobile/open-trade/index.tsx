@@ -2,8 +2,8 @@ import { useGeneralContext } from "@/context";
 import { Drawer, DrawerContent } from "@/lib/shadcn/drawer";
 import { FuturesAssetProps } from "@/models";
 import { useEffect, useRef, useState } from "react";
-import { OpenTrade } from "../open-trade";
-import { Orderbook } from "../orderbook";
+import { OpenTrade } from "../../desktop/open-trade";
+import { Orderbook } from "../../desktop/orderbook";
 import { TriggerMobileTradeCreator } from "./trigger";
 
 type MobileOpenTradeProps = {

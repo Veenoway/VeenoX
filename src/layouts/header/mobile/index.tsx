@@ -13,14 +13,14 @@ type MobileModalProps = {
 export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
   return (
     <>
-      <div
+      {/* <div
         onClick={onClose}
         className={`fixed top-0 h-screen w-full z-[100] p-5 left-0 ${
           isOpen ? "opacity-20" : "opacity-0 pointer-events-none"
         } transition-all duration-200 ease-in-out bg-secondary z-30`}
-      />
+      /> */}
       <div
-        className={`fixed top-0 h-screen w-full sm:w-[350px] z-[100] p-5 left-0 ${
+        className={`fixed top-0  w-full sm:w-[350px] z-[100] p-5 left-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-all duration-200 ease-in-out bg-secondary sm:border-r sm:border-borderColor shadow-2xl`}
       >

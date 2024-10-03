@@ -16,7 +16,7 @@ import {
   ResolutionString,
   SearchSymbolResultItem,
   Timezone,
-} from "../../../../../public/static/charting_library/charting_library";
+} from "../../../../../../public/static/charting_library/charting_library";
 import { DISABLED_FEATURES, ENABLED_FEATURES } from "./constant";
 import { Datafeed } from "./datafeed";
 import { widgetOptionsDefault } from "./helper";
@@ -313,68 +313,67 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       return;
     }
 
-    import("../../../../../public/static/charting_library").then(
-      ({ widget: Widget }) => {
-        const widgetOptions: WidgetOptions = {
-          symbol: asset?.symbol,
-          datafeed: Datafeed(asset, ws) as never,
-          container: ref.current as never,
-          container_id: ref.current?.id as never,
-          locale: "en",
-          disabled_features: DISABLED_FEATURES,
-          enabled_features: ENABLED_FEATURES,
-          fullscreen: false,
-          autosize: true,
-          theme: "Dark",
-          custom_css_url: "/static/pro.css",
-          loading_screen: { backgroundColor: "#1B1D22" },
-          timezone: Intl.DateTimeFormat().resolvedOptions()
-            .timeZone as Timezone,
-          ...widgetOptionsDefault,
-          studies_overrides: {
-            "volume.volume.color.0": "#ea4339",
-            "volume.volume.color.1": "#0ECB81",
-            "volume.volume.transparency": 50,
-          },
-          overrides: {
-            volumePaneSize: "medium",
-          },
+    import(
+      "../../../../../../public/static/charting_library/charting_library"
+    ).then(({ widget: Widget }) => {
+      const widgetOptions: WidgetOptions = {
+        symbol: asset?.symbol,
+        datafeed: Datafeed(asset, ws) as never,
+        container: ref.current as never,
+        container_id: ref.current?.id as never,
+        locale: "en",
+        disabled_features: DISABLED_FEATURES,
+        enabled_features: ENABLED_FEATURES,
+        fullscreen: false,
+        autosize: true,
+        theme: "Dark",
+        custom_css_url: "/static/pro.css",
+        loading_screen: { backgroundColor: "#1B1D22" },
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as Timezone,
+        ...widgetOptionsDefault,
+        studies_overrides: {
+          "volume.volume.color.0": "#ea4339",
+          "volume.volume.color.1": "#0ECB81",
+          "volume.volume.transparency": 50,
+        },
+        overrides: {
+          volumePaneSize: "medium",
+        },
+      };
+
+      const widgetInstance = new Widget(widgetOptions);
+
+      widgetInstance.onChartReady(async () => {
+        widgetInstance.activeChart().getTimeScale().setRightOffset(30);
+
+        widgetInstance.applyOverrides(overrides as any);
+        setTvWidget(widgetInstance);
+        setIsChartReady(true);
+
+        const chart = widgetInstance.activeChart();
+
+        try {
+          await loadSavedState(chart);
+        } catch (error) {
+          console.error("Error loading saved state:", error);
+        }
+
+        const chartChangedHandler = () => {
+          saveChartState(chart);
         };
 
-        const widgetInstance = new Widget(widgetOptions);
+        widgetInstance.subscribe("onAutoSaveNeeded", chartChangedHandler);
 
-        widgetInstance.onChartReady(async () => {
-          widgetInstance.activeChart().getTimeScale().setRightOffset(30);
+        const cleanup = setupChangeListeners(widgetInstance);
 
-          widgetInstance.applyOverrides(overrides as any);
-          setTvWidget(widgetInstance);
-          setIsChartReady(true);
+        updatePositions();
 
-          const chart = widgetInstance.activeChart();
-
-          try {
-            await loadSavedState(chart);
-          } catch (error) {
-            console.error("Error loading saved state:", error);
-          }
-
-          const chartChangedHandler = () => {
-            saveChartState(chart);
-          };
-
-          widgetInstance.subscribe("onAutoSaveNeeded", chartChangedHandler);
-
-          const cleanup = setupChangeListeners(widgetInstance);
-
-          updatePositions();
-
-          return () => {
-            cleanup();
-            widgetInstance.unsubscribe("onAutoSaveNeeded", chartChangedHandler);
-          };
-        });
-      }
-    );
+        return () => {
+          cleanup();
+          widgetInstance.unsubscribe("onAutoSaveNeeded", chartChangedHandler);
+        };
+      });
+    });
   }, [asset, mobile, ws, setupChangeListeners]);
 
   const prevTimeframe = useRef("");
