@@ -1,3 +1,4 @@
+import { Loader } from "@/components/loader";
 import { useGeneralContext } from "@/context";
 import { FuturesAssetProps } from "@/models";
 import { cn } from "@/utils/cn";
@@ -312,74 +313,74 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       return;
     }
 
-    import(
-      "../../../../../../public/static/charting_library/charting_library"
-    ).then(({ widget: Widget }) => {
-      const widgetOptions: WidgetOptions = {
-        symbol: asset?.symbol,
-        datafeed: Datafeed(asset, ws) as never,
-        container: ref.current as never,
-        container_id: ref.current?.id as never,
-        locale: "en",
-        disabled_features: DISABLED_FEATURES,
-        enabled_features: ENABLED_FEATURES,
-        fullscreen: false,
-        autosize: true,
-        theme: "Dark",
-        custom_css_url: "/static/pro.css",
-        loading_screen: { backgroundColor: "#1B1D22" },
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as Timezone,
-        ...widgetOptionsDefault,
-        studies_overrides: {
-          "volume.volume.color.0": "#ea4339",
-          "volume.volume.color.1": "#0ECB81",
-          "volume.volume.transparency": 50,
-        },
-        overrides: {
-          volumePaneSize: "medium",
-        },
-      };
-
-      const widgetInstance = new Widget(widgetOptions);
-
-      widgetInstance.onChartReady(async () => {
-        widgetInstance.activeChart().getTimeScale().setRightOffset(30);
-
-        widgetInstance.applyOverrides(overrides as any);
-        setTvWidget(widgetInstance);
-        setIsChartReady(true);
-
-        const chart = widgetInstance.activeChart();
-
-        try {
-          await loadSavedState(chart);
-        } catch (error) {
-          console.error("Error loading saved state:", error);
-        }
-
-        const chartChangedHandler = () => {
-          saveChartState(chart);
+    import("../../../../../../public/static/charting_library").then(
+      ({ widget: Widget }) => {
+        const widgetOptions: WidgetOptions = {
+          symbol: asset?.symbol,
+          datafeed: Datafeed(asset, ws) as never,
+          container: ref.current as never,
+          container_id: ref.current?.id as never,
+          locale: "en",
+          disabled_features: DISABLED_FEATURES,
+          enabled_features: ENABLED_FEATURES,
+          fullscreen: false,
+          autosize: true,
+          theme: "Dark",
+          custom_css_url: "/static/pro.css",
+          loading_screen: { backgroundColor: "#1B1D22" },
+          timezone: Intl.DateTimeFormat().resolvedOptions()
+            .timeZone as Timezone,
+          ...widgetOptionsDefault,
+          studies_overrides: {
+            "volume.volume.color.0": "#ea4339",
+            "volume.volume.color.1": "#0ECB81",
+            "volume.volume.transparency": 50,
+          },
+          overrides: {
+            volumePaneSize: "medium",
+          },
         };
 
-        widgetInstance.subscribe("onAutoSaveNeeded", chartChangedHandler);
+        const widgetInstance = new Widget(widgetOptions);
 
-        const cleanup = setupChangeListeners(widgetInstance);
+        widgetInstance.onChartReady(async () => {
+          widgetInstance.activeChart().getTimeScale().setRightOffset(30);
 
-        updatePositions();
+          widgetInstance.applyOverrides(overrides as any);
+          setTvWidget(widgetInstance);
+          setIsChartReady(true);
 
-        return () => {
-          cleanup();
-          widgetInstance.unsubscribe("onAutoSaveNeeded", chartChangedHandler);
-        };
-      });
-    });
+          const chart = widgetInstance.activeChart();
+
+          try {
+            await loadSavedState(chart);
+          } catch (error) {
+            console.error("Error loading saved state:", error);
+          }
+
+          const chartChangedHandler = () => {
+            saveChartState(chart);
+          };
+
+          widgetInstance.subscribe("onAutoSaveNeeded", chartChangedHandler);
+
+          const cleanup = setupChangeListeners(widgetInstance);
+
+          updatePositions();
+
+          return () => {
+            cleanup();
+            widgetInstance.unsubscribe("onAutoSaveNeeded", chartChangedHandler);
+          };
+        });
+      }
+    );
   }, [asset, mobile, ws, setupChangeListeners]);
 
   const prevTimeframe = useRef("");
   const [timeframe, setTimeframe] = useState("15");
 
   const updatePositions = useCallback(() => {
-    console.log("I CAME HERE");
     if (!tvWidget || !relevantPositions) {
       console.warn(
         "Chart or relevant positions not available. Skipping update."
@@ -582,7 +583,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
 
   return (
     <div className="relative w-full chart">
-      {/* <div
+      <div
         className={cn(
           `absolute z-10 bg-secondary w-full transition-all duration-200 ease-in-out h-full`,
           isChartLoading ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -591,7 +592,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
         <div className="w-full h-full flex items-center justify-center">
           <Loader />
         </div>
-      </div> */}
+      </div>
       <div className={cn(`w-full h-full`, className)} ref={ref} />
     </div>
   );
