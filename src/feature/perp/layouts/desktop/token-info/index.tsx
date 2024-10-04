@@ -94,6 +94,7 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
       return "text-red";
     } else "text-white";
   };
+
   const colorPriceChange = getColorFromChangePercentage(
     priceChange.formatPercentage,
     false
@@ -108,11 +109,11 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
   return (
     <div
       className={`${
-        showMoreMobileInfo ? "max-h-[300px]" : "max-h-[55px] sm:max-h-[65px]"
+        showMoreMobileInfo ? "max-h-[300px]" : "max-h-[45px] md:max-h-[65px]"
       } h-full transition-all duration-200 ease-in-out overflow-hidden md:overflow-auto border-b border-borderColor`}
     >
       <div
-        className={`flex items-center w-full h-[55px] sm:h-[65px] px-3 whitespace-nowrap overflow-x-scroll no-scrollbar`}
+        className={`flex items-center w-full h-[45px] md:h-[65px] px-3 whitespace-nowrap overflow-x-scroll no-scrollbar`}
       >
         <div className="flex items-center md:justify-start md:w-auto w-full justify-between gap-3 relative text-white h-full">
           <Popover>
@@ -144,6 +145,17 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
               className={`${lastPriceInfo.price_color} transition-color duration-200 ease-in-out text-base sm:text-lg mr-4`}
             >
               {getFormattedAmount(marketInfo?.mark_price) || "Loading..."}
+            </p>
+            <p
+              className={`${colorPriceChange} ${
+                Number(priceChange.formatPercentage) > 0
+                  ? "bg-green-opacity-15"
+                  : Number(priceChange.formatPercentage) < 0
+                  ? "bg-red-opacity-15"
+                  : "bg-font-40"
+              } px-1.5 py-[2px] rounded`}
+            >
+              {priceChange.formatPercentage || "0.00"}%
             </p>
             <div className="hidden md:flex gap-6 ">
               <div>
@@ -180,11 +192,7 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
                   {marketInfo?.mark_price}
                 </p>
               </div>
-              {/* 
-Open interest = The total outstanding position of all users on this contract
-Funding rate =
 
-Used for margining, computing unrealized PnL, liquidations, and triggering TP/SL orders. */}
               <div>
                 <p className="text-xs text-font-60">Index</p>
                 <p className="text-xs mt-1 text-white font-medium">
