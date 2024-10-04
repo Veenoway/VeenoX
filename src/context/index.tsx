@@ -39,6 +39,8 @@ interface GeneralContextProps {
   setShouldRefresh: Dispatch<SetStateAction<boolean>>;
   showActiveMobileOrders: boolean;
   setShowActiveMobileOrders: Dispatch<SetStateAction<boolean>>;
+  showAccountMobile: boolean;
+  setShowAccountMobile: Dispatch<SetStateAction<boolean>>;
 }
 
 const INITIAL_TRADE_INFO = {
@@ -68,6 +70,7 @@ export const GeneralProvider: FC<PropsWithChildren> = ({ children }) => {
     useState(false);
   const [editPendingPositionOpen, setEditPendingPositionOpen] = useState(null);
   const [showActiveMobileOrders, setShowActiveMobileOrders] = useState(false);
+  const [showAccountMobile, setShowAccountMobile] = useState(false);
   const [orderPositions, setOrderPositions] = useState([]);
   const [TPSLOpenOrder, setTPSLOpenOrder] = useState(null);
   const [openWithdraw, setOpenWithdraw] = useState(false);
@@ -103,6 +106,8 @@ export const GeneralProvider: FC<PropsWithChildren> = ({ children }) => {
       shouldRefresh,
       setShowActiveMobileOrders,
       showActiveMobileOrders,
+      showAccountMobile,
+      setShowAccountMobile,
     }),
     [
       showMobileTradeCreator,
@@ -119,6 +124,7 @@ export const GeneralProvider: FC<PropsWithChildren> = ({ children }) => {
       openWithdraw,
       depositAmount,
       showActiveMobileOrders,
+      showAccountMobile,
     ]
   );
 
