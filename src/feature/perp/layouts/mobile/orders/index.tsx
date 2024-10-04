@@ -10,11 +10,13 @@ import { triggerAlert } from "@/lib/toaster";
 import { Leverage } from "@/modals/leverage";
 import { getFormattedAmount } from "@/utils/misc";
 import {
+  useAccount,
   useAccountInstance,
   useCollateral,
   usePositionStream,
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
+import { useConnectWallet } from "@web3-onboard/react";
 import { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdRefresh } from "react-icons/md";
@@ -32,7 +34,17 @@ export const MobileOrdersDrawer = ({
   const { setShowAccountMobile, showAccountMobile } = useGeneralContext();
   const accountInstance = useAccountInstance();
   const [isSettleLoading, setIsSettleLoading] = useState(false);
-  const { depositAmount } = useGeneralContext();
+  const { state } = useAccount();
+  const [_, connectWallet] = useConnectWallet();
+  const {
+    isDeposit,
+    setIsDeposit,
+    openWithdraw,
+    setOpenWithdraw,
+    setDepositAmount,
+    setIsEnableTradingModalOpen,
+    depositAmount,
+  } = useGeneralContext();
   const [data, _info, { refresh: refreshPosition, loading }] =
     usePositionStream(undefined, {
       refreshInterval: 1000,
@@ -180,16 +192,34 @@ export const MobileOrdersDrawer = ({
                   </div>
                 </div>{" "}
               </div>
-              {/* <button
-          className="w-full py-2 flex items-center justify-center"
-          onClick={() => setExpendAccountInfo((prev) => !prev)}
-        >
-          <IoChevronDown
-            className={`text-xl text-white ${
-              expendAccountInfo ? "-rotate-180" : "rotate-0"
-            } transition-all duration-200 ease-in-out`}
-          />
-        </button> */}
+              <div className="flex items-center w-full mt-5">
+                <button
+                  className="border border-base_color rounded-md px-3 mr-1.5 h-[35px] w-1/2 text-white text-sm"
+                  onClick={async () => {
+                    if (state.status >= 5) {
+                      setOpenWithdraw(true);
+                      setIsDeposit(false);
+                    } else if (state.status >= 2)
+                      setIsEnableTradingModalOpen(true);
+                    else await connectWallet();
+                  }}
+                >
+                  Withdraw
+                </button>
+                <button
+                  className="bg-base_color border border-borderColor rounded-md w-1/2 px-3 ml-1.5 h-[35px] text-white text-sm"
+                  onClick={async () => {
+                    if (state.status >= 5) {
+                      setOpenWithdraw(true);
+                      setIsDeposit(true);
+                    } else if (state.status >= 2)
+                      setIsEnableTradingModalOpen(true);
+                    else await connectWallet();
+                  }}
+                >
+                  Deposit
+                </button>
+              </div>
             </div>
           </div>
         </DrawerContent>
