@@ -30,9 +30,13 @@ export const TradeSection = ({
             {trades?.map((trade, i: number) => (
               <tr key={i} className="text-font-80 text-xs ">
                 <td
-                  className={`pl-2.5 ${
-                    trade.side === "BUY" ? "text-green" : "text-red"
-                  }`}
+                  className={`pl-2.5 md:py-0 py-[5px] ${
+                    i === 0
+                      ? "pt-2.5"
+                      : i === trades?.length - 1
+                      ? "pb-2.5"
+                      : ""
+                  } ${trade.side === "BUY" ? "text-green" : "text-red"}`}
                 >
                   {getFormattedAmount(trade.price)}
                 </td>

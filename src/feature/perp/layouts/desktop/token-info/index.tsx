@@ -153,7 +153,7 @@ export const TokenInfo = ({ asset: assetBuffer, params }: TokenInfoProps) => {
                   : Number(priceChange.formatPercentage) < 0
                   ? "bg-red-opacity-15"
                   : "bg-font-40"
-              } px-1.5 py-[2px] rounded`}
+              } px-1.5 py-[1px] rounded text-sm block md:hidden`}
             >
               {priceChange.formatPercentage || "0.00"}%
             </p>
