@@ -13,7 +13,7 @@ import {
 import { API } from "@orderly.network/types";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Favorites } from "./layouts/desktop/favorites";
 import { OpenTrade } from "./layouts/desktop/open-trade";
 import { Orderbook } from "./layouts/desktop/orderbook";
@@ -22,6 +22,7 @@ import { TokenInfo } from "./layouts/desktop/token-info";
 import { MobileOpenTrade } from "./layouts/mobile/open-trade";
 import { MobileOrdersDrawer } from "./layouts/mobile/orders";
 import { MobileSectionSelector } from "./layouts/mobile/section-selector";
+import { TokenInfoMobile } from "./layouts/mobile/token-info";
 
 const TradingViewChart = dynamic(() => import("./layouts/desktop/chart"), {
   ssr: false,
@@ -92,8 +93,6 @@ export const Perp = ({ asset }: PerpProps) => {
     updateFavoriteTabs,
     updateSymbolFavoriteState,
   };
-
-  const [showMobilePositions, setShowMobilePositions] = useState(false);
 
   return (
     <div
@@ -169,10 +168,20 @@ export const Perp = ({ asset }: PerpProps) => {
                     </div>
                     <div
                       className={`${
-                        mobileActiveSection !== "Chart" ? "block" : "hidden"
+                        mobileActiveSection !== "Chart" &&
+                        mobileActiveSection !== "Info"
+                          ? "block"
+                          : "hidden"
                       }`}
                     >
                       <Orderbook asset={asset} isMobile />
+                    </div>
+                    <div
+                      className={`${
+                        mobileActiveSection === "Info" ? "block" : "hidden"
+                      }`}
+                    >
+                      <TokenInfoMobile asset={asset} />
                     </div>
                   </>
                 )}

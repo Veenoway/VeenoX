@@ -103,7 +103,12 @@ export type ContextTradeInfo = {
   leverage: number;
 };
 
-export type MobileActiveSectionType = "Chart" | "Orderbook" | "Trades" | null;
+export type MobileActiveSectionType =
+  | "Chart"
+  | "Orderbook"
+  | "Trades"
+  | "Info"
+  | null;
 
 export type FavoriteProps = {
   [key: string]: {
