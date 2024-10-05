@@ -339,7 +339,13 @@ export const Position = ({
           activeSection === Sections.POSITION ? "" : "mt-2.5"
         } w-full px-2.5 max-h-[500px] overflow-y-scroll no-scrollbar`}
       >
-        {data?.rows?.map((order, i) => {
+        {(activeSection === Sections.POSITION
+          ? data?.rows
+          : orders
+              ?.filter(filterSide)
+              ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
+              ?.filter((_, i) => i < 40)
+        )?.map((order: (API.PositionTPSLExt | API.Order) | any, i) => {
           const initialMargin =
             Math.abs(order.position_qty) *
             order.mark_price *
@@ -351,6 +357,8 @@ export const Position = ({
               order={order}
               totalMargin={totalMargin}
               refresh={refreshPosition}
+              activeSection={activeSection}
+              closePendingOrder={closePendingOrder}
             />
           );
         })}

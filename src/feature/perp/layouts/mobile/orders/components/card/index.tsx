@@ -1,19 +1,41 @@
 import { useGeneralContext } from "@/context";
+import { EditModal } from "@/feature/perp/layouts/desktop/position/components/edit-modal";
 import { PosterModal } from "@/modals/poster";
 import { Inputs } from "@/models";
-import { formatSymbol, getFormattedAmount } from "@/utils/misc";
+import {
+  formatSymbol,
+  getFormattedAmount,
+  getFormattedDate,
+} from "@/utils/misc";
 import { useOrderEntry } from "@orderly.network/hooks";
 import { API, OrderType } from "@orderly.network/types";
 import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
+
+enum Sections {
+  POSITION = 0,
+  PENDING = 1,
+  TP_SL = 2,
+  FILLED = 3,
+  ORDER_HISTORY = 4,
+}
 
 type CardType = {
   order: API.PositionTPSLExt;
   totalMargin: number | null;
   refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>;
+  activeSection: Sections;
+  closePendingOrder: any;
 };
 
-export const Card = ({ order, totalMargin, refresh }: CardType) => {
+export const Card = ({
+  order,
+  totalMargin,
+  refresh,
+  activeSection,
+  closePendingOrder,
+}: CardType) => {
   const { setOrderPositions, setShowActiveMobileOrders, setTPSLOpenOrder } =
     useGeneralContext();
   const { onSubmit } = useOrderEntry(
@@ -29,8 +51,52 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
     },
     { watchOrderbook: true }
   );
+
+  console.log("order", order);
+
+  const renderCardContent = () => {
+    switch (activeSection) {
+      case Sections.POSITION:
+        return renderPositionData(
+          order,
+          totalMargin,
+          setTPSLOpenOrder,
+          onSubmit,
+          refresh
+        );
+      case Sections.TP_SL:
+        return renderTPSLData(order);
+      case Sections.PENDING:
+        return renderPendingData(
+          order,
+          setOrderPositions,
+          closePendingOrder,
+          refresh
+        );
+      case Sections.FILLED:
+      case Sections.ORDER_HISTORY:
+        return renderOrderData(order);
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="bg-dark_terciary p-5 rounded-lg mb-2.5 text-white">
+      {renderCardContent()}
+    </div>
+  );
+};
+
+const renderPositionData = (
+  order: API.PositionTPSLExt,
+  totalMargin: number | null,
+  setTPSLOpenOrder: Dispatch<SetStateAction<any>>,
+  onSubmit: any,
+  refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>
+) => {
+  return (
+    <>
       <div className="flex items-center flex-wrap w-full gap-7 gap-y-4">
         <div>
           <p className="text-font-60 text-xs mb-1">Symbol</p>
@@ -198,6 +264,114 @@ export const Card = ({ order, totalMargin, refresh }: CardType) => {
           Close
         </button>
       </div>
-    </div>
+    </>
   );
+};
+
+const renderTPSLData = (order: API.OrderExt) => {
+  return <>fjir</>;
+};
+
+const renderPendingData = (
+  order: API.OrderExt,
+  setOrderPositions: any,
+  closePendingOrder: any,
+  refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>
+) => {
+  const toPercentage = (): number => {
+    if (order?.quantity === 0) return 0;
+    return (order?.total_executed_quantity / order?.quantity) * 100;
+  };
+  const percentageFilled = toPercentage();
+  return (
+    <>
+      <div className="flex items-center flex-wrap w-full gap-7 gap-y-4">
+        <div>
+          <p className="text-font-60 text-xs mb-1">Symbol</p>
+          <Link href={`/perp/${order?.symbol}`}>
+            <div className="h-full w-full flex items-center">
+              <img
+                className="w-3.5 h-3.5 rounded-full mr-2"
+                height={14}
+                width={14}
+                alt={`${order?.symbol} logo`}
+                src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
+                  order?.symbol ? order?.symbol : "PERP_BTC_USDC",
+                  true
+                )}.png`}
+              />
+              <p className="text-white hover:underline text-xs font-medium">
+                {order?.symbol ? formatSymbol(order.symbol) : "--"}
+              </p>
+            </div>
+          </Link>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Type</p>
+          <div className={`font-medium text-xs`}>
+            {order?.type === "LIMIT" && order?.trigger_price
+              ? "STOP LIMIT"
+              : order?.type}
+          </div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Side</p>
+          <div
+            className={`${
+              order?.side === "SELL" ? "text-red" : "text-green"
+            } text-xs`}
+          >
+            {order?.side}
+          </div>
+        </div>
+        <div>
+          <p className="text-font-60 text-xs mb-1">Filled / Quantity</p>
+          <p className="text-white text-[11px]">
+            {order?.total_executed_quantity || 0} / {order?.quantity || 0}
+          </p>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Price</p>
+          <div className={`text-xs`}>{order?.price}</div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Trigger</p>
+          <div className="flex items-center justify-start text-xs font-medium text-font-80">
+            {order?.trigger_price || "--"}
+          </div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Est. total</p>
+          <div className="text-xs">
+            {getFormattedAmount(order?.quantity * (order?.price as number))}$
+          </div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Reduce</p>
+          <div className="text-xs">{order?.reduce_only ? "Yes" : "No"}</div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 mb-1">Order time</p>
+          {getFormattedDate(order?.created_time)}
+        </div>
+      </div>
+      <div className="items-center w-full flex mt-5">
+        <EditModal order={order} refresh={refresh} />
+        <button
+          key={order?.order_id}
+          onClick={() => {
+            closePendingOrder(order?.order_id, order?.symbol);
+            setOrderPositions([]);
+          }}
+          className="h-[25px] w-fit px-2 text-xs ml-2.5 text-white bg-base_color border-borderColor-DARK rounded"
+        >
+          Close
+        </button>
+      </div>
+    </>
+  );
+};
+
+const renderOrderData = (order: API.OrderExt) => {
+  return <>fjir</>;
 };
