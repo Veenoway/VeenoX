@@ -130,7 +130,7 @@ const renderAdditionalCells = (
         </td>
         <td className={tdStyle}>{filledOrder?.total_executed_quantity}</td>
         <td className={tdStyle}>
-          {getFormattedAmount(filledOrder?.trigger_price)}
+          {getFormattedAmount(filledOrder?.trigger_trade_price)}
         </td>
         <td className={tdStyle}>{filledOrder?.trigger_price || "--"}</td>
         <td
