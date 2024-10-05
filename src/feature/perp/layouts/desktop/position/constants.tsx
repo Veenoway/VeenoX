@@ -32,6 +32,7 @@ export const thead = {
     "Quantity",
     "Trigger Type",
     "Trigger Price",
+    "Price",
     "PnL",
     "Fees",
     "Trigger time",

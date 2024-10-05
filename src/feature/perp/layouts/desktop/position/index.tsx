@@ -212,7 +212,7 @@ export const Position = ({
   }, [shouldRefresh]);
 
   return (
-    <div className="w-full min-h-[320px] h-[320px] max-h-[320px]">
+    <div className="w-full md:min-h-[320px] md:h-[320px] md:max-h-[320px]">
       <div className="w-full flex justify-between items-center border-b border-borderColor-DARK">
         <div className="flex items-center relative">
           {sections.map((section, index) => (
@@ -262,7 +262,7 @@ export const Position = ({
           </div>
         </div>
       ) : null}
-      <div className="overflow-x-scroll min-h-[200px] max-h-[250px] overflow-y-scroll w-full no-scrollbar hidden md:block">
+      <div className="min-h-[200px] max-h-[250px] overflow-scroll w-full no-scrollbar hidden md:block">
         <table className="w-full ">
           <thead>
             <tr>
@@ -337,7 +337,7 @@ export const Position = ({
       <div
         className={`block md:hidden ${
           activeSection === Sections.POSITION ? "" : "mt-2.5"
-        } w-full px-2.5 max-h-[500px] overflow-y-scroll no-scrollbar`}
+        } w-full px-2.5 max-h-[600px] min-h-[400px] overflow-y-scroll no-scrollbar`}
       >
         {(activeSection === Sections.POSITION
           ? data?.rows

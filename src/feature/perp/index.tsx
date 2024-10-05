@@ -205,12 +205,12 @@ export const Perp = ({ asset }: PerpProps) => {
               </div>
             </div>
           </div>
-          <div className="border-r border-borderColor">
+          <div className="md:border-r md:border-borderColor">
             <div
               className="resizerY hidden md:flex"
               onMouseDown={handleMouse}
             />
-            <div className=" w-full min-h-[350px] h-[350px] ">
+            <div className=" w-full md:min-h-[350px] md:h-[350px] no-scrollbar">
               <div className="no-scrollbar">
                 <Position
                   asset={asset}

@@ -22,7 +22,7 @@ enum Sections {
 }
 
 type CardType = {
-  order: API.PositionTPSLExt;
+  order: API.PositionTPSLExt | API.AlgoOrderExt | API.OrderExt;
   totalMargin: number | null;
   refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>;
   activeSection: Sections;
@@ -268,8 +268,96 @@ const renderPositionData = (
   );
 };
 
-const renderTPSLData = (order: API.OrderExt) => {
-  return <>fjir</>;
+type ExtendedAlgoOrder = API.AlgoOrder & {
+  trigger_trade_price: number;
+  realized_pnl: number;
+  trigger_time: number;
+};
+
+const renderTPSLData = (order: API.AlgoOrder) => {
+  const filledOrder: ExtendedAlgoOrder | any =
+    order.child_orders?.[0]?.algo_status === "FILLED"
+      ? order?.child_orders?.[0]
+      : order?.child_orders?.[1];
+  return (
+    <>
+      <div className="flex items-center flex-wrap w-full gap-7 gap-y-4">
+        <div>
+          <p className="text-font-60 text-xs mb-1">Symbol</p>
+          <Link href={`/perp/${order?.symbol}`}>
+            <div className="h-full w-full flex items-center">
+              <img
+                className="w-3.5 h-3.5 rounded-full mr-2"
+                height={14}
+                width={14}
+                alt={`${order?.symbol} logo`}
+                src={`https://oss.orderly.network/static/symbol_logo/${formatSymbol(
+                  order?.symbol ? order?.symbol : "PERP_BTC_USDC",
+                  true
+                )}.png`}
+              />
+              <p className="text-white hover:underline text-xs font-medium">
+                {order?.symbol ? formatSymbol(order.symbol) : "--"}
+              </p>
+            </div>
+          </Link>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Side</p>
+          <div
+            className={`${
+              order?.side === "SELL" ? "text-red" : "text-green"
+            } text-xs`}
+          >
+            {order?.side}
+          </div>
+        </div>
+        <div>
+          <p className="text-font-60 text-xs mb-1">Quantity</p>
+          <p className="text-white text-[11px]">
+            {filledOrder?.total_executed_quantity}
+          </p>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Trigger Type</p>
+          <div className="flex items-center justify-start text-xs font-medium">
+            {filledOrder?.algo_type?.split("_").join(" ")}
+          </div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Trigger Price</p>
+          <div className={`text-xs`}>{filledOrder?.trigger_trade_price}</div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">Price</p>
+          <div className="text-xs">{filledOrder?.trigger_price}</div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 text-xs mb-1">PnL</p>
+          <div
+            className={`${
+              filledOrder?.realized_pnl > 0
+                ? "text-green"
+                : filledOrder?.realized_pnl < 0
+                ? "text-red"
+                : "text-white"
+            } text-xs`}
+          >
+            {" "}
+            ${filledOrder?.realized_pnl}
+          </div>
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 mb-1">Fee</p>$
+          {filledOrder?.total_fee.toFixed(2)}
+        </div>
+        <div className="text-xs">
+          <p className="text-font-60 mb-1">Time</p>
+          {getFormattedDate(filledOrder?.trigger_time)}
+        </div>
+      </div>
+    </>
+  );
 };
 
 const renderPendingData = (
@@ -278,11 +366,6 @@ const renderPendingData = (
   closePendingOrder: any,
   refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>
 ) => {
-  const toPercentage = (): number => {
-    if (order?.quantity === 0) return 0;
-    return (order?.total_executed_quantity / order?.quantity) * 100;
-  };
-  const percentageFilled = toPercentage();
   return (
     <>
       <div className="flex items-center flex-wrap w-full gap-7 gap-y-4">
