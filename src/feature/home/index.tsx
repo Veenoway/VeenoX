@@ -173,9 +173,9 @@ export const Home = () => {
               className="overflow-hidden block relative md:whitespace-nowrap
                text-4xl lg:text-6xl font-extrabold w-auto text-white uppercase text-start lg:leading-[60px]"
             >
-              Unleash the limitless
+              Unleash limitless
               <br />
-              trading with <br />
+              trading with the <br />
               <span className="text-base_color"> lowest fees</span>
             </div>
             <motion.div
@@ -201,7 +201,9 @@ export const Home = () => {
                 <span className="text-white font-bold">Monad</span>. Enjoy an
                 intuitive user interface and benefit from the{" "}
                 <span className="text-white font-bold">lowest fees</span> in the
-                market, powered by Orderly Network for seamless and
+                market coupled with{" "}
+                <span className="text-white font-bold">low-slippage & lightning-fast 
+                settlement</span> powered by Orderly Network, for seamless and
                 cost-effective trading.
               </p>
             </motion.div>
@@ -317,7 +319,7 @@ export const Home = () => {
                   <span className=" text-base_color">Monad </span> and beyond
                 </h2>
                 <p className="text-sm lg:text-lg text-font-60 mt-2 lg:mt-5 max-w-[600px]">
-                  Users will have the capability to effortlessly swap any assets
+                  Users will be able to effortlessly swap any assets
                   available on the <span className="text-white">Monad</span>{" "}
                   chain. This functionality extends beyond Monad, allowing for
                   cross-chain swaps through{" "}
@@ -388,12 +390,14 @@ export const Home = () => {
             <AccordionItem value="item-1">
               <AccordionTrigger>What is VeenoX?</AccordionTrigger>
               <AccordionContent>
-                Veenox is a decentralized exchange that focuses on
-                orderbook-based trading, offering secure cryptocurrency trades
-                through the use of technology from Orderly Networks. It enables
+                VeenoX is a decentralized exchange that focuses on
+                orderbook-based perpetuals trading, offering secure cryptocurrency trades
+                through the use of Orderly Network's technology. It enables
                 real-time matching of buy and sell orders, promoting transparent
-                trading without centralized intermediaries, this empowering
-                users in the decentralized finance (DeFi) space.
+                trading without centralized intermediaries, empowering
+                users in the decentralized finance (DeFi) space. VeenoX now also offers
+                cross-chain cryptocurrency swapping across all major blockchains at 
+                unmatched prices, powered by the leading bridge aggregator LI.FI.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
@@ -416,16 +420,15 @@ export const Home = () => {
             </AccordionItem>
             <AccordionItem value="item-3">
               <AccordionTrigger>
-                Trading View Powered Charts on VeenoX
+                TradingView-powered Charts on VeenoX
               </AccordionTrigger>
               <AccordionContent>
+                TradingView is a global analytics platform for traders and investors. 
                 VeenoX utilizes TradingView’s advanced charting technology,
                 offering users real-time market data and analytics. This
                 integration ensures precise and informed trading decisions on
-                the VeenoX platform. TradingView is a global platform for
-                traders and investors. Visit their site for more of their
-                research offerings, such as global market data and the entire
-                crypto market cap.
+                the VeenoX platform. Visit the TradingView website to discover their full 
+                analytics tool suite.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4">
