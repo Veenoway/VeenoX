@@ -38,7 +38,7 @@ export const Position = ({
 }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
   const account = useAccountInstance();
-  const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
+  const sections = ["Positions", "Pending", "TP/SL", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const prevLengthRef = useRef<number | null>(null);
@@ -169,8 +169,6 @@ export const Position = ({
     switch (activeSection) {
       case Sections.POSITION:
         return "No open order";
-      case Sections.FILLED:
-        return "No filled position";
       case Sections.ORDER_HISTORY:
         return "No history";
       case Sections.PENDING:

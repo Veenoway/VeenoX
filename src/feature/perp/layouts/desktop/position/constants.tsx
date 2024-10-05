@@ -50,18 +50,4 @@ export const thead = {
     "Reduce",
     "Order time",
   ],
-  4: [
-    "Symbol",
-    "Type",
-    "Side",
-    "Filled / Quantity",
-    "Avg. price",
-    "Trigger",
-    "Realized PnL",
-    "Est. total",
-    "Fee",
-    "Status",
-    "Reduce",
-    "Order time",
-  ],
 };
