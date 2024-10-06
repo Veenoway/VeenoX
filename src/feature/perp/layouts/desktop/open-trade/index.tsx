@@ -410,7 +410,7 @@ export const OpenTrade = ({
 
   return (
     <section className="h-full w-full text-white">
-      <div className="flex flex-col sm:px-4 px-2 border-b border-borderColor">
+      <div className="hidden md:flex flex-col sm:px-4 px-2 border-b border-borderColor">
         <div
           className={`overflow-hidden h-full transition-all duration-200 ease-in-out`}
         >
@@ -617,7 +617,10 @@ export const OpenTrade = ({
             </div>
           </div>
           <div className="flex items-center w-full justify-between mt-4">
-            <p className="text-xs text-font-60">Available to Trade</p>
+            <p className="text-xs text-font-60 hidden sm:block">
+              Available to Trade
+            </p>
+            <p className="text-xs text-font-60 block sm:hidden">Available</p>
             <p className="text-xs text-white font-medium">
               {getFormattedAmount(freeCollateral)} USDC
             </p>
@@ -640,7 +643,7 @@ export const OpenTrade = ({
           {values.type !== OrderType.MARKET ? (
             <>
               <div
-                className={`flex items-center h-[35px] bg-terciary justify-between w-full border ${
+                className={`flex items-center h-[30px] sm:h-[35px] bg-terciary justify-between w-full border ${
                   inputErrors.input_price_max || inputErrors.input_price_min
                     ? "border border-red"
                     : "border-borderColor-DARK"
@@ -690,7 +693,7 @@ export const OpenTrade = ({
             </>
           ) : null}
           <div
-            className={`flex items-center h-[35px] bg-terciary justify-between ${
+            className={`flex items-center h-[30px] sm:h-[35px] bg-terciary justify-between ${
               inputErrors.input_quantity
                 ? "border border-red"
                 : "border-borderColor-DARK"
@@ -809,20 +812,24 @@ export const OpenTrade = ({
           </div>
 
           <div className="flex items-center justify-between mt-3">
-            <p className="text-xs text-font-60">Est. Liq. price</p>
-            <p className="text-xs text-white font-medium">
+            <p className="text-[11px] sm:text-xs text-font-60">
+              Est. Liq. price
+            </p>
+            <p className="text-[11px] sm:text-xs text-white font-medium">
               {getFormattedAmount(Number(estLiqPrice)) || "--"}{" "}
               <span className="text-font-60">USDC</span>
             </p>
           </div>
           <div className="flex items-center justify-between mt-2 border-b border-borderColor pb-3">
-            <p className="text-xs text-font-60">Account leverage</p>
-            <p className="text-xs text-white font-medium">
+            <p className="text-[11px] sm:text-xs text-font-60">
+              Account leverage
+            </p>
+            <p className="text-[11px] sm:text-xs text-white font-medium">
               {estLeverage || "--"}x
             </p>
           </div>
           <button
-            className="text-xs text-white mt-3 flex items-center justify-between w-full"
+            className="text-[11px] sm:text-xs text-white mt-3 flex items-center justify-between w-full"
             onClick={() => {
               setValues((prev) => ({
                 ...prev,
@@ -862,7 +869,7 @@ export const OpenTrade = ({
             </div>
           </button>
           <button
-            className="text-xs text-white mt-3  flex items-center justify-between w-full"
+            className="text-[11px] sm:text-xs text-white mt-3  flex items-center justify-between w-full"
             // onClick={() => {
             //   setValues((prev) => ({
             //     ...prev,
@@ -909,13 +916,13 @@ export const OpenTrade = ({
           className={`w-full mt-2.5 h-[32px] sm:h-[35px] ${buttonStatus?.color} 
           ${
             isMobile ? "mb-0" : "mb-4"
-          } text-white rounded transition-all duration-200 ease-in-out text-xs sm:text-sm`}
+          } text-white rounded transition-all duration-200 ease-in-out text-[11px] text-xs sm:text-sm`}
         >
           {buttonStatus?.title}
         </button>
         <div className="flex items-center justify-between pt-4 border-t border-borderColor">
-          <p className="text-xs text-font-60">Fees (Maker / Taker)</p>
-          <p className="text-xs text-white font-medium">
+          <p className="text-[11px] sm:text-xs text-font-60">Fees</p>
+          <p className="text-[11px] sm:text-xs text-white font-medium">
             {accountInfo?.futures_maker_fee_rate
               ? formatPercentage(accountInfo?.futures_maker_fee_rate as number)
               : "0.025%"}{" "}
@@ -925,21 +932,25 @@ export const OpenTrade = ({
               : "0.05%"}
           </p>
         </div>
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-xs text-font-60">Cross Margin Ratio</p>
-          <p className="text-xs text-white font-medium">
+        <div className="flex items-center justify-between mt-1 sm:mt-2">
+          <p className="text-[11px] sm:text-xs text-font-60">
+            Cross Margin Ratio
+          </p>
+          <p className="text-[11px] sm:text-xs text-white font-medium">
             {formatPercentages(marginRatio as number)}
           </p>
         </div>
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-xs text-font-60">Margin Required</p>
-          <p className="text-xs text-white font-medium">
+        <div className="flex items-center justify-between mt-1 sm:mt-2">
+          <p className="text-[11px] sm:text-xs text-font-60">Margin Required</p>
+          <p className="text-[11px] sm:text-xs text-white font-medium">
             {formatCurrency(totalMarginRequired as number)}
           </p>
         </div>
-        <div className="flex items-center justify-between mt-2 pb-4">
-          <p className="text-xs text-font-60">Maintenance Margin</p>
-          <p className="text-xs text-white font-medium">
+        <div className="flex items-center justify-between mt-1 sm:mt-2 pb-0 sm:pb-4">
+          <p className="text-[11px] sm:text-xs text-font-60">
+            Maintenance Margin
+          </p>
+          <p className="text-[11px] sm:text-xs text-white font-medium">
             {formatCurrency(totalMaintenanceMargin as number)}
           </p>
         </div>

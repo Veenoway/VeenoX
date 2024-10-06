@@ -1,4 +1,4 @@
-import { FavoriteProps } from "@/models";
+import { FavoriteProps, MarketTickerProps } from "@/models";
 import { formatSymbol, getTokenPercentage } from "@/utils/misc";
 import { useLocalStorage } from "@orderly.network/hooks";
 import Link from "next/link";
@@ -17,11 +17,11 @@ export const Favorites = ({ props }: FavoriteProps) => {
   };
 
   return (
-    <div className="hidden sm:flex items-center justify-between w-full min-h-[38px] sm:min-h-[41px] relative py-1 border-b border-borderColor overflow-x-scroll no-scrollbar">
+    <div className="flex items-center justify-between w-full md:min-h-[38px] min-h-[30px] relative py-1 border-b border-borderColor overflow-x-scroll no-scrollbar">
       <div className="flex items-center px-3 ">
         <FaStar className="text-yellow text-sm mr-1" />
         <div className="h-full flex items-center whitespace-nowrap">
-          {favorites.map((item, index) => {
+          {favorites.map((item: MarketTickerProps, index: number) => {
             const change = get24hChange(item["24h_close"], item["24h_open"]);
             return (
               <button

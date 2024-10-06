@@ -8,21 +8,23 @@ import {
   useHoldingStream,
   useMarkets,
   useOrderStream,
+  usePositionStream,
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
-import { Favorites } from "./layouts/favorites";
-import { MobileOpenTrade } from "./layouts/mobile-open-trade";
-import { MobilePnL } from "./layouts/mobile-pnl";
-import { MobileSectionSelector } from "./layouts/mobile-section-selector";
-import { OpenTrade } from "./layouts/open-trade";
-import { Orderbook } from "./layouts/orderbook";
-import { Position } from "./layouts/position";
-import { TokenInfo } from "./layouts/token-info";
+import { Favorites } from "./layouts/desktop/favorites";
+import { OpenTrade } from "./layouts/desktop/open-trade";
+import { Orderbook } from "./layouts/desktop/orderbook";
+import { Position } from "./layouts/desktop/position";
+import { TokenInfo } from "./layouts/desktop/token-info";
+import { MobileOpenTrade } from "./layouts/mobile/open-trade";
+import { MobileOrdersDrawer } from "./layouts/mobile/orders";
+import { MobileSectionSelector } from "./layouts/mobile/section-selector";
+import { TokenInfoMobile } from "./layouts/mobile/token-info";
 
-const TradingViewChart = dynamic(() => import("./layouts/chart"), {
+const TradingViewChart = dynamic(() => import("./layouts/desktop/chart"), {
   ssr: false,
 });
 
@@ -43,6 +45,15 @@ export const Perp = ({ asset }: PerpProps) => {
   const { usdc } = useHoldingStream();
   const orderbookRef = useRef<HTMLDivElement>(null);
   const useParam = useParams();
+  const [positions, _info, { refresh: refreshPosition }] = usePositionStream(
+    undefined,
+    {
+      refreshInterval: 1000,
+      revalidateOnFocus: true,
+      refreshWhenOffline: true,
+      revalidateIfStale: true,
+    }
+  );
   const [orders, { cancelOrder, refresh, updateOrder }] = useOrderStream(
     {},
     {
@@ -84,9 +95,12 @@ export const Perp = ({ asset }: PerpProps) => {
   };
 
   return (
-    <div ref={containerRef} className="container w-full max-w-full pb-[35px]">
+    <div
+      ref={containerRef}
+      className="container relative w-full max-w-full pb-[35px]"
+    >
       <EnableTrading />
-      <div className="w-full flex h-full">
+      <div className="w-full relative flex h-full">
         <div
           style={{
             width: window.innerWidth > 1168 ? `${widths[0]}%` : "100%",
@@ -123,7 +137,6 @@ export const Perp = ({ asset }: PerpProps) => {
                       }}
                     >
                       <TokenInfo params={params} asset={asset} />
-                      <MobilePnL />
                       <MobileSectionSelector />
                       <TradingViewChart
                         params={useParam}
@@ -137,7 +150,7 @@ export const Perp = ({ asset }: PerpProps) => {
                 ) : (
                   <>
                     <TokenInfo params={params} asset={asset} />
-                    <MobilePnL />
+                    <Favorites props={params as FavoriteProps as never} />
                     <MobileSectionSelector />
                     <div
                       className={`${
@@ -156,10 +169,20 @@ export const Perp = ({ asset }: PerpProps) => {
                     </div>
                     <div
                       className={`${
-                        mobileActiveSection !== "Chart" ? "block" : "hidden"
+                        mobileActiveSection !== "Chart" &&
+                        mobileActiveSection !== "Info"
+                          ? "block"
+                          : "hidden"
                       }`}
                     >
                       <Orderbook asset={asset} isMobile />
+                    </div>
+                    <div
+                      className={`${
+                        mobileActiveSection === "Info" ? "block" : "hidden"
+                      }`}
+                    >
+                      <TokenInfoMobile asset={asset} />
                     </div>
                   </>
                 )}
@@ -183,12 +206,12 @@ export const Perp = ({ asset }: PerpProps) => {
               </div>
             </div>
           </div>
-          <div className="border-r border-borderColor">
+          <div className="md:border-r md:border-borderColor">
             <div
               className="resizerY hidden md:flex"
               onMouseDown={handleMouse}
             />
-            <div className=" w-full min-h-[350px] h-[350px] ">
+            <div className=" w-full md:min-h-[350px] md:h-[350px] no-scrollbar">
               <div className="no-scrollbar">
                 <Position
                   asset={asset}
@@ -217,19 +240,24 @@ export const Perp = ({ asset }: PerpProps) => {
           <OpenTrade asset={asset} holding={usdc?.holding} refresh={refresh} />
         </div>
       </div>
-      <div className="flex items-center justify-center lg:hidden h-screen w-screen fixed top-0 bg-[rgba(0,0,0,0.4)] z-[120]">
+      {/* <div className="flex items-center justify-center lg:hidden h-screen w-screen fixed top-0 bg-[rgba(0,0,0,0.4)] z-[120]">
         <div className="bg-secondary border border-borderColor rounded p-2.5 px-4">
           <p className="text-white font-bold text-base text-center">
             Mobile version isn&apos;t ready yet. <br />
             Come back later!
           </p>{" "}
         </div>
-      </div>
+      </div> */}
       <MaintenanceStatusModal />
       <MobileOpenTrade
         asset={asset}
         holding={usdc?.holding}
         refresh={refresh}
+        ordersLength={positions?.rows?.length || 0}
+      />
+      <MobileOrdersDrawer
+        orders={positions?.rows as API.PositionTPSLExt[]}
+        refresh={refreshPosition}
       />
     </div>
   );

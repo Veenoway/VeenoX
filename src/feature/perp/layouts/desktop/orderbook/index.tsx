@@ -158,13 +158,13 @@ export const Orderbook = ({
           <div className="flex items-center w-full h-[44px] relative">
             <button
               className="w-1/2 h-full text-white text-[13px]"
-              onClick={() => setActiveSection(0)}
+              onClick={() => setActiveSection(OrderbookSection.ORDERBOOK)}
             >
               Orderbook
             </button>
             <button
               className="w-1/2 h-full text-white text-[13px]"
-              onClick={() => setActiveSection(1)}
+              onClick={() => setActiveSection(OrderbookSection.TRADE_HISTORY)}
             >
               Trade History
             </button>

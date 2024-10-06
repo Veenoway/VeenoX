@@ -9,6 +9,7 @@ import {
 import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { Card } from "../../mobile/orders/components/card";
 import { RenderCells } from "./components/render-cells";
 import { thead } from "./constants";
 
@@ -24,8 +25,7 @@ enum Sections {
   POSITION = 0,
   PENDING = 1,
   TP_SL = 2,
-  FILLED = 3,
-  ORDER_HISTORY = 4,
+  ORDER_HISTORY = 3,
 }
 
 export const Position = ({
@@ -37,7 +37,7 @@ export const Position = ({
 }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
   const account = useAccountInstance();
-  const sections = ["Positions", "Pending", "TP/SL", "Filled", "Order History"];
+  const sections = ["Positions", "Pending", "TP/SL", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const prevLengthRef = useRef<number | null>(null);
@@ -124,7 +124,7 @@ export const Position = ({
         return false;
       }
       return false;
-    } else if (activeSection === Sections.FILLED) {
+    } else if (activeSection === Sections.ORDER_HISTORY) {
       const tp = entry?.child_orders?.[0];
       const sl = entry?.child_orders?.[1];
       if (
@@ -168,8 +168,6 @@ export const Position = ({
     switch (activeSection) {
       case Sections.POSITION:
         return "No open order";
-      case Sections.FILLED:
-        return "No filled position";
       case Sections.ORDER_HISTORY:
         return "No history";
       case Sections.PENDING:
@@ -210,8 +208,10 @@ export const Position = ({
     }
   }, [shouldRefresh]);
 
+  console.log("ACTIVE", activeSection);
+
   return (
-    <div className="w-full min-h-[320px] h-[320px] max-h-[320px]">
+    <div className="w-full md:min-h-[320px] md:h-[320px] md:max-h-[320px]">
       <div className="w-full flex justify-between items-center border-b border-borderColor-DARK">
         <div className="flex items-center relative">
           {sections.map((section, index) => (
@@ -261,7 +261,7 @@ export const Position = ({
           </div>
         </div>
       ) : null}
-      <div className="overflow-x-scroll min-h-[200px] max-h-[250px] overflow-y-scroll w-full no-scrollbar">
+      <div className="min-h-[200px] max-h-[250px] overflow-scroll w-full no-scrollbar hidden md:block">
         <table className="w-full ">
           <thead>
             <tr>
@@ -332,6 +332,35 @@ export const Position = ({
             ) : null}
           </tbody>
         </table>
+      </div>
+      <div
+        className={`block md:hidden ${
+          activeSection === Sections.POSITION ? "" : "mt-2.5"
+        } w-full px-2.5 max-h-[600px] min-h-[400px] overflow-y-scroll no-scrollbar`}
+      >
+        {(activeSection === Sections.POSITION
+          ? data?.rows
+          : orders
+              ?.filter(filterSide)
+              ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
+              ?.filter((_, i) => i < 40)
+        )?.map((order: (API.PositionTPSLExt | API.Order) | any, i) => {
+          const initialMargin =
+            Math.abs(order.position_qty) *
+            order.mark_price *
+            order.IMR_withdraw_orders;
+          const totalMargin = initialMargin + order.unrealized_pnl;
+          return (
+            <Card
+              key={i}
+              order={order}
+              totalMargin={totalMargin}
+              refresh={refreshPosition}
+              activeSection={activeSection}
+              closePendingOrder={closePendingOrder}
+            />
+          );
+        })}
       </div>
     </div>
   );

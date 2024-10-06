@@ -16,7 +16,7 @@ import {
   ResolutionString,
   SearchSymbolResultItem,
   Timezone,
-} from "../../../../../public/static/charting_library/charting_library";
+} from "../../../../../../public/static/charting_library/charting_library";
 import { DISABLED_FEATURES, ENABLED_FEATURES } from "./constant";
 import { Datafeed } from "./datafeed";
 import { widgetOptionsDefault } from "./helper";
@@ -313,7 +313,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
       return;
     }
 
-    import("../../../../../public/static/charting_library").then(
+    import("../../../../../../public/static/charting_library").then(
       ({ widget: Widget }) => {
         const widgetOptions: WidgetOptions = {
           symbol: asset?.symbol,

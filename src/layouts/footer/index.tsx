@@ -12,7 +12,7 @@ export const Footer = () => {
   );
 
   return (
-    <footer className="h-[35px] bg-secondary border-t text-sm z-10 text-white w-full border-borderColor flex items-center fixed bottom-0 left-0">
+    <footer className="h-[35px] bg-secondary border-t text-sm z-10 text-white w-full border-borderColor flex items-center  md:fixed bottom-0 left-0">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center px-2.5">
           {maintenance?.status === 0 ? (

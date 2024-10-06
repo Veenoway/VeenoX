@@ -19,8 +19,7 @@ enum Sections {
   POSITION = 0,
   PENDING = 1,
   TP_SL = 2,
-  FILLED = 3,
-  ORDER_HISTORY = 4,
+  ORDER_HISTORY = 3,
 }
 
 export const RenderCells = ({
@@ -110,55 +109,7 @@ const renderAdditionalCells = (
   refreshPosition: any,
   refresh: any
 ) => {
-  if (section === Sections.FILLED) {
-    let filledOrder =
-      trade?.child_orders?.length > 0
-        ? trade?.child_orders?.[0]?.algo_status === "FILLED"
-          ? trade?.child_orders?.[0]
-          : trade?.child_orders?.[1]
-        : trade;
-    return (
-      <>
-        <td className={tdStyle}>{filledOrder?.type}</td>
-        <td
-          className={cn(
-            tdStyle,
-            `${filledOrder?.side === "SELL" ? "text-red" : "text-green"}`
-          )}
-        >
-          {filledOrder?.side}
-        </td>
-        <td className={tdStyle}>{filledOrder?.total_executed_quantity}</td>
-        <td className={tdStyle}>
-          {getFormattedAmount(filledOrder?.trigger_price)}
-        </td>
-        <td className={tdStyle}>{filledOrder?.trigger_price || "--"}</td>
-        <td
-          className={cn(
-            tdStyle,
-            `${
-              filledOrder?.realized_pnl > 0
-                ? "text-green"
-                : filledOrder?.realized_pnl < 0
-                ? "text-red"
-                : "text-white"
-            }`
-          )}
-        >
-          {filledOrder.realized_pnl || "--"}
-        </td>
-
-        <td className={tdStyle}>{getFormattedAmount(filledOrder.total_fee)}</td>
-        <td className={tdStyle}>
-          {filledOrder?.status || filledOrder?.algo_status}
-        </td>
-        <td className={tdStyle}>{trade?.reduce_only ? "Yes" : "No"}</td>
-        <td className={cn(tdStyle, "pr-5 text-end")}>
-          {getFormattedDate(trade?.created_time)}
-        </td>
-      </>
-    );
-  } else if (section === Sections.PENDING) {
+  if (section === Sections.PENDING) {
     const toPercentage = (): number => {
       if (trade?.quantity === 0) return 0;
       return (trade?.total_executed_quantity / trade?.quantity) * 100;
@@ -225,7 +176,7 @@ const renderAdditionalCells = (
         </td>
       </>
     );
-  } else if (section === Sections.POSITION) {
+  } else if (section === Sections.POSITION && window.innerWidth > 768) {
     const initialMargin =
       Math.abs(trade.position_qty) *
       trade.mark_price *
@@ -364,6 +315,7 @@ const renderAdditionalCells = (
       </>
     );
   } else if (section === Sections.ORDER_HISTORY) {
+    console.log("I RENDER");
     let filledOrder =
       trade.child_orders?.length > 0
         ? trade?.child_orders?.[0]?.algo_status === "FILLED"
@@ -386,7 +338,7 @@ const renderAdditionalCells = (
         <td className={tdStyle}>
           {filledOrder?.total_executed_quantity
             ? filledOrder?.total_executed_quantity
-            : filledOrder?.total_executed_quantity}
+            : "--"}
         </td>
         <td className={tdStyle}>
           {filledOrder?.average_executed_price

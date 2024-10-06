@@ -30,6 +30,7 @@ const config: Config = {
         secondary: "#1B1D22",
         terciary: "#2b2f36e6",
         base_color: "#836EF9",
+        dark_terciary: "#2b2f3669",
         // 006D77
         // 8C7853
         // 34495E

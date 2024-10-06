@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { AiOutlineSwap } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
-import { LuBarChart3, LuWallet } from "react-icons/lu";
-import { MdOutlineAreaChart } from "react-icons/md";
+import { IoClose, IoDocumentAttachOutline } from "react-icons/io5";
+import { LuBarChart3 } from "react-icons/lu";
 
 type MobileModalProps = {
   isOpen: boolean;
@@ -13,26 +12,24 @@ type MobileModalProps = {
 export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
   return (
     <>
-      <div
+      {/* <div
         onClick={onClose}
         className={`fixed top-0 h-screen w-full z-[100] p-5 left-0 ${
           isOpen ? "opacity-20" : "opacity-0 pointer-events-none"
         } transition-all duration-200 ease-in-out bg-secondary z-30`}
-      />
+      /> */}
       <div
-        className={`fixed top-0 h-screen w-full sm:w-[350px] z-[100] p-5 left-0 ${
+        className={`fixed top-0 h-screen w-full sm:w-[350px] z-[90] p-5 left-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-all duration-200 ease-in-out bg-secondary sm:border-r sm:border-borderColor shadow-2xl`}
       >
         <div className="flex items-center">
           <img
-            src="/logo/v.png"
+            src="/veenox/veenox-text.png"
             alt="Veeno Logo"
-            className="h-[30px] w-[30px] max-w-[30px] max-h-[30px]"
+            className="h-[35px] max-h-[35px]"
           />
-          <h3 className="text-white text-bold font-poppins text-xl ml-2">
-            VEENOX
-          </h3>
+
           <button className="text-white ml-auto text-2xl" onClick={onClose}>
             <IoClose />
           </button>
@@ -48,23 +45,15 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
               </Link>
             </li>
             <li className="my-5">
-              <Link href="/perp/PERP_BTC_USDC">
+              <Link href="/portfolio">
                 <span className="flex items-center">
                   <FaRegUser className="mr-3 text-xl" />
-                  Dashboard
+                  Portfolio
                 </span>
               </Link>
             </li>
             <li className="my-5">
-              <Link href="/perp/PERP_BTC_USDC">
-                <span className="flex items-center">
-                  <LuWallet className="mr-3 text-xl" />
-                  Wallet
-                </span>
-              </Link>
-            </li>
-            <li className="my-5">
-              <Link href="/perp/PERP_BTC_USDC">
+              <Link href="/bridge">
                 <span className="flex items-center">
                   <AiOutlineSwap className="mr-3 text-xl" />
                   Swap
@@ -72,10 +61,14 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
               </Link>
             </li>
             <li>
-              <Link href="/perp/PERP_BTC_USDC">
+              <Link
+                href="https://veenox.gitbook.io/veenox/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span className="flex items-center">
-                  <MdOutlineAreaChart className="mr-3 text-xl" />
-                  Learn Trading & Earn
+                  <IoDocumentAttachOutline className="mr-3 text-xl" />
+                  Docs
                 </span>
               </Link>
             </li>
