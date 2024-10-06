@@ -150,6 +150,7 @@ export const Perp = ({ asset }: PerpProps) => {
                 ) : (
                   <>
                     <TokenInfo params={params} asset={asset} />
+                    <Favorites props={params as FavoriteProps as never} />
                     <MobileSectionSelector />
                     <div
                       className={`${
