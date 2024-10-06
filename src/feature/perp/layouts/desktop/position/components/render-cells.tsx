@@ -19,8 +19,7 @@ enum Sections {
   POSITION = 0,
   PENDING = 1,
   TP_SL = 2,
-  FILLED = 3,
-  ORDER_HISTORY = 4,
+  ORDER_HISTORY = 3,
 }
 
 export const RenderCells = ({
@@ -316,6 +315,7 @@ const renderAdditionalCells = (
       </>
     );
   } else if (section === Sections.ORDER_HISTORY) {
+    console.log("I RENDER");
     let filledOrder =
       trade.child_orders?.length > 0
         ? trade?.child_orders?.[0]?.algo_status === "FILLED"

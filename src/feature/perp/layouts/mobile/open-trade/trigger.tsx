@@ -21,14 +21,6 @@ export const TriggerMobileTradeCreator = ({
           setShowAccountMobile(true);
         }}
       >
-        X50
-      </button>
-      <button
-        className="border border-borderColor-DARK rounded h-[35px] w-1/3 px-2 text-white bg-terciary text-xs mr-2"
-        onClick={() => {
-          setShowAccountMobile(true);
-        }}
-      >
         Account
       </button>
       <button

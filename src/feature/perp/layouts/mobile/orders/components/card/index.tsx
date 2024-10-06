@@ -17,8 +17,7 @@ enum Sections {
   POSITION = 0,
   PENDING = 1,
   TP_SL = 2,
-  FILLED = 3,
-  ORDER_HISTORY = 4,
+  ORDER_HISTORY = 3,
 }
 
 type CardType = {
@@ -51,8 +50,6 @@ export const Card = ({
     },
     { watchOrderbook: true }
   );
-
-  console.log("order", order);
 
   const renderCardContent = () => {
     switch (activeSection) {

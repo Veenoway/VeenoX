@@ -25,8 +25,7 @@ enum Sections {
   POSITION = 0,
   PENDING = 1,
   TP_SL = 2,
-  FILLED = 3,
-  ORDER_HISTORY = 4,
+  ORDER_HISTORY = 3,
 }
 
 export const Position = ({
@@ -125,7 +124,7 @@ export const Position = ({
         return false;
       }
       return false;
-    } else if (activeSection === Sections.FILLED) {
+    } else if (activeSection === Sections.ORDER_HISTORY) {
       const tp = entry?.child_orders?.[0];
       const sl = entry?.child_orders?.[1];
       if (
@@ -208,6 +207,8 @@ export const Position = ({
       console.log("refreshed");
     }
   }, [shouldRefresh]);
+
+  console.log("ACTIVE", activeSection);
 
   return (
     <div className="w-full md:min-h-[320px] md:h-[320px] md:max-h-[320px]">
