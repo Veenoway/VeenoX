@@ -59,7 +59,9 @@ export const Card = ({
           totalMargin,
           setTPSLOpenOrder,
           onSubmit,
-          refresh
+          refresh,
+          setShowActiveMobileOrders,
+          setOrderPositions
         );
       case Sections.TP_SL:
         return renderTPSLData(order as API.AlgoOrderExt);
@@ -89,7 +91,9 @@ const renderPositionData = (
   totalMargin: number | null,
   setTPSLOpenOrder: Dispatch<SetStateAction<any>>,
   onSubmit: any,
-  refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>
+  refresh: import("swr/_internal").KeyedMutator<API.PositionInfo>,
+  setShowActiveMobileOrders: Dispatch<SetStateAction<boolean>>,
+  setOrderPositions: any
 ) => {
   return (
     <>
