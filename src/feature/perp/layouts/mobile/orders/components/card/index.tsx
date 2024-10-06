@@ -40,13 +40,13 @@ export const Card = ({
   const { onSubmit } = useOrderEntry(
     {
       symbol: order.symbol,
-      side: order?.algo_order?.side
-        ? order?.algo_order?.side
-        : (order.position_qty as number) >= 0
+      side: (order as API.PositionTPSLExt)?.algo_order?.side
+        ? (order as API.PositionTPSLExt)?.algo_order?.side
+        : ((order as API.PositionTPSLExt)?.position_qty as number) >= 0
         ? "SELL"
         : ("BUY" as any),
       order_type: OrderType.MARKET,
-      order_quantity: order?.position_qty,
+      order_quantity: (order as API.PositionTPSLExt)?.position_qty,
     },
     { watchOrderbook: true }
   );
@@ -55,25 +55,23 @@ export const Card = ({
     switch (activeSection) {
       case Sections.POSITION:
         return renderPositionData(
-          order,
+          order as API.PositionTPSLExt,
           totalMargin,
           setTPSLOpenOrder,
           onSubmit,
           refresh
         );
       case Sections.TP_SL:
-        return renderTPSLData(order);
+        return renderTPSLData(order as API.AlgoOrderExt);
       case Sections.PENDING:
         return renderPendingData(
-          order,
+          order as API.OrderExt,
           setOrderPositions,
           closePendingOrder,
           refresh
         );
-      case Sections.FILLED:
-        return renderFilledData(order);
       case Sections.ORDER_HISTORY:
-        return renderFilledData(order);
+        return renderFilledData(order as API.OrderExt);
       default:
         return null;
     }
@@ -453,7 +451,7 @@ const renderPendingData = (
   );
 };
 
-const renderFilledData = (order: API.OrderExt) => {
+const renderFilledData = (order: any) => {
   const filledOrder =
     order?.child_orders?.length > 0
       ? order?.child_orders?.[0]?.algo_status === "FILLED"
