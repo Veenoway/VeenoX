@@ -284,9 +284,11 @@ export const Portfolio = () => {
             <div className="flex w-full">
               <div className="rounded-md p-5 border w-full border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <div className="flex items-center justify-between">
-                  <div className="flex flex-col ">
-                    <p className="text-sm text-font-80">Total Value:</p>
-                    <p className="text-lg">
+                  <div className="flex flex-col">
+                    <p className="text-xs md:text-sm text-font-80">
+                      Total Value:
+                    </p>
+                    <p className="text-base md:text-lg">
                       {totalValue || 0}{" "}
                       <span className="text-font-60 font-medium">USDC</span>
                     </p>
@@ -310,9 +312,9 @@ export const Portfolio = () => {
                         <MdOutlineContentCopy className="ml-2" />
                       )}
                     </div> */}
-                    <div className="flex items-center">
+                    <div className="flex sm:flex-row flex-col md:items-center">
                       <button
-                        className="border border-base_color rounded-md px-3 ml-2 h-[35px] text-base_color text-sm"
+                        className="border border-base_color rounded-md px-2 sm:px-3 sm:ml-2 h-[30px] md:h-[35px] text-base_color text-sm"
                         onClick={async () => {
                           if (state.status >= 5) {
                             setOpenWithdraw(true);
@@ -325,7 +327,7 @@ export const Portfolio = () => {
                         Withdraw
                       </button>
                       <button
-                        className="bg-base_color border border-borderColor rounded-md px-3 ml-2 h-[35px] text-white text-sm"
+                        className="bg-base_color border mt-2 sm:mt-0 border-borderColor rounded-md px-2 sm:px-3 sm:ml-2 h-[30px] text-white text-sm"
                         onClick={async () => {
                           if (state.status >= 5) {
                             setOpenWithdraw(true);
@@ -340,33 +342,33 @@ export const Portfolio = () => {
                     </div>
                   </div>{" "}
                 </div>
-                <div className="flex items-center justify-between gap-2.5 mt-2.5">
-                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
+                <div className="flex items-center justify-between gap-2.5 mt-2.5 flex-wrap sm:flex-nowrap">
+                  <div className="flex h-[70px] md:h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <Leverage />
                   </div>
-                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[70px] md:h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">Holding</p>
-                    <p className="text-lg text-center">
+                    <p className="text-sm mt-0.5 md:mt-0 md:text-lg text-center">
                       {getFormattedAmount(usdc?.holding.toFixed(2)) || "--"}
                     </p>
                   </div>
-                  <div className="flex h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[70px] md:h-[100px]  w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">
                       Avbl. Withdraw
                     </p>
-                    <p className="text-lg text-center">
+                    <p className="text-sm mt-0.5 md:mt-0 md:text-lg text-center">
                       {availableWithdraw > 0
                         ? getFormattedAmount(availableWithdraw?.toFixed(2)) ||
                           "--"
                         : "0.00"}
                     </p>
                   </div>
-                  <div className="flex h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
+                  <div className="flex h-[70px] md:h-[100px] w-full flex-col items-center px-2 py-2 justify-center rounded-md bg-[#2b2f3649] border border-borderColor-DARK">
                     <p className="text-xs text-font-60 text-center">
                       Unsettled PnL
                     </p>
                     <p
-                      className={`text-lg text-center ${
+                      className={`text-sm mt-0.5 md:mt-0 md:text-lg text-center ${
                         unsettledPnL > 0
                           ? "text-green"
                           : unsettledPnL < 0
@@ -403,8 +405,8 @@ export const Portfolio = () => {
                     }}
                   />
                 </div>
-                <div className="max-h-[350px] min-h-[350px] relative w-full overflow-y-scroll no-scrollbar">
-                  <table className="mt-2.5 w-full">
+                <div className="max-h-[350px] min-h-[350px] relative w-full overflow-scroll no-scrollbar">
+                  <table className="mt-2.5 w-full min-w-[420px] overflow-x-scroll">
                     <thead>
                       <tr>
                         <th className={cn(thStyle, "pl-2.5 text-start")}>
@@ -669,8 +671,10 @@ export const Portfolio = () => {
               <div className="rounded-md w-[60%] p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <p className="text-base mb-2.5">Volume</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">24h Vol.</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    24h Vol.
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_24_hours
@@ -678,8 +682,10 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">7d Vol.</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    7d Vol.
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_7_days
@@ -687,8 +693,10 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">30d Vol.</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    30d Vol.
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     $
                     {getFormattedAmount(
                       volume?.perp_trading_volume_last_30_days
@@ -696,8 +704,10 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">Total Vol.</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    Total Vol.
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     $
                     {getFormattedAmount(volume?.perp_trading_volume_ytd) ||
                       "--"}
@@ -707,8 +717,10 @@ export const Portfolio = () => {
               <div className="rounded-md ml-2.5 w-[40%] p-3 mt-2.5 border border-borderColor bg-secondary shadow-[rgba(0,0,0,0.2)] shadow-xl">
                 <p className="text-base mb-2.5">Trading Fee</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">Maker fee</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    Maker fee
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     {`${
                       (accountInfo?.futures_maker_fee_rate as number) / 100 +
                       "%"
@@ -716,8 +728,10 @@ export const Portfolio = () => {
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-font-60 mb-0.5">Taker fee</p>
-                  <p className="text-sm">
+                  <p className="text-xs sm:text-sm text-font-60 mb-0.5">
+                    Taker fee
+                  </p>
+                  <p className="text-xs sm:text-sm">
                     {`${
                       (accountInfo?.futures_taker_fee_rate as number) / 100 +
                       "%"

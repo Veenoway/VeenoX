@@ -33,13 +33,13 @@ export const Leverage = () => {
           }
         }}
       >
-        <button className="text-white flex flex-col justify-center items-end">
+        <div className="text-white flex flex-col justify-center items-center sm:items-end">
           <p className="text-font-60 text-xs mb-[3px]">Account Leverage</p>
           <div className="flex items-center text-sm text-white hover:text-base_color transition-color duration-150 ease-in-out">
-            <p>{currentLeverage.toFixed(2)}x</p>/ <p>{maxLeverage}x</p>{" "}
-            <FaRegEdit className="ml-2" />
+            <p className="sm:block hidden">{currentLeverage.toFixed(2)}x/ </p>
+            <p>{maxLeverage}x</p> <FaRegEdit className="ml-2" />
           </div>
-        </button>
+        </div>
       </DialogTrigger>
       <DialogContent
         className="max-w-[400px] pb-2 w-[90%] flex flex-col gap-0 overflow-auto no-scrollbar"

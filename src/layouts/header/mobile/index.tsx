@@ -24,11 +24,13 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
         } transition-all duration-200 ease-in-out bg-secondary sm:border-r sm:border-borderColor shadow-2xl`}
       >
         <div className="flex items-center">
-          <img
-            src="/veenox/veenox-text.png"
-            alt="Veeno Logo"
-            className="h-[35px] max-h-[35px]"
-          />
+          <Link href="/" onClick={onClose}>
+            <img
+              src="/veenox/veenox-text.png"
+              alt="Veeno Logo"
+              className="h-[35px] max-h-[35px]"
+            />
+          </Link>
 
           <button className="text-white ml-auto text-2xl" onClick={onClose}>
             <IoClose />
@@ -36,7 +38,7 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
         </div>
         <nav className="h-full mt-10">
           <ul className="text-white text-medium text-base gap-5 h-full">
-            <li>
+            <li onClick={onClose}>
               <Link href="/perp/PERP_BTC_USDC">
                 <span className="flex items-center">
                   <LuBarChart3 className="mr-3 text-xl" />
@@ -44,7 +46,7 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
                 </span>
               </Link>
             </li>
-            <li className="my-5">
+            <li onClick={onClose} className="my-5">
               <Link href="/portfolio">
                 <span className="flex items-center">
                   <FaRegUser className="mr-3 text-xl" />
@@ -52,7 +54,7 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
                 </span>
               </Link>
             </li>
-            <li className="my-5">
+            <li onClick={onClose} className="my-5">
               <Link href="/bridge">
                 <span className="flex items-center">
                   <AiOutlineSwap className="mr-3 text-xl" />
@@ -60,7 +62,7 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
                 </span>
               </Link>
             </li>
-            <li>
+            <li onClick={onClose}>
               <Link
                 href="https://veenox.gitbook.io/veenox/"
                 target="_blank"
