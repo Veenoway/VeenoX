@@ -1,4 +1,3 @@
-import { Loader } from "@/components/loader";
 import { useGeneralContext } from "@/context";
 import { Popover, PopoverContent, PopoverTrigger } from "@/lib/shadcn/popover";
 import { FuturesAssetProps, TradeExtension } from "@/models";
@@ -248,166 +247,150 @@ export const Orderbook = ({
         (mobileActiveSection === "Orderbook" || !mobileActiveSection)) ||
       isMobileOpenTrade ? (
         <div
-          // max-h-[670px]  overflow-y-scroll
           className={`relative h-full md:h-calc-full-button ${
             isMobileOpenTrade ? "min-w-[140px] w-full" : "w-auto"
           }  sm:w-auto`}
         >
-          {!data?.asks?.length && !data?.bids?.length ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <Loader />
-            </div>
-          ) : (
-            <table className="w-full h-calc-full-market">
-              <thead>
-                <tr className="text-font-60 text-xs">
-                  <th className="pl-2.5 text-start py-1 font-normal">Price</th>
-                  {isMobileOpenTrade ? null : (
-                    <th className="text-end font-normal pr-2.5">
-                      Qty{" "}
-                      {isQtyUSDC ? "USDC" : formatSymbol(asset?.symbol, true)}
-                    </th>
-                  )}
+          <table className="w-full h-calc-full-market">
+            <thead>
+              <tr className="text-font-60 text-xs">
+                <th className="pl-2.5 text-start py-1 font-normal">Price</th>
+                {isMobileOpenTrade ? null : (
                   <th className="text-end font-normal pr-2.5">
-                    Total{" "}
-                    {isQtyUSDC ? "USDC" : formatSymbol(asset?.symbol, true)}
+                    Qty {isQtyUSDC ? "USDC" : formatSymbol(asset?.symbol, true)}
                   </th>
-                </tr>
-              </thead>
-              <tbody>
-                {(formatOrderbook("asks", isQtyUSDC) || [])?.map((ask, i) => {
-                  return (
-                    <tr key={i} className="text-font-80 text-xs relative">
-                      {Array.from({ length: 3 }).map((_, j) => {
-                        const className = getStyleFromDevice(j, "");
-                        const value =
-                          j === 0
-                            ? ask[j]
-                            : typeof ask[j] === "number"
-                            ? getFormattedAmount(ask[j])
-                            : ask[j];
-                        if (isMobileOpenTrade && (j === 0 || j === 2))
-                          return (
-                            <td
-                              key={j + className}
-                              className={cn(
-                                className,
-                                `${j === 0 ? "text-red" : ""} relative`
-                              )}
-                            >
-                              {j === 0 ? (
-                                <div
-                                  className="absolute left-0 flex h-full md:hidden top-0 bg-red-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
-                                  style={{ width: `${asksWidth[i]}%` }}
-                                />
-                              ) : null}
-                              {value}
-                            </td>
-                          );
-                        if (!isMobileOpenTrade)
-                          return (
-                            <td
-                              key={j + className}
-                              className={cn(
-                                className,
-                                `${j === 0 ? "text-red" : ""} relative ${
-                                  j === 1 ? "pr-2.5" : ""
-                                } relative`
-                              )}
-                            >
-                              {value}
-                            </td>
-                          );
-                      })}
-                      <td
-                        className="absolute rounded-r left-0 md:flex hidden md:h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
-                        style={{ width: `${asksWidth[i]}%` }}
-                      />
-                    </tr>
-                  );
-                })}
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-2.5 border-y border-borderColor-DARK bg-terciary"
-                  >
-                    <div className="whitespace-nowrap flex justify-between items-center">
-                      <p className="text-sm text-white font-bold">
-                        {getFormattedAmount(data?.middlePrice as any, true) ||
-                          0}
-                      </p>
-                      <div className="flex items-center">
-                        <span className="text-[13px] mr-2.5 text-white hidden sm:flex">
-                          Spread
-                        </span>
-                        <span className="text-xs sm:text-[13px] text-white">
-                          {spread}%
-                        </span>{" "}
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                {(formatOrderbook("bids", isQtyUSDC) || []).map((bid, i) => {
-                  return (
-                    <tr key={i} className="text-font-80 text-xs relative">
-                      {Array.from({ length: 3 }).map((_, j) => {
-                        const className = getStyleFromDevice(j, "");
-                        const value =
-                          j === 0
-                            ? bid[j]
-                            : typeof bid[j] === "number"
-                            ? getFormattedAmount(bid[j])
-                            : bid[j];
-
-                        console.log(
-                          "isMobileOpenTrade && (j === 0 || j === 2)",
-                          isMobileOpenTrade && (j === 0 || j === 2),
-                          j === 0,
-                          isMobileOpenTrade
+                )}
+                <th className="text-end font-normal pr-2.5">
+                  Total {isQtyUSDC ? "USDC" : formatSymbol(asset?.symbol, true)}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(formatOrderbook("asks", isQtyUSDC) || [])?.map((ask, i) => {
+                return (
+                  <tr key={i} className="text-font-80 text-xs relative">
+                    {Array.from({ length: 3 }).map((_, j) => {
+                      const className = getStyleFromDevice(j, "");
+                      const value =
+                        j === 0
+                          ? ask[j]
+                          : typeof ask[j] === "number"
+                          ? getFormattedAmount(ask[j])
+                          : ask[j];
+                      if (isMobileOpenTrade && (j === 0 || j === 2))
+                        return (
+                          <td
+                            key={j + className}
+                            className={cn(
+                              className,
+                              `${j === 0 ? "text-red" : ""} relative`
+                            )}
+                          >
+                            {j === 0 ? (
+                              <div
+                                className="absolute left-0 flex h-[90%] top-[5%] md:hidden bg-red-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                style={{ width: `${asksWidth[i]}%` }}
+                              />
+                            ) : null}
+                            {value}
+                          </td>
                         );
-                        if (isMobileOpenTrade && (j === 0 || j === 2))
-                          return (
-                            <td
-                              key={j + className}
-                              className={cn(
-                                className,
-                                `${j === 0 ? "text-green" : ""} relative`
-                              )}
-                            >
-                              {j === 0 ? (
-                                <div
-                                  className="absolute left-0 flex h-full md:hidden top-0 bg-green-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
-                                  style={{ width: `${bidsWidth[i]}%` }}
-                                />
-                              ) : null}
-                              {value}
-                            </td>
-                          );
-                        if (!isMobileOpenTrade)
-                          return (
-                            <td
-                              key={j + className}
-                              className={cn(
-                                className,
-                                `${j === 0 ? "text-green" : ""} relative ${
-                                  j === 1 ? "pr-2.5" : ""
-                                }`
-                              )}
-                            >
-                              {value}
-                            </td>
-                          );
-                      })}
-                      <div
-                        className="absolute rounded-r left-0 h-[90%] hidden md:flex top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
-                        style={{ width: `${bidsWidth[i]}%` }}
-                      />
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+                      if (!isMobileOpenTrade)
+                        return (
+                          <td
+                            key={j + className}
+                            className={cn(
+                              className,
+                              `${j === 0 ? "text-red" : ""} relative ${
+                                j === 1 ? "pr-2.5" : ""
+                              } relative`
+                            )}
+                          >
+                            {value}
+                          </td>
+                        );
+                    })}
+                    <td
+                      className="absolute rounded-r left-0 md:flex hidden md:h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
+                      style={{ width: `${asksWidth[i]}%` }}
+                    />
+                  </tr>
+                );
+              })}
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-2.5 border-y border-borderColor-DARK bg-terciary"
+                >
+                  <div className="whitespace-nowrap flex justify-between items-center">
+                    <p className="text-sm text-white font-bold">
+                      {getFormattedAmount(data?.middlePrice as any, true) || 0}
+                    </p>
+                    <div className="flex items-center">
+                      <span className="text-[13px] mr-2.5 text-white hidden sm:flex">
+                        Spread
+                      </span>
+                      <span className="text-xs sm:text-[13px] text-white">
+                        {spread}%
+                      </span>{" "}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {(formatOrderbook("bids", isQtyUSDC) || []).map((bid, i) => {
+                return (
+                  <tr key={i} className="text-font-80 text-xs relative">
+                    {Array.from({ length: 3 }).map((_, j) => {
+                      const className = getStyleFromDevice(j, "");
+                      const value =
+                        j === 0
+                          ? bid[j]
+                          : typeof bid[j] === "number"
+                          ? getFormattedAmount(bid[j])
+                          : bid[j];
+
+                      if (isMobileOpenTrade && (j === 0 || j === 2))
+                        return (
+                          <td
+                            key={j + className}
+                            className={cn(
+                              className,
+                              `${j === 0 ? "text-green" : ""} relative`
+                            )}
+                          >
+                            {j === 0 ? (
+                              <div
+                                className="absolute h-[90%] top-[5%] left-0 flex md:hidden bg-green-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                style={{ width: `${bidsWidth[i]}%` }}
+                              />
+                            ) : null}
+                            {value}
+                          </td>
+                        );
+                      if (!isMobileOpenTrade)
+                        return (
+                          <td
+                            key={j + className}
+                            className={cn(
+                              className,
+                              `${j === 0 ? "text-green" : ""} relative ${
+                                j === 1 ? "pr-2.5" : ""
+                              }`
+                            )}
+                          >
+                            {value}
+                          </td>
+                        );
+                    })}
+                    <div
+                      className="absolute rounded-r left-0 h-[90%] hidden md:flex top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
+                      style={{ width: `${bidsWidth[i]}%` }}
+                    />
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       ) : (
         <TradeSection

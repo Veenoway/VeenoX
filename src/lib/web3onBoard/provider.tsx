@@ -32,7 +32,7 @@ const web3Onboard = init({
   appMetadata: {
     name: "VeenoX",
     description: "VeenoX powered by Monad & Orderly Network",
-    icon: "/veenox/v-icon.png",
+    icon: "/pwa/icon-192x192.png",
   },
   accountCenter: {
     desktop: { enabled: false },

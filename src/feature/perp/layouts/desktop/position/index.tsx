@@ -84,7 +84,6 @@ export const Position = ({
 
   const closePendingOrder = async (id: number, symbol: string) => {
     const idToast = toast.loading("Closing Order");
-    console.log(id);
     try {
       await cancelOrder(id, symbol);
       toast.update(idToast, {
