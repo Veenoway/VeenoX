@@ -359,6 +359,22 @@ export const Position = ({
             />
           );
         })}
+        {activeSection === Sections.POSITION && !data?.rows?.length ? (
+          <p className="text-sm text-font-80 mx-auto text-center my-5">
+            No open positions
+          </p>
+        ) : null}
+        {activeSection !== Sections.POSITION &&
+        !orders
+          ?.filter(filterSide)
+          ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
+          ?.filter((_, i) => i < 40)?.length ? (
+          <p className="text-sm text-font-80 mx-auto text-center my-5">
+            {activeSection === Sections.PENDING
+              ? "No pending positions"
+              : "No history"}
+          </p>
+        ) : null}
       </div>
     </div>
   );
