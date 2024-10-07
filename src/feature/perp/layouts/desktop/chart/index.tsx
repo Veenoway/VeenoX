@@ -456,8 +456,13 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
           return null;
         };
 
+        const processedOrderIds = new Set<string>();
         relevantPositions?.forEach((position: any) => {
           if (position.symbol !== asset?.symbol) return;
+
+          const orderId = position?.algo_order?.algo_order_id;
+          if (processedOrderIds.has(orderId)) return;
+          processedOrderIds.add(orderId);
           const openPriceLineId = `open_${position?.algo_order?.algo_order_id}`;
           const openPriceLine = createLine({
             setText: "Open Price",
