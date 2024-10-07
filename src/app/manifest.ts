@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/perp/PERP_BTC_USDC",
     display: "standalone",
     background_color: "#1B1D22",
-    theme_color: "#836EF9",
+    theme_color: "#1B1D22",
     icons: [
       {
         src: "/pwa/icon-192x192.png",

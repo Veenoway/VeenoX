@@ -45,6 +45,21 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        <link
+          rel="icon"
+          type="image/png"
+          href="/pwa/favicon-48x48.png"
+          sizes="48x48"
+        />
+        <link rel="icon" type="image/svg+xml" href="/pwa/favicon.svg" />
+        <link rel="shortcut icon" href="/pwa/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/pwa/apple-touch-icon.png"
+        />
+        <meta name="apple-mobile-web-app-title" content="VeenoX" />
+        <link rel="manifest" href="/pwa/site.webmanifest" />
       </head>
       <body className={inter.className}>
         <Web3OnBoardProvider>
