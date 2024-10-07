@@ -277,10 +277,7 @@ export const Orderbook = ({
               <tbody>
                 {(formatOrderbook("asks", isQtyUSDC) || [])?.map((ask, i) => {
                   return (
-                    <tr
-                      key={i}
-                      className="text-font-80 text-xs relative my-0.5 h-fit"
-                    >
+                    <tr key={i} className="text-font-80 text-xs relative">
                       {Array.from({ length: 3 }).map((_, j) => {
                         const className = getStyleFromDevice(j, "");
                         const value =
@@ -298,6 +295,12 @@ export const Orderbook = ({
                                 `${j === 0 ? "text-red" : ""} relative`
                               )}
                             >
+                              {j === 0 ? (
+                                <div
+                                  className="absolute left-0 flex h-full md:hidden top-0 bg-red-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                  style={{ width: `${asksWidth[i]}%` }}
+                                />
+                              ) : null}
                               {value}
                             </td>
                           );
@@ -312,12 +315,6 @@ export const Orderbook = ({
                                 } relative`
                               )}
                             >
-                              {j === 0 ? (
-                                <div
-                                  className="absolute left-0 flex md:hidden top-0 bg-red-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
-                                  style={{ width: `${bidsWidth[i]}%` }}
-                                />
-                              ) : null}
                               {value}
                             </td>
                           );
@@ -361,6 +358,13 @@ export const Orderbook = ({
                             : typeof bid[j] === "number"
                             ? getFormattedAmount(bid[j])
                             : bid[j];
+
+                        console.log(
+                          "isMobileOpenTrade && (j === 0 || j === 2)",
+                          isMobileOpenTrade && (j === 0 || j === 2),
+                          j === 0,
+                          isMobileOpenTrade
+                        );
                         if (isMobileOpenTrade && (j === 0 || j === 2))
                           return (
                             <td
@@ -370,6 +374,12 @@ export const Orderbook = ({
                                 `${j === 0 ? "text-green" : ""} relative`
                               )}
                             >
+                              {j === 0 ? (
+                                <div
+                                  className="absolute left-0 flex h-full md:hidden top-0 bg-green-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                  style={{ width: `${bidsWidth[i]}%` }}
+                                />
+                              ) : null}
                               {value}
                             </td>
                           );
@@ -381,15 +391,9 @@ export const Orderbook = ({
                                 className,
                                 `${j === 0 ? "text-green" : ""} relative ${
                                   j === 1 ? "pr-2.5" : ""
-                                } relative`
+                                }`
                               )}
                             >
-                              {j === 0 ? (
-                                <div
-                                  className="absolute left-0 flex md:hidden top-0 bg-green-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
-                                  style={{ width: `${bidsWidth[i]}%` }}
-                                />
-                              ) : null}
                               {value}
                             </td>
                           );

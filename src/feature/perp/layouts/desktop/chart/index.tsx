@@ -587,7 +587,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   }, [asset?.symbol, custom_css_url, mobile]);
 
   return (
-    <div className="relative w-full chart">
+    <div className="relative w-full chart bg-secondary">
       <div
         className={cn(
           `absolute z-10 bg-secondary w-full transition-all duration-200 ease-in-out h-full`,
@@ -598,7 +598,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
           <Loader />
         </div>
       </div>
-      <div className={cn(`w-full h-full`, className)} ref={ref} />
+      <div className={cn(`w-full h-full bg-secondary`, className)} ref={ref} />
     </div>
   );
 };
