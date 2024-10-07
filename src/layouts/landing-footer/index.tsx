@@ -83,7 +83,7 @@ export const LandingFooter = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Doc
+                  Docs
                 </Link>
               </li>
               <li className="my-2">
