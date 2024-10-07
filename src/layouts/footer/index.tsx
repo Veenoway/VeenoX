@@ -61,10 +61,10 @@ export const Footer = () => {
             </Link>
           </div>
         </div>
-        <div className="flex md:flex-row flex-col md:items-center px-2.5">
+        <div className="flex sm:flex-row flex-col sm:items-center px-2.5">
           <p className="text-font-60 text-xs whitespace-nowrap">Powered by</p>
           <img
-            className="md:ml-2"
+            className="sm:ml-2"
             src="/logo/orderly-powered.svg"
             alt="Orderly network logo"
           />
