@@ -317,12 +317,6 @@ export const PosterModal = ({ order }: any) => {
                 />
               ) : (
                 <div className="max-w-full w-full md:max-w-[760px] md:w-[760px] min-h-[180px] md:h-[427px] bg-[#1B1D22] rounded-lg flex items-center justify-center">
-                  {/* <img
-                    src={"/loader/loader.gif"}
-                    alt="Generated Trading Poster"
-                    style={{ maxWidth: "100px", height: "auto" }}
-                    className="rounded-lg"
-                  /> */}
                   <Loader className="w-[70px]" />
                 </div>
               )}

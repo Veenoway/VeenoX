@@ -23,6 +23,9 @@ export const LandingFooter = () => {
             Unleash your <br />
             trading experience
           </p>{" "}
+          <p className="text-font-60 text-sm mt-auto font-light">
+            Copyright © 2024 VeenoX All Rights Reserved.
+          </p>{" "}
         </div>
         <div className="flex w-[90%] mx-auto md:mx-0 md:w-[50%] justify-between gap-5">
           <div>

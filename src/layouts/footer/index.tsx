@@ -28,7 +28,7 @@ export const Footer = () => {
             {maintenance?.status === 0 ? "Operational" : "Under maintenance"}
           </p>
           <div className="h-[30px] w-[1px] bg-borderColor mx-5 sm:block hidden" />
-          <div className="flex items-center gap-2.5 text-white">
+          <div className="flex items-center gap-2.5 text-white md:ml-0 ml-5">
             <p className="text-font-60 text-xs hidden sm:block">
               Join our community
             </p>
@@ -61,10 +61,10 @@ export const Footer = () => {
             </Link>
           </div>
         </div>
-        <div className="flex items-center px-2.5">
+        <div className="flex md:flex-row flex-col md:items-center px-2.5">
           <p className="text-font-60 text-xs whitespace-nowrap">Powered by</p>
           <img
-            className="ml-2"
+            className="md:ml-2"
             src="/logo/orderly-powered.svg"
             alt="Orderly network logo"
           />
