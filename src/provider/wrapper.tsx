@@ -23,7 +23,8 @@ export const Providers = ({ children }: ProviderType) => {
         pauseOnFocusLoss={false}
         pauseOnHover={false}
         autoClose={3000}
-        limit={1}
+        stacked
+        draggable={false}
       />
       <GeneralProvider>{children}</GeneralProvider>
     </>
