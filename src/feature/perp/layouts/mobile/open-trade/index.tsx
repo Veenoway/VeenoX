@@ -1,5 +1,6 @@
 import { useGeneralContext } from "@/context";
 import { Drawer, DrawerContent } from "@/lib/shadcn/drawer";
+import { Switch } from "@/lib/shadcn/switch";
 import { FuturesAssetProps } from "@/models";
 import { useEffect, useRef, useState } from "react";
 import { OpenTrade } from "../../desktop/open-trade";
@@ -34,22 +35,40 @@ export const MobileOpenTrade = ({
       setPosition(`calc(100vh - ${clientHeight}px)`);
     }
   }, [showMobileTradeCreator, tradeInfo.type, tradeInfo.tp_sl]);
+
+  const [showOrderbook, setShowOrderbook] = useState(true);
+
   return (
     <>
       <Drawer open={showMobileTradeCreator}>
         <DrawerContent close={() => setShowMobileTradeCreator(false)}>
-          <div
-            ref={tradeCreatorRef}
-            className={` h-fit w-full md:w-[350px] z-[100] left-0  transition-all duration-200 ease-in-out bg-secondary border-t border-borderColor shadow-2xl flex`}
-          >
-            <OpenTrade
-              asset={asset}
-              isMobile
-              holding={holding}
-              refresh={refresh}
-            />
-            <Orderbook asset={asset} isMobileOpenTrade isMobile />
-          </div>
+          <>
+            <div
+              ref={tradeCreatorRef}
+              className={` h-fit w-full md:w-[350px] pb-4 z-[100] left-0  transition-all duration-200 ease-in-out bg-secondary border-t border-borderColor shadow-2xl flex flex-col`}
+            >
+              <div className="flex items-center justify-end w-full pr-2.5 pt-1.5">
+                <Switch
+                  checked={showOrderbook}
+                  onCheckedChange={() => setShowOrderbook((prev) => !prev)}
+                />
+                <p className="text-white text-xs ml-2.5">
+                  {showOrderbook ? "Hide" : "Show"} orderbook
+                </p>
+              </div>
+              <div className="flex w-full h-full">
+                <OpenTrade
+                  asset={asset}
+                  isMobile
+                  holding={holding}
+                  refresh={refresh}
+                />
+                {showOrderbook ? (
+                  <Orderbook asset={asset} isMobileOpenTrade isMobile />
+                ) : null}{" "}
+              </div>
+            </div>
+          </>
         </DrawerContent>
       </Drawer>
       <div

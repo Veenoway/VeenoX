@@ -15,8 +15,10 @@ export const TradeSection = ({
 }: TradeSectionProps) => {
   return (
     <div className="h-[467px] md:h-calc-full-button overflow-y-scroll no-scrollbar relative">
-      {!trades?.length ? (
-        <Loader />
+      {isLoading ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <Loader />
+        </div>
       ) : (
         <table className="w-full h-full">
           <thead>

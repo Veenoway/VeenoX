@@ -11,7 +11,7 @@ import {
   useMarketTradeStream,
   useOrderbookStream,
 } from "@orderly.network/hooks";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { TradeSection } from "./trade-section";
 1;
@@ -145,6 +145,23 @@ export const Orderbook = ({
     return padOrderbook(formattedData, exepectedOrderbookLength);
   }
 
+  const filteredTrades = useMemo(() => {
+    if (!trades) return [];
+
+    return trades
+      .filter(
+        (trade) =>
+          trade.executed_price !== 0 &&
+          trade.executed_quantity !== 0 &&
+          trade.executed_timestamp !== 0
+      )
+      .filter((_, i) =>
+        (sectionRef?.current?.clientHeight as number) > 800 ? i < 32 : i < 28
+      );
+  }, [trades, sectionRef]);
+
+  console.log("activeSection", activeSection);
+
   return (
     <section
       ref={sectionRef}
@@ -177,7 +194,8 @@ export const Orderbook = ({
           </div>
         </>
       )}
-      {activeSection === OrderbookSection.TRADE_HISTORY ? null : (
+      {mobileActiveSection === "Orderbook" ||
+      activeSection === OrderbookSection.ORDERBOOK ? (
         <div className="flex items-center justify-between py-1.5">
           <Popover>
             <PopoverTrigger className="h-full min-w-fit">
@@ -242,7 +260,7 @@ export const Orderbook = ({
             </PopoverContent>
           </Popover>
         </div>
-      )}
+      ) : null}
       {(activeSection === OrderbookSection.ORDERBOOK &&
         (mobileActiveSection === "Orderbook" || !mobileActiveSection)) ||
       isMobileOpenTrade ? (
@@ -395,13 +413,7 @@ export const Orderbook = ({
       ) : (
         <TradeSection
           asset={asset}
-          trades={
-            trades?.filter((e, i) =>
-              (sectionRef?.current?.clientHeight as number) > 800
-                ? i < 32
-                : i < 28
-            ) as TradeExtension[]
-          }
+          trades={filteredTrades as TradeExtension[]}
           isLoading={isTradesLoading}
         />
       )}
