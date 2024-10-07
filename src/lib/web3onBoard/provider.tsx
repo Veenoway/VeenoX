@@ -31,8 +31,9 @@ const web3Onboard = init({
   },
   appMetadata: {
     name: "VeenoX",
-    description: "VeenoX powered by Monad & Orderly Network",
-    icon: "/pwa/icon-192x192.png",
+    description: "VeenoX is a perp dex powered by Monad & Orderly Network",
+    icon: "/pwa/icon-40x40.png",
+    logo: "/pwa/icon-text.png",
   },
   accountCenter: {
     desktop: { enabled: false },
