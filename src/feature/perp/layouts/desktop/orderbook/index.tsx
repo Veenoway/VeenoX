@@ -309,15 +309,21 @@ export const Orderbook = ({
                                 className,
                                 `${j === 0 ? "text-red" : ""} relative ${
                                   j === 1 ? "pr-2.5" : ""
-                                }`
+                                } relative`
                               )}
                             >
+                              {j === 0 ? (
+                                <div
+                                  className="absolute left-0 flex md:hidden top-0 bg-red-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                  style={{ width: `${bidsWidth[i]}%` }}
+                                />
+                              ) : null}
                               {value}
                             </td>
                           );
                       })}
                       <td
-                        className="absolute rounded-r left-0 md:max-h-auto max-h-[22px] h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute rounded-r left-0 md:flex hidden md:h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${asksWidth[i]}%` }}
                       />
                     </tr>
@@ -375,15 +381,21 @@ export const Orderbook = ({
                                 className,
                                 `${j === 0 ? "text-green" : ""} relative ${
                                   j === 1 ? "pr-2.5" : ""
-                                }`
+                                } relative`
                               )}
                             >
+                              {j === 0 ? (
+                                <div
+                                  className="absolute left-0 flex md:hidden top-0 bg-green-opacity-10 z-0 rounded-r transition-all duration-150 ease-linear"
+                                  style={{ width: `${bidsWidth[i]}%` }}
+                                />
+                              ) : null}
                               {value}
                             </td>
                           );
                       })}
                       <div
-                        className="absolute rounded-r left-0 md:max-h-auto max-h-[22px] h-[90%] top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute rounded-r left-0 h-[90%] hidden md:flex top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${bidsWidth[i]}%` }}
                       />
                     </tr>
