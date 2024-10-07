@@ -315,7 +315,6 @@ const renderAdditionalCells = (
       </>
     );
   } else if (section === Sections.ORDER_HISTORY) {
-    console.log("I RENDER");
     let filledOrder =
       trade.child_orders?.length > 0
         ? trade?.child_orders?.[0]?.algo_status === "FILLED"
