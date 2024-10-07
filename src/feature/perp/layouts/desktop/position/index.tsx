@@ -208,8 +208,6 @@ export const Position = ({
     }
   }, [shouldRefresh]);
 
-  console.log("ACTIVE", activeSection);
-
   return (
     <div className="w-full md:min-h-[320px] md:h-[320px] md:max-h-[320px]">
       <div className="w-full flex justify-between items-center border-b border-borderColor-DARK">

@@ -12,7 +12,7 @@ import { MobileModal } from "./mobile";
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   return (
-    <header className="flex items-center justify-between h-[60px] px-2.5 border-b border-borderColor">
+    <header className="flex items-center justify-between h-[55px] sm:h-[60px] px-2.5 border-b border-borderColor">
       <div className="flex items-center gap-5">
         <div className="flex items-center gap-2">
           <Link href="/">
