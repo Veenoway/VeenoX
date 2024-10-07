@@ -32,7 +32,7 @@ export const Leverage = () => {
           }
         }}
       >
-        <div className="text-white flex flex-col justify-center items-center sm:items-end">
+        <div className="text-white flex flex-col justify-center items-end">
           <p className="text-font-60 text-xs mb-[3px]">Account Leverage</p>
           <div className="flex items-center text-sm text-white hover:text-base_color transition-color duration-150 ease-in-out">
             <p className="sm:block hidden">{currentLeverage.toFixed(2)}x/ </p>
