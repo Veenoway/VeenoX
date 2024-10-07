@@ -133,7 +133,9 @@ export const EditModal = ({ order, refresh }: EditModalType) => {
           ) {
             setEditPendingPositionOpen(order);
             setOrderPositions([]);
-          } else setEditPendingPositionOpen(null);
+          } else {
+            setEditPendingPositionOpen(null);
+          }
         }}
       >
         <div
@@ -146,8 +148,10 @@ export const EditModal = ({ order, refresh }: EditModalType) => {
       </PopoverTrigger>
       <PopoverContent
         sideOffset={4}
-        align="center"
-        onInteractOutside={() => setEditPendingPositionOpen(null)}
+        align={window.innerWidth > 768 ? "center" : "start"}
+        onInteractOutside={() => {
+          if (window.innerWidth > 768) setEditPendingPositionOpen(null);
+        }}
         className="flex flex-col p-2.5 z-[102] w-[200px] whitespace-nowrap bg-secondary border border-borderColor shadow-xl"
       >
         <div className="flex items-center justify-between gap-2">
