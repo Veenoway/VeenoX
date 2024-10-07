@@ -43,6 +43,7 @@ export default function RootLayout({
           name="description"
           content="VeenoX is a cutting-edge perpetual decentralized exchange (DEX) built on the Orderly Network and powered by Monad technology."
         />
+
         <link rel="icon" href="/pwa/favicon.ico" />
         <link
           rel="icon"
@@ -118,13 +119,18 @@ export default function RootLayout({
         />
         <link
           rel="apple-touch-startup-image"
-          href="/splash_screens/iPhone_13_mini__iPhone_12_mini__iPhone_11_Pro__iPhone_XS__iPhone_X.png"
+          href="/splash_screens/11__iPad_Pro_M4_portrait.png"
           media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
         />
         <link
           rel="apple-touch-startup-image"
           href="/splash_screens/4__iPhone_SE__iPod_touch_5th_generation_and_later.png"
           media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+        />
+        <link
+          rel="apple-touch-startup-image"
+          href="/splash_screens/11__iPad_Pro_M4_portrait.png"
+          media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
         />
         <link
           rel="apple-touch-startup-image"
