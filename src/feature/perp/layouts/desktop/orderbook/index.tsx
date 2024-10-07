@@ -279,7 +279,7 @@ export const Orderbook = ({
                   return (
                     <tr
                       key={i}
-                      className="text-font-80 text-xs relative my-0.5"
+                      className="text-font-80 text-xs relative my-0.5 h-fit"
                     >
                       {Array.from({ length: 3 }).map((_, j) => {
                         const className = getStyleFromDevice(j, "");
@@ -299,12 +299,6 @@ export const Orderbook = ({
                               )}
                             >
                               {value}
-                              {j == 2 ? (
-                                <div
-                                  className="absolute left-0 h-full top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
-                                  style={{ width: `${asksWidth[i]}%` }}
-                                />
-                              ) : null}
                             </td>
                           );
                         if (!isMobileOpenTrade)
@@ -323,7 +317,7 @@ export const Orderbook = ({
                           );
                       })}
                       <td
-                        className="absolute rounded-r left-0 h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute rounded-r left-0 md:max-h-auto max-h-[22px] h-[90%] top-[5%] bg-red-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${asksWidth[i]}%` }}
                       />
                     </tr>
@@ -389,7 +383,7 @@ export const Orderbook = ({
                           );
                       })}
                       <div
-                        className="absolute rounded-r left-0 h-[90%] top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
+                        className="absolute rounded-r left-0 md:max-h-auto max-h-[22px] h-[90%] top-[5%] bg-green-opacity-10 z-0 transition-all duration-150 ease-linear"
                         style={{ width: `${bidsWidth[i]}%` }}
                       />
                     </tr>

@@ -31,31 +31,6 @@ const LeverageSlider: any = styled(Slider)({
       display: "none",
     },
   },
-  "& .MuiSlider-mark": {
-    backgroundColor: "transparent",
-    height: 4,
-    width: 2,
-    borderRadius: "10px",
-    top: "17px",
-    color: "#FFF",
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "100%",
-      height: "100%",
-      backgroundColor: "#836ef9",
-    },
-    "&.MuiSlider-markActive": {
-      opacity: 1,
-      backgroundColor: "transparent",
-      "&::before": {
-        backgroundColor: "#836ef9",
-      },
-    },
-  },
   "& .MuiSlider-markLabel": {
     color: "#FFFFFF70",
     fontSize: 12,

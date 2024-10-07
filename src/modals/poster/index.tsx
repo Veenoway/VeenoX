@@ -305,7 +305,7 @@ export const PosterModal = ({ order }: any) => {
         close={() => {}}
       >
         <div className="flex flex-col">
-          <div className="flex ">
+          <div className="flex md:flex-row flex-col">
             <div className="border border-borderColor-DARK rounded-lg">
               <canvas ref={canvasRef} style={{ display: "none" }} />
               {imageUrl ? (
@@ -313,10 +313,10 @@ export const PosterModal = ({ order }: any) => {
                   src={imageUrl}
                   alt="Generated Trading Poster"
                   style={{ maxWidth: "760px", height: "auto" }}
-                  className="rounded-lg"
+                  className="rounded-lg max-w-full md:w-[760px] w-full"
                 />
               ) : (
-                <div className="max-w-[760px] w-[760px] h-[427px] bg-[#1B1D22] rounded-lg flex items-center justify-center">
+                <div className="max-w-full w-full md:max-w-[760px] md:w-[760px] min-h-[180px] md:h-[427px] bg-[#1B1D22] rounded-lg flex items-center justify-center">
                   {/* <img
                     src={"/loader/loader.gif"}
                     alt="Generated Trading Poster"
@@ -327,7 +327,7 @@ export const PosterModal = ({ order }: any) => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col ml-5">
+            <div className="flex flex-col mt-5 md:mt-0 md:ml-5">
               <p>PnL display:</p>
               <div className="flex items-center gap-3">
                 {displays.map((type) => (

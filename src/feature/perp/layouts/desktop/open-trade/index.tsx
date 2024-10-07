@@ -87,6 +87,7 @@ export const OpenTrade = ({
     setOrderPositions,
     setDepositAmount,
     depositAmount,
+    setShowMobileTradeCreator,
   } = useGeneralContext();
 
   const { totalValue, unsettledPnL, accountInfo } = useCollateral({
@@ -217,6 +218,7 @@ export const OpenTrade = ({
         autoClose: 2000,
       });
       await Promise.all([refresh(), refreshPosition()]);
+      setShowMobileTradeCreator(false);
     } catch (err: any) {
       toast.update(id, {
         render: err?.message,
@@ -250,10 +252,13 @@ export const OpenTrade = ({
   const barPosition = getSectionBarPosition();
 
   const handleButtonLongClick = async () => {
-    if (state.status === 0) await connectWallet();
-    else if (state.status >= 1 && state.status <= 4)
+    if (state.status === 0) {
+      setShowMobileTradeCreator(false);
+      await connectWallet();
+    } else if (state.status >= 1 && state.status <= 4) {
+      setShowMobileTradeCreator(false);
       setIsEnableTradingModalOpen(true);
-    else {
+    } else {
       if (values.type === OrderType.LIMIT) {
         if (Number(values.price) > (rangeInfo?.max as number)) {
           setInputErrors((prev) => ({

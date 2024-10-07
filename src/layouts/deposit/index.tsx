@@ -180,7 +180,7 @@ export const Deposit = () => {
         </DialogTrigger>
         <DialogContent
           close={() => setOpenWithdraw(false)}
-          className="w-full max-w-[435px] bg-secondary h-auto max-h-auto flex flex-col gap-0"
+          className="w-[95%] md:w-full max-w-[435px] bg-secondary h-auto max-h-auto flex flex-col gap-0"
         >
           <DialogHeader>
             <DialogTitle className="">

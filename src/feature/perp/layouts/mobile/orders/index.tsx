@@ -202,6 +202,7 @@ export const MobileOrdersDrawer = ({
                     } else if (state.status >= 2)
                       setIsEnableTradingModalOpen(true);
                     else await connectWallet();
+                    setShowAccountMobile(false);
                   }}
                 >
                   Withdraw
@@ -215,6 +216,7 @@ export const MobileOrdersDrawer = ({
                     } else if (state.status >= 2)
                       setIsEnableTradingModalOpen(true);
                     else await connectWallet();
+                    setShowAccountMobile(false);
                   }}
                 >
                   Deposit

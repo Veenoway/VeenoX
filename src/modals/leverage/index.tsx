@@ -1,4 +1,5 @@
 "use client";
+import { useGeneralContext } from "@/context";
 import {
   Dialog,
   DialogContent,
@@ -17,13 +18,19 @@ export const Leverage = () => {
   const { currentLeverage } = useMarginRatio();
   const [showPopup, setShowPopup] = useState(false);
   const [maxLeverage] = useLeverage();
+  const { setShowAccountMobile } = useGeneralContext();
 
   return (
     <Dialog open={showPopup}>
       <DialogTrigger
         onClick={async () => {
-          if (wallet) setShowPopup(true);
-          else await connectWallet();
+          if (wallet) {
+            setShowAccountMobile(false);
+            setShowPopup(true);
+          } else {
+            setShowAccountMobile(false);
+            await connectWallet();
+          }
         }}
       >
         <button className="text-white flex flex-col justify-center items-end">
