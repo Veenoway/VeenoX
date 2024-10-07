@@ -25,7 +25,6 @@ export const Leverage = () => {
       <DialogTrigger
         onClick={async () => {
           if (wallet) {
-            setShowAccountMobile(false);
             setShowPopup(true);
           } else {
             setShowAccountMobile(false);
