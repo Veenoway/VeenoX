@@ -60,7 +60,7 @@ export const Bridge = () => {
       container: {
         boxShadow: "0 0 0 1px rgba(200, 200, 200, 0.15)",
         borderRadius: "8px",
-        minWidth: "404px",
+        minWidth: "304px",
         zIndex: 0,
       },
       shape: {
@@ -77,7 +77,7 @@ export const Bridge = () => {
 
   return (
     <main className="">
-      <div className="flex flex-col items-center h-[95vh] pt-[50px] glowing-background relative">
+      <div className="flex flex-col items-center h-[95vh] pt-[40px] sm:pt-[50px] glowing-background relative">
         <Web3OnBoardProvider>
           {/* <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
           <button
@@ -129,7 +129,7 @@ export const Bridge = () => {
             }
           </div> */}
 
-          <div className="relative w-full max-w-[420px] h-[606px] mt-[40px] z-0">
+          <div className="relative w-[90%] mx-auto sm:min-w-[404px] sm:mx-0 sm:w-full max-w-[420px] h-[606px] md:mt-[40px] z-0">
             <div
               className={`absolute inset-0 transition-opacity max-w-[420px] duration-300 ${
                 activeBridge === "LiFi" ? "opacity-100 z-10" : "opacity-0 z-0"

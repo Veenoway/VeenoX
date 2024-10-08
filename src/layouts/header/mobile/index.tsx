@@ -1,3 +1,5 @@
+import { Deposit } from "@/layouts/deposit";
+import { OrderlyRewards } from "@/layouts/orderly-rewards";
 import Link from "next/link";
 import { AiOutlineSwap } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
@@ -73,6 +75,14 @@ export const MobileModal = ({ isOpen, onClose }: MobileModalProps) => {
                   Docs
                 </span>
               </Link>
+            </li>
+            <li className="mt-5">
+              <div className="flex items-center gap-5">
+                <div onClick={onClose}>
+                  <Deposit />
+                </div>
+                <OrderlyRewards />
+              </div>
             </li>
           </ul>
         </nav>
