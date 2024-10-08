@@ -202,6 +202,7 @@ export const MobileOrdersDrawer = ({
                     } else if (state.status >= 2)
                       setIsEnableTradingModalOpen(true);
                     else {
+                      setShowAccountMobile(false);
                       await connectWallet();
                     }
                     setShowAccountMobile(false);
@@ -218,6 +219,7 @@ export const MobileOrdersDrawer = ({
                     } else if (state.status >= 2)
                       setIsEnableTradingModalOpen(true);
                     else {
+                      setShowAccountMobile(false);
                       await connectWallet();
                     }
                     setShowAccountMobile(false);
