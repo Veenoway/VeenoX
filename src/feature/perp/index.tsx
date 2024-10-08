@@ -54,7 +54,7 @@ export const Perp = ({ asset }: PerpProps) => {
       revalidateIfStale: true,
     }
   );
-  const [orders, { cancelOrder, refresh, updateOrder }] = useOrderStream(
+  const [orders, { cancelOrder, refresh }] = useOrderStream(
     {},
     {
       keeplive: true,
