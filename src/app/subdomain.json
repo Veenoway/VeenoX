@@ -1,0 +1,6 @@
+[
+  {
+    "subdomain": "app",
+    "paths": ["/perp/PERP_BTC_USDC", "/portfolio", "/bridge"]
+  }
+]

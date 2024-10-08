@@ -35,10 +35,10 @@ export const Row = ({ content, isEven = false }: RowType) => {
           {content.ul.map((text, i) => (
             <li
               key={i}
-              className={`flex items-center ${i === 1 ? "my-1.5 lg:my-2" : ""}`}
+              className={`flex relative ${i === 1 ? "my-1.5 lg:my-2" : ""}`}
             >
-              <div className="h-1.5 w-1.5 min-w-1.5 mr-2 rounded-full bg-white" />
-              {text}
+              <div className="top-[11px] absolute h-1.5 w-1.5 -mb-2 min-w-1.5 mr-2 rounded-full bg-white" />
+              <p className="ml-3.5">{text} </p>
             </li>
           ))}
         </ul>

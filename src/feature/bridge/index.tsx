@@ -27,7 +27,7 @@ export const Bridge = () => {
     variant: "wide",
     subvariant: "default",
     appearance: "dark",
-    fee: 0.02,
+    fee: 0.005,
     hiddenUI: ["walletMenu", "poweredBy"],
     theme: {
       palette: {

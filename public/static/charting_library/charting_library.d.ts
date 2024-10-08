@@ -329,16 +329,16 @@ export declare type ChartActionId =
   | "showSymbolInfoDialog";
 export declare type ContextMenuItemsProcessor = (
   items: readonly IActionVariant[],
-  actionsFactory: ActionsFactory,
+  actionsFactory: ActionsFactory
 ) => Promise<readonly IActionVariant[]>;
 export declare type ContextMenuRendererFactory = (
   items: readonly IActionVariant[],
   params: CreateContextMenuParams,
-  onDestroy: () => void,
+  onDestroy: () => void
 ) => Promise<IContextMenuRenderer>;
 export declare type CustomTranslateFunction = (
   key: string,
-  options?: TranslateOptions,
+  options?: TranslateOptions
 ) => string | null;
 export declare type DateFormat = keyof typeof dateFormatFunctions;
 export declare type Direction = "buy" | "sell";
@@ -369,7 +369,7 @@ export declare type FieldDescriptor =
 export declare type GetMarksCallback<T> = (marks: T[]) => void;
 export declare type GetNewsFunction = (
   symbol: string,
-  callback: (response: GetNewsResponse) => void,
+  callback: (response: GetNewsResponse) => void
 ) => void;
 export declare type GroupLockState = "Locked" | "Unlocked" | "Partial";
 export declare type GroupVisibilityState = "Visible" | "Invisible" | "Partial";
@@ -379,13 +379,13 @@ export declare type HeaderWidgetButtonsMode =
   | "adaptive";
 export declare type HistoryCallback = (
   bars: Bar[],
-  meta?: HistoryMetadata,
+  meta?: HistoryMetadata
 ) => void;
 export declare type IActionVariant = IAction | ISeparator;
 export declare type IBasicDataFeed = IDatafeedChartApi & IExternalDatafeed;
 export declare type INumberFormatter = IFormatter<number>;
 export declare type InputFieldValidator = (
-  value: any,
+  value: any
 ) => InputFieldValidatorResult;
 export declare type InputFieldValidatorResult =
   | PositiveBaseInputFieldValidatorResult
@@ -466,7 +466,7 @@ export declare type Nominal<T, Name extends string> = T & {
 export declare type OnActionExecuteHandler = (action: IAction) => void;
 export declare type OnActionUpdateHandler = (action: IAction) => void;
 export declare type OnReadyCallback = (
-  configuration: DatafeedConfiguration,
+  configuration: DatafeedConfiguration
 ) => void;
 export declare type Order = PlacedOrder | BracketOrder;
 export declare type PageName =
@@ -480,7 +480,7 @@ export declare type ResolutionString = Nominal<string, "ResolutionString">;
 export declare type ResolveCallback = (symbolInfo: LibrarySymbolInfo) => void;
 export declare type RssNewsFeedItem = RssNewsFeedInfo | RssNewsFeedInfo[];
 export declare type SearchSymbolsCallback = (
-  items: SearchSymbolResultItem[],
+  items: SearchSymbolResultItem[]
 ) => void;
 export declare type SeriesEventType = "price_scale_changed";
 export declare type SeriesFormat = "price" | "volume";
@@ -598,7 +598,7 @@ export declare type SupportedLineTools =
   | "regression_trend"
   | "fixed_range_volume_profile";
 export declare type SymbolSearchCompleteOverrideFunction = (
-  symbol: string,
+  symbol: string
 ) => Promise<string>;
 export declare type SymbolType =
   | "stock"
@@ -620,7 +620,7 @@ export declare type SymbolType =
   | "fund"
   | "structured";
 export declare type TextInputFieldValidator = (
-  value: string,
+  value: string
 ) => InputFieldValidatorResult;
 export declare type ThemeName = "Light" | "Dark";
 export declare type TickMarkType =
@@ -657,18 +657,18 @@ export declare type TradingDialogCustomField =
 export declare type VisiblePlotsSet = "ohlcv" | "ohlc" | "c";
 export declare type WatchListSymbolListAddedCallback = (
   listId: string,
-  symbols: string[],
+  symbols: string[]
 ) => void;
 export declare type WatchListSymbolListChangedCallback = (
-  listId: string,
+  listId: string
 ) => void;
 export declare type WatchListSymbolListRemovedCallback = (
-  listId: string,
+  listId: string
 ) => void;
 export declare type WatchListSymbolListRenamedCallback = (
   listId: string,
   oldName: string,
-  newName: string,
+  newName: string
 ) => void;
 export declare type WatchedValueCallback<T> = (value: T) => void;
 export interface AccessList {
@@ -708,7 +708,7 @@ export interface AccountManagerInfo {
   marginUsed?: IWatchedValue<number>;
   contextMenuActions?(
     contextMenuEvent: MouseEvent | TouchEvent,
-    activePageActions: ActionMetaInfo[],
+    activePageActions: ActionMetaInfo[]
   ): Promise<ActionMetaInfo[]>;
 }
 export interface AccountManagerPage {
@@ -951,12 +951,12 @@ export interface BrokerConfigFlags {
 export interface BrokerCustomUI {
   showOrderDialog?: (
     order: OrderTemplate | Order,
-    focus?: OrderTicketFocusControl,
+    focus?: OrderTicketFocusControl
   ) => Promise<boolean>;
   showPositionDialog?: (
     position: Position | Trade,
     brackets: Brackets,
-    focus?: OrderTicketFocusControl,
+    focus?: OrderTicketFocusControl
   ) => Promise<boolean>;
   showCancelOrderDialog?: (order: Order) => Promise<boolean>;
   showClosePositionDialog?: (position: Position) => Promise<boolean>;
@@ -1000,7 +1000,7 @@ export interface ChartMetaInfo {
 }
 export interface ChartingLibraryWidgetConstructor {
   new (
-    options: ChartingLibraryWidgetOptions | TradingTerminalWidgetOptions,
+    options: ChartingLibraryWidgetOptions | TradingTerminalWidgetOptions
   ): IChartingLibraryWidget;
 }
 export interface ChartingLibraryWidgetOptions {
@@ -1051,7 +1051,7 @@ export interface ChartingLibraryWidgetOptions {
   theme?: ThemeName;
   compare_symbols?: CompareSymbol[];
   custom_indicators_getter?: (
-    PineJS: PineJS,
+    PineJS: PineJS
   ) => Promise<readonly CustomIndicator[]>;
   additional_symbol_info_fields?: AdditionalSymbolInfoField[];
   header_widget_buttons_mode?: HeaderWidgetButtonsMode;
@@ -1427,7 +1427,7 @@ export interface IBoxedValueReadOnly<T> {
 export interface IBrokerCommon {
   chartContextMenuActions(
     context: TradeContext,
-    options?: DefaultContextMenuActionsParams,
+    options?: DefaultContextMenuActionsParams
   ): Promise<ActionMetaInfo[]>;
   isTradable(symbol: string): Promise<boolean | IsTradableResult>;
   connectionStatus(): ConnectionStatus;
@@ -1440,12 +1440,12 @@ export interface IBrokerCommon {
   accountManagerInfo(): AccountManagerInfo;
   formatter?(
     symbol: string,
-    alignToMinMove: boolean,
+    alignToMinMove: boolean
   ): Promise<INumberFormatter>;
   spreadFormatter?(symbol: string): Promise<INumberFormatter>;
   quantityFormatter?(symbol: string): Promise<INumberFormatter>;
   getOrderDialogOptions?(
-    symbol: string,
+    symbol: string
   ): Promise<OrderDialogOptions | undefined>;
   getPositionDialogOptions?(): PositionDialogOptions | undefined;
 }
@@ -1456,23 +1456,23 @@ export interface IBrokerConnectionAdapterFactory {
     priceScale?: number,
     minMove?: number,
     fractional?: boolean,
-    minMove2?: number,
+    minMove2?: number
   ): IPriceFormatter;
 }
 export interface IBrokerConnectionAdapterHost {
   factory: IBrokerConnectionAdapterFactory;
   defaultFormatter(
     symbol: string,
-    alignToMinMove: boolean,
+    alignToMinMove: boolean
   ): Promise<INumberFormatter>;
   numericFormatter(decimalPlaces: number): Promise<INumberFormatter>;
   quantityFormatter(decimalPlaces?: number): Promise<INumberFormatter>;
   defaultContextMenuActions(
     context: TradeContext,
-    params?: DefaultContextMenuActionsParams,
+    params?: DefaultContextMenuActionsParams
   ): Promise<ActionMetaInfo[]>;
   defaultDropdownMenuActions(
-    options?: Partial<DefaultDropdownActionsParams>,
+    options?: Partial<DefaultDropdownActionsParams>
   ): ActionMetaInfo[];
   sellBuyButtonsVisibility(): IWatchedValue<boolean> | null;
   domPanelVisibility(): IWatchedValue<boolean> | null;
@@ -1498,39 +1498,39 @@ export interface IBrokerConnectionAdapterHost {
   domeUpdate(symbol: string, equity: DOMData): void;
   showOrderDialog?<T extends PreOrder>(
     order: T,
-    focus?: OrderTicketFocusControl,
+    focus?: OrderTicketFocusControl
   ): Promise<boolean>;
   showNotification(
     title: string,
     text: string,
-    notificationType?: NotificationType,
+    notificationType?: NotificationType
   ): void;
   showCancelOrderDialog(
     orderId: string,
-    handler: () => Promise<void>,
+    handler: () => Promise<void>
   ): Promise<void>;
   showCancelMultipleOrdersDialog(
     symbol: string,
     side: Side,
     qty: number,
-    handler: () => Promise<void>,
+    handler: () => Promise<void>
   ): Promise<void>;
   showCancelBracketsDialog(
     orderId: string,
-    handler: () => Promise<void>,
+    handler: () => Promise<void>
   ): Promise<void>;
   showCancelMultipleBracketsDialog(
     orderId: string,
-    handler: () => Promise<void>,
+    handler: () => Promise<void>
   ): Promise<void>;
   showReversePositionDialog(
     position: string,
-    handler: () => Promise<boolean>,
+    handler: () => Promise<boolean>
   ): Promise<boolean>;
   showPositionBracketsDialog(
     position: Position | Trade,
     brackets: Brackets,
-    focus: OrderTicketFocusControl,
+    focus: OrderTicketFocusControl
   ): Promise<boolean>;
   setButtonDropdownActions(descriptions: ActionMetaInfo[]): void;
   activateBottomWidget(): Promise<void>;
@@ -1542,14 +1542,14 @@ export interface IBrokerConnectionAdapterHost {
     content: string | string[],
     mainButtonText?: string,
     cancelButtonText?: string,
-    showDisableConfirmationsCheckbox?: boolean,
+    showDisableConfirmationsCheckbox?: boolean
   ): Promise<boolean>;
   showSimpleConfirmDialog(
     title: string,
     content: string | string[],
     mainButtonText?: string,
     cancelButtonText?: string,
-    showDisableConfirmationsCheckbox?: boolean,
+    showDisableConfirmationsCheckbox?: boolean
   ): Promise<boolean>;
 }
 export interface IBrokerTerminal extends IBrokerWithoutRealtime {
@@ -1566,7 +1566,7 @@ export interface IBrokerWithoutRealtime extends IBrokerCommon {
   cancelOrders(
     symbol: string,
     side: Side | undefined,
-    ordersIds: string[],
+    ordersIds: string[]
   ): Promise<void>;
   reversePosition?(positionId: string): Promise<void>;
   closePosition?(positionId: string, amount?: number): Promise<void>;
@@ -1574,15 +1574,15 @@ export interface IBrokerWithoutRealtime extends IBrokerCommon {
   editPositionBrackets?(
     positionId: string,
     brackets: Brackets,
-    customFields?: CustomInputFieldsValues,
+    customFields?: CustomInputFieldsValues
   ): Promise<void>;
   editTradeBrackets?(tradeId: string, brackets: Brackets): Promise<void>;
   leverageInfo?(leverageInfoParams: LeverageInfoParams): Promise<LeverageInfo>;
   setLeverage?(
-    leverageSetParams: LeverageSetParams,
+    leverageSetParams: LeverageSetParams
   ): Promise<LeverageSetResult>;
   previewLeverage?(
-    leverageSetParams: LeverageSetParams,
+    leverageSetParams: LeverageSetParams
   ): Promise<LeveragePreviewResult>;
   /**
    * @deprecated Brokers should always send PL and equity updates
@@ -1607,7 +1607,7 @@ export interface IChartWidgetApi {
       interval: ResolutionString,
       timeFrameParameters: {
         timeframe?: TimeFrameValue;
-      },
+      }
     ) => void
   >;
   onVisibleRangeChanged(): ISubscription<(range: VisibleTimeRange) => void>;
@@ -1616,7 +1616,7 @@ export interface IChartWidgetApi {
   crossHairMoved(): ISubscription<(params: CrossHairMovedEventParams) => void>;
   setVisibleRange(
     range: SetVisibleTimeRange,
-    options?: SetVisibleRangeOptions,
+    options?: SetVisibleRangeOptions
   ): Promise<void>;
   setSymbol(symbol: string, callback?: () => void): void;
   setResolution(resolution: ResolutionString, callback?: () => void): void;
@@ -1635,7 +1635,7 @@ export interface IChartWidgetApi {
   getAllPanesHeight(): number[];
   setAllPanesHeight(heights: readonly number[]): void;
   availableZOrderOperations(
-    sources: readonly EntityId[],
+    sources: readonly EntityId[]
   ): AvailableZOrderOperations;
   sendToBack(entities: readonly EntityId[]): void;
   bringToFront(sources: readonly EntityId[]): void;
@@ -1653,7 +1653,7 @@ export interface IChartWidgetApi {
     lock?: boolean,
     inputs?: Record<string, StudyInputValue>,
     overrides?: TOverrides,
-    options?: CreateStudyOptions,
+    options?: CreateStudyOptions
   ): Promise<EntityId | null>;
   /**
    * @deprecated Prefer `createStudy` function that relies on named properties for `inputs`.
@@ -1661,24 +1661,24 @@ export interface IChartWidgetApi {
    */
   createStudy<
     TStudyInputValue extends StudyInputValue,
-    TOverrides extends StudyOverrides,
+    TOverrides extends StudyOverrides
   >(
     name: string,
     forceOverlay?: boolean,
     lock?: boolean,
     inputs?: TStudyInputValue[],
     overrides?: TOverrides,
-    options?: CreateStudyOptions,
+    options?: CreateStudyOptions
   ): Promise<EntityId | null>;
   getStudyById(entityId: EntityId): IStudyApi;
   getSeries(): ISeriesApi;
   createShape<TOverrides extends object>(
     point: ShapePoint,
-    options: CreateShapeOptions<TOverrides>,
+    options: CreateShapeOptions<TOverrides>
   ): EntityId | null;
   createMultipointShape<TOverrides extends object>(
     points: ShapePoint[],
-    options: CreateMultipointShapeOptions<TOverrides>,
+    options: CreateMultipointShapeOptions<TOverrides>
   ): EntityId | null;
   getShapeById(entityId: EntityId): ILineDataSourceApi;
   removeEntity(entityId: EntityId, options?: UndoOptions): void;
@@ -1741,22 +1741,22 @@ export interface IChartingLibraryWidget {
   onGrayedObjectClicked(callback: (obj: GrayedObject) => void): void;
   onShortcut(
     shortCut: string | number | (string | number)[],
-    callback: EmptyCallback,
+    callback: EmptyCallback
   ): void;
   subscribe<EventName extends keyof SubscribeEventsMap>(
     event: EventName,
-    callback: SubscribeEventsMap[EventName],
+    callback: SubscribeEventsMap[EventName]
   ): void;
   unsubscribe<EventName extends keyof SubscribeEventsMap>(
     event: EventName,
-    callback: SubscribeEventsMap[EventName],
+    callback: SubscribeEventsMap[EventName]
   ): void;
   chart(index?: number): IChartWidgetApi;
   getLanguage(): LanguageCode;
   setSymbol(
     symbol: string,
     interval: ResolutionString,
-    callback: EmptyCallback,
+    callback: EmptyCallback
   ): void;
   remove(): void;
   closePopupsAndDialogs(): void;
@@ -1769,14 +1769,14 @@ export interface IChartingLibraryWidget {
   saveChartToServer(
     onComplete?: EmptyCallback,
     onFail?: EmptyCallback,
-    options?: SaveChartToServerOptions,
+    options?: SaveChartToServerOptions
   ): void;
   removeChartFromServer(
     chartId: string,
-    onCompleteCallback: EmptyCallback,
+    onCompleteCallback: EmptyCallback
   ): void;
   onContextMenu(
-    callback: (unixTime: number, price: number) => ContextMenuItem[],
+    callback: (unixTime: number, price: number) => ContextMenuItem[]
   ): void;
   createButton(options?: CreateButtonOptions): HTMLElement;
   createDropdown(params: DropdownParams): Promise<IDropdownApi>;
@@ -1791,7 +1791,7 @@ export interface IChartingLibraryWidget {
   getStudyInputs(studyName: string): StudyInputInfo[];
   addCustomCSSFile(url: string): void;
   applyOverrides<TOverrides extends StudyOverrides>(
-    overrides: TOverrides,
+    overrides: TOverrides
   ): void;
   applyStudiesOverrides(overrides: object): void;
   watchList(): Promise<IWatchListApi>;
@@ -1804,12 +1804,12 @@ export interface IChartingLibraryWidget {
   layoutName(): string;
   changeTheme(
     themeName: ThemeName,
-    options?: ChangeThemeOptions,
+    options?: ChangeThemeOptions
   ): Promise<void>;
   getTheme(): ThemeName;
   takeScreenshot(): void;
   takeClientScreenshot(
-    options?: Partial<ClientSnapshotOptions>,
+    options?: Partial<ClientSnapshotOptions>
   ): Promise<HTMLCanvasElement>;
   lockAllDrawingTools(): IWatchedValue<boolean>;
   hideAllDrawingTools(): IWatchedValue<boolean>;
@@ -1846,14 +1846,14 @@ export interface IDatafeedChartApi {
     from: number,
     to: number,
     onDataCallback: GetMarksCallback<Mark>,
-    resolution: ResolutionString,
+    resolution: ResolutionString
   ): void;
   getTimescaleMarks?(
     symbolInfo: LibrarySymbolInfo,
     from: number,
     to: number,
     onDataCallback: GetMarksCallback<TimescaleMark>,
-    resolution: ResolutionString,
+    resolution: ResolutionString
   ): void;
   /**
    * This function is called if configuration flag supports_time is set to true when chart needs to know the server time.
@@ -1865,27 +1865,27 @@ export interface IDatafeedChartApi {
     userInput: string,
     exchange: string,
     symbolType: string,
-    onResult: SearchSymbolsCallback,
+    onResult: SearchSymbolsCallback
   ): void;
   resolveSymbol(
     symbolName: string,
     onResolve: ResolveCallback,
     onError: ErrorCallback,
-    extension?: SymbolResolveExtension,
+    extension?: SymbolResolveExtension
   ): void;
   getBars(
     symbolInfo: LibrarySymbolInfo,
     resolution: ResolutionString,
     periodParams: PeriodParams,
     onResult: HistoryCallback,
-    onError: ErrorCallback,
+    onError: ErrorCallback
   ): void;
   subscribeBars(
     symbolInfo: LibrarySymbolInfo,
     resolution: ResolutionString,
     onTick: SubscribeBarsCallback,
     listenerGuid: string,
-    onResetCacheNeededCallback: () => void,
+    onResetCacheNeededCallback: () => void
   ): void;
   unsubscribeBars(listenerGuid: string): void;
   subscribeDepth?(symbol: string, callback: DomeCallback): string;
@@ -1894,20 +1894,20 @@ export interface IDatafeedChartApi {
     currentResolution: ResolutionString,
     from: number,
     to: number,
-    symbolInfo: LibrarySymbolInfo,
+    symbolInfo: LibrarySymbolInfo
   ): ResolutionString;
 }
 export interface IDatafeedQuotesApi {
   getQuotes(
     symbols: string[],
     onDataCallback: QuotesCallback,
-    onErrorCallback: (msg: string) => void,
+    onErrorCallback: (msg: string) => void
   ): void;
   subscribeQuotes(
     symbols: string[],
     fastSymbols: string[],
     onRealtimeCallback: QuotesCallback,
-    listenerGUID: string,
+    listenerGUID: string
   ): void;
   unsubscribeQuotes(listenerGUID: string): void;
 }
@@ -1968,7 +1968,7 @@ export interface IExternalSaveLoadAdapter {
   removeStudyTemplate(studyTemplateInfo: StudyTemplateMetaInfo): Promise<void>;
   saveStudyTemplate(studyTemplateData: StudyTemplateData): Promise<void>;
   getStudyTemplateContent(
-    studyTemplateInfo: StudyTemplateMetaInfo,
+    studyTemplateInfo: StudyTemplateMetaInfo
   ): Promise<string>;
   getDrawingTemplates(toolName: string): Promise<string[]>;
   loadDrawingTemplate(toolName: string, templateName: string): Promise<string>;
@@ -1976,13 +1976,13 @@ export interface IExternalSaveLoadAdapter {
   saveDrawingTemplate(
     toolName: string,
     templateName: string,
-    content: string,
+    content: string
   ): Promise<void>;
 }
 export interface IFormatter<T> {
   format(value?: T): string;
   parse?(
-    value: string,
+    value: string
   ): ErrorFormatterParseResult | SuccessFormatterParseResult<T>;
 }
 export interface ILineDataSourceApi {
@@ -2153,7 +2153,7 @@ export interface IPriceFormatter extends ISymbolValueFormatter {
     signPositive?: boolean,
     tailSize?: number,
     signNegative?: boolean,
-    useRtlFormat?: boolean,
+    useRtlFormat?: boolean
   ): string;
 }
 export interface IPriceScaleApi {
@@ -2197,11 +2197,11 @@ export interface ISeriesApi {
   sendToBack(): void;
   entityId(): EntityId;
   chartStyleProperties<T extends ChartStyle>(
-    chartStyle: T,
+    chartStyle: T
   ): SeriesPreferencesMap[T];
   setChartStyleProperties<T extends ChartStyle>(
     chartStyle: T,
-    newPrefs: Partial<SeriesPreferencesMap[T]>,
+    newPrefs: Partial<SeriesPreferencesMap[T]>
   ): void;
 }
 export interface ISettingsAdapter {
@@ -2246,7 +2246,7 @@ export interface IStudyApi {
   bringToFront(): void;
   sendToBack(): void;
   applyOverrides<TOverrides extends StudyOverrides>(
-    overrides: TOverrides,
+    overrides: TOverrides
   ): void;
   applyToEntireLayout(): void;
   onDataLoaded(): ISubscription<() => void>;
@@ -2310,14 +2310,14 @@ export interface IWatchedValue<T>
   setValue(value: T, forceUpdate?: boolean): void;
   subscribe(
     callback: WatchedValueCallback<T>,
-    options?: WatchedValueSubscribeOptions,
+    options?: WatchedValueSubscribeOptions
   ): void;
   unsubscribe(callback?: WatchedValueCallback<T> | null): void;
 }
 export interface IWatchedValueReadonly<T> extends IObservableValueReadOnly<T> {
   subscribe(
     callback: (value: T) => void,
-    options?: WatchedValueSubscribeOptions,
+    options?: WatchedValueSubscribeOptions
   ): void;
   unsubscribe(callback?: ((value: T) => void) | null): void;
 }
@@ -2856,7 +2856,7 @@ export interface SubscribeEventsMap {
   study_event: (entityId: EntityId, studyEventType: StudyEventType) => void;
   drawing_event: (
     sourceId: EntityId,
-    drawingEventType: DrawingEventType,
+    drawingEventType: DrawingEventType
   ) => void;
   study_properties_changed: (id: EntityId) => void;
   series_properties_changed: (id: EntityId) => void;
@@ -2977,10 +2977,10 @@ export interface TradingTerminalWidgetOptions
   news_provider?: GetNewsFunction;
   trading_customization?: TradingCustomization;
   brokerFactory?(
-    host: IBrokerConnectionAdapterHost,
+    host: IBrokerConnectionAdapterHost
   ): IBrokerWithoutRealtime | IBrokerTerminal;
   broker_factory?(
-    host: IBrokerConnectionAdapterHost,
+    host: IBrokerConnectionAdapterHost
   ): IBrokerWithoutRealtime | IBrokerTerminal;
 }
 export interface TranslateOptions {

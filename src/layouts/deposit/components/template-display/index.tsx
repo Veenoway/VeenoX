@@ -218,7 +218,7 @@ export const TemplateDisplay = ({
             type="number"
             placeholder={"Quantity"}
             value={amount?.toString()}
-            className="h-[30px] pr-2.5 w-full max-w-[240px] text-sm placeholder:text-white"
+            className="h-[30px] pr-2.5 md:w-full max-w-[240px] text-sm placeholder:text-white"
             onChange={(e) => {
               const newValue = filterAllowedCharacters(e.target.value);
               setAmount(newValue as any);
