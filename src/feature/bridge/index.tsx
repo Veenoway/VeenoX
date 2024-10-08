@@ -76,8 +76,8 @@ export const Bridge = () => {
   } as Partial<WidgetConfig>;
 
   return (
-    <main className="">
-      <div className="flex flex-col items-center h-[95vh] pt-[40px] sm:pt-[50px] glowing-background relative">
+    <main className="bg-[url('/layer/d.jpg')] bg-cover bg-no-repeat">
+      <div className="flex flex-col items-center h-[95vh] pt-[40px] sm:pt-[50px] relative">
         <Web3OnBoardProvider>
           {/* <div className="flex items-center w-full h-[64px] relative max-w-[300px] mx-auto">
           <button
