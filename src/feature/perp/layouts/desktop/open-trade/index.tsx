@@ -84,6 +84,7 @@ export const OpenTrade = ({
   const [{ wallet }, connectWallet] = useConnectWallet();
   const [activeHoldings, setActiveHoldings] = useState(0);
   const [isSettleLoading, setIsSettleLoading] = useState(false);
+  const [activePercentageMobile, setActivePercentageMobile] = useState(100);
   const {
     setIsEnableTradingModalOpen,
     setOrderPositions,
@@ -763,51 +764,78 @@ export const OpenTrade = ({
             Quantity can&apos;t exceed {getFormattedAmount(maxQty)}{" "}
             {getSymbolForPair()}
           </p>
-          <div className={`mt-2 flex items-center text-white`}>
-            <Slider
-              value={[sliderValue]}
-              max={100}
-              step={1}
-              onValueChange={(value) => {
-                setSliderValue(value[0]);
-                handleInputErrors(false, "input_quantity");
-                const newQuantity = percentageToValue(value[0]);
-                handleValueChange("quantity", newQuantity.toString());
-              }}
-              isBuy={values.direction === "BUY"}
-            />
-            <div className="w-[57px] px-2 flex items-center justify-center ml-4 h-fit bg-terciary border border-borderColor-DARK rounded">
-              <input
-                name="quantity"
-                className="w-[30px] text-white text-sm h-[25px]"
-                type="number"
-                min={0}
-                max={100}
-                disabled={!freeCollateral || !wallet}
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    setSliderValue(0);
-                    const newQuantity = percentageToValue(undefined);
+          {isMobile ? (
+            <div
+              className={`mt-2 flex items-center text-white justify-between`}
+            >
+              {[25, 50, 75, 100].map((entry, i) => (
+                <button
+                  key={entry}
+                  onClick={() => {
+                    const newQuantity = percentageToValue(entry);
                     handleValueChange("quantity", newQuantity.toString());
-                    return;
-                  }
-                  if (
-                    parseFloat(e.target.value) >= 0 &&
-                    parseFloat(e.target.value) <= 100
-                  ) {
-                    const newQuantity = percentageToValue(
-                      parseInt(e.target.value)
-                    );
-                    handleValueChange("quantity", newQuantity.toString());
-                    setSliderValue(Number(e.target.value));
-                  }
-                }}
-                value={toPercentage(values.quantity as string) || "0"}
-              />
-              <p className="text-font-80 text-sm">%</p>
+                    setActivePercentageMobile(entry);
+                  }}
+                  className={`border bg-terciary rounded h-[27px] w-1/4 text-xs ${
+                    activePercentageMobile == entry ||
+                    toPercentage(values.quantity as string).toString() ===
+                      entry.toString()
+                      ? "border-borderColor text-white font-medium"
+                      : "border-borderColor-DARK text-font-60"
+                  } ${
+                    i !== 0 ? "ml-1.5" : ""
+                  } transition-all duration-150 ease-in-out`}
+                >
+                  {entry === 100 ? "MAX" : `${entry}%`}
+                </button>
+              ))}
             </div>
-          </div>
-
+          ) : (
+            <div className={`mt-2 flex items-center text-white`}>
+              <Slider
+                value={[sliderValue]}
+                max={100}
+                step={1}
+                onValueChange={(value) => {
+                  setSliderValue(value[0]);
+                  handleInputErrors(false, "input_quantity");
+                  const newQuantity = percentageToValue(value[0]);
+                  handleValueChange("quantity", newQuantity.toString());
+                }}
+                isBuy={values.direction === "BUY"}
+              />
+              <div className="w-[57px] px-2 flex items-center justify-center ml-4 h-fit bg-terciary border border-borderColor-DARK rounded">
+                <input
+                  name="quantity"
+                  className="w-[30px] text-white text-sm h-[25px]"
+                  type="number"
+                  min={0}
+                  max={100}
+                  disabled={!freeCollateral || !wallet}
+                  onChange={(e) => {
+                    if (!e.target.value) {
+                      setSliderValue(0);
+                      const newQuantity = percentageToValue(undefined);
+                      handleValueChange("quantity", newQuantity.toString());
+                      return;
+                    }
+                    if (
+                      parseFloat(e.target.value) >= 0 &&
+                      parseFloat(e.target.value) <= 100
+                    ) {
+                      const newQuantity = percentageToValue(
+                        parseInt(e.target.value)
+                      );
+                      handleValueChange("quantity", newQuantity.toString());
+                      setSliderValue(Number(e.target.value));
+                    }
+                  }}
+                  value={toPercentage(values.quantity as string) || "0"}
+                />
+                <p className="text-font-80 text-sm">%</p>
+              </div>
+            </div>
+          )}
           <div className="flex items-center justify-between mt-3">
             <p className="text-[11px] sm:text-xs text-font-60">
               Est. Liq. price

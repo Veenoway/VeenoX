@@ -160,8 +160,6 @@ export const Orderbook = ({
       );
   }, [trades, sectionRef]);
 
-  console.log("activeSection", activeSection);
-
   return (
     <section
       ref={sectionRef}
