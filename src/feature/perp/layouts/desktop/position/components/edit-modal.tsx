@@ -10,7 +10,6 @@ import {
   useSymbolsInfo,
 } from "@orderly.network/hooks";
 import { OrderEntity, OrderSide } from "@orderly.network/types";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Oval } from "react-loader-spinner";
 
@@ -20,9 +19,6 @@ type EditModalType = {
 };
 
 export const EditModal = ({ order, refresh }: EditModalType) => {
-  const [activePnlOrOffset, setActivePnlOrOffset] = useState("$");
-  const [error, setError] = useState([""]);
-  const params = useParams();
   const [loading, setLoading] = useState(false);
   const {
     editPendingPositionOpen,
@@ -41,7 +37,7 @@ export const EditModal = ({ order, refresh }: EditModalType) => {
   });
 
   const {
-    helper: { calculate, validator },
+    helper: { calculate },
   } = useOrderEntry(
     {
       symbol: order.symbol,

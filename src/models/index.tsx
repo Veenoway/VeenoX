@@ -173,3 +173,11 @@ export type PositionStream = {
   totalValue: any["totalValue"];
   totalUnrealizedROI: any["totalUnrealizedROI"];
 };
+
+export interface PositionStreamType {
+  readonly rows: API.PositionTPSLExt[] | null;
+  readonly aggregated: any;
+  readonly totalCollateral: number;
+  readonly totalValue: number;
+  readonly totalUnrealizedROI: number;
+}

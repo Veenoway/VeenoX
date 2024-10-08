@@ -9,7 +9,7 @@ import {
 } from "@/lib/shadcn/tooltip";
 import { triggerAlert } from "@/lib/toaster";
 import { Leverage } from "@/modals/leverage";
-import { FuturesAssetProps } from "@/models";
+import { FuturesAssetProps, PositionStreamType } from "@/models";
 import { getFormattedAmount } from "@/utils/misc";
 import {
   useAccountInstance,
@@ -20,11 +20,10 @@ import {
   useMaxQty,
   useOrderEntry,
   useAccount as useOrderlyAccount,
-  usePositionStream,
   useSymbolPriceRange,
   useSymbolsInfo,
 } from "@orderly.network/hooks";
-import { OrderEntity, OrderSide, OrderType } from "@orderly.network/types";
+import { API, OrderEntity, OrderSide, OrderType } from "@orderly.network/types";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -39,6 +38,8 @@ type OpenTradeProps = {
   holding?: number;
   asset: FuturesAssetProps;
   refresh: import("swr/_internal").KeyedMutator<any[]>;
+  refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
+  positions: PositionStreamType;
 };
 const marketType = ["Market", "Limit"];
 
@@ -74,6 +75,8 @@ export const OpenTrade = ({
   asset,
   holding,
   refresh,
+  positions: data,
+  refreshPosition,
 }: OpenTradeProps) => {
   const accountInstance = useAccountInstance();
   const [isTooltipMarketTypeOpen, setIsTooltipMarketTypeOpen] = useState(false);
@@ -83,7 +86,6 @@ export const OpenTrade = ({
   const [isSettleLoading, setIsSettleLoading] = useState(false);
   const {
     setIsEnableTradingModalOpen,
-    setIsWalletConnectorOpen,
     setOrderPositions,
     setDepositAmount,
     depositAmount,
@@ -332,16 +334,6 @@ export const OpenTrade = ({
     if (name === "quantity") setSliderValue(toPercentage(value));
   };
 
-  const [data, _info, { refresh: refreshPosition, loading }] =
-    usePositionStream(undefined, {
-      refreshInterval: 1000,
-      revalidateOnFocus: true,
-      refreshWhenHidden: true,
-      refreshWhenOffline: true,
-      revalidateIfStale: true,
-      dedupingInterval: 0,
-    });
-
   const [sliderValue, setSliderValue] = useState(toPercentage(newMaxQty));
 
   const handleInputErrors = (boolean: boolean, name: string) => {
@@ -371,15 +363,15 @@ export const OpenTrade = ({
     if (!depositAmount) setIsTooltipDepositOpen(false);
   }, [depositAmount]);
 
-  const [expendAccountInfo, setExpendAccountInfo] = useState(false);
   const { marginRatio } = useMarginRatio();
 
   const totalMarginRequired = data?.rows?.reduce(
-    (sum, position) => sum + position.notional * position.imr,
+    (sum: number, position: { notional: number; imr: number }) =>
+      sum + position.notional * position.imr,
     0
   );
   const totalMaintenanceMargin = data?.rows?.reduce(
-    (sum, position) => sum + position.mm,
+    (sum: number, position: { mm: number }) => sum + position.mm,
     0
   );
 

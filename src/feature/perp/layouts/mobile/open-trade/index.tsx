@@ -1,7 +1,8 @@
 import { useGeneralContext } from "@/context";
 import { Drawer, DrawerContent } from "@/lib/shadcn/drawer";
 import { Switch } from "@/lib/shadcn/switch";
-import { FuturesAssetProps } from "@/models";
+import { FuturesAssetProps, PositionStreamType } from "@/models";
+import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { OpenTrade } from "../../desktop/open-trade";
 import { Orderbook } from "../../desktop/orderbook";
@@ -12,6 +13,8 @@ type MobileOpenTradeProps = {
   holding?: number;
   refresh: import("swr/_internal").KeyedMutator<any[]>;
   ordersLength: number;
+  refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
+  positions: PositionStreamType;
 };
 
 export const MobileOpenTrade = ({
@@ -19,6 +22,8 @@ export const MobileOpenTrade = ({
   holding,
   refresh,
   ordersLength,
+  positions,
+  refreshPosition,
 }: MobileOpenTradeProps) => {
   const {
     showMobileTradeCreator,
@@ -62,6 +67,8 @@ export const MobileOpenTrade = ({
                   isMobile
                   holding={holding}
                   refresh={refresh}
+                  positions={positions}
+                  refreshPosition={refreshPosition}
                 />
                 {showOrderbook ? (
                   <Orderbook asset={asset} isMobileOpenTrade isMobile />

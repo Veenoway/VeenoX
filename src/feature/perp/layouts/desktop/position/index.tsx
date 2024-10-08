@@ -1,11 +1,7 @@
 import { useGeneralContext } from "@/context";
-import { FuturesAssetProps } from "@/models";
+import { PositionStreamType } from "@/models";
 import { getFormattedAmount, getTokenPercentage } from "@/utils/misc";
-import {
-  useAccountInstance,
-  useMarginRatio,
-  usePositionStream,
-} from "@orderly.network/hooks";
+import { useMarginRatio } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -14,11 +10,11 @@ import { RenderCells } from "./components/render-cells";
 import { thead } from "./constants";
 
 type PositionProps = {
-  asset: FuturesAssetProps;
+  positions: PositionStreamType;
   orders: API.Order[];
   refresh: import("swr/_internal").KeyedMutator<any[]>;
   cancelOrder: (orderId: number, symbol?: string) => Promise<any>;
-  updateOrder: any;
+  refreshPosition: import("swr/_internal").KeyedMutator<API.PositionInfo>;
 };
 
 enum Sections {
@@ -29,35 +25,24 @@ enum Sections {
 }
 
 export const Position = ({
-  asset,
   refresh,
   cancelOrder,
   orders,
-  updateOrder,
+  positions: data,
+  refreshPosition,
 }: PositionProps) => {
   const [activeSection, setActiveSection] = useState(Sections.POSITION);
-  const account = useAccountInstance();
   const sections = ["Positions", "Pending", "TP/SL", "Order History"];
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [shouldRefresh, setShouldRefresh] = useState(false);
   const prevLengthRef = useRef<number | null>(null);
   const isFirstCallRef = useRef(true);
   const { currentLeverage } = useMarginRatio();
-  const { setOrderPositions, orderPositions, TPSLOpenOrder } =
-    useGeneralContext();
+  const { setOrderPositions, orderPositions } = useGeneralContext();
   const [underlineStyle, setUnderlineStyle] = useState<{
     width: string;
     left: string;
   }>({ width: "20%", left: "0%" });
-  const [data, _info, { refresh: refreshPosition }] = usePositionStream(
-    undefined,
-    {
-      refreshInterval: 1000,
-      revalidateOnFocus: true,
-      refreshWhenOffline: true,
-      revalidateIfStale: true,
-    }
-  );
 
   useEffect(() => {
     if (!orderPositions?.length && (data?.rows?.length as number) > 0) {
@@ -291,35 +276,37 @@ export const Position = ({
                   ?.filter(filterSide)
                   ?.sort((a, b) => (b.updated_time as never) - a.updated_time)
                   ?.filter((_, i) => i < 40)
-            )?.map((order: (API.PositionTPSLExt | API.Order) | any, i) => {
-              if (
-                (activeSection === 0 && !data?.rows?.length) ||
-                (activeSection > 0 && !orders?.length)
-              ) {
+            )?.map(
+              (order: (API.PositionTPSLExt | API.Order) | any, i: number) => {
+                if (
+                  (activeSection === 0 && !data?.rows?.length) ||
+                  (activeSection > 0 && !orders?.length)
+                ) {
+                  return (
+                    <tr
+                      key={i}
+                      className="flex flex-col justify-center text-xs text-white items-center absolute h-[80px] left-1/2"
+                    >
+                      <div className="flex flex-col items-center justify-center w-full h-full">
+                        <p className="mt-2">{noOrderMessage}</p>{" "}
+                      </div>
+                    </tr>
+                  );
+                }
                 return (
-                  <tr
-                    key={i}
-                    className="flex flex-col justify-center text-xs text-white items-center absolute h-[80px] left-1/2"
-                  >
-                    <div className="flex flex-col items-center justify-center w-full h-full">
-                      <p className="mt-2">{noOrderMessage}</p>{" "}
-                    </div>
+                  <tr key={order?.order_id || i}>
+                    <RenderCells
+                      order={order}
+                      activeSection={activeSection}
+                      closePendingOrder={closePendingOrder}
+                      rows={data?.rows}
+                      refreshPosition={refreshPosition}
+                      refresh={refresh}
+                    />
                   </tr>
                 );
               }
-              return (
-                <tr key={order?.order_id || i}>
-                  <RenderCells
-                    order={order}
-                    activeSection={activeSection}
-                    closePendingOrder={closePendingOrder}
-                    rows={data?.rows}
-                    refreshPosition={refreshPosition}
-                    refresh={refresh}
-                  />
-                </tr>
-              );
-            })}
+            )}
             {!orders?.length && activeSection !== Sections.POSITION ? (
               <tr className="flex flex-col justify-center text-xs text-white items-center absolute h-[80px] left-1/2">
                 <div className="flex flex-col justify-center items-center">

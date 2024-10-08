@@ -1,8 +1,8 @@
 import { Loader } from "@/components/loader";
 import { useGeneralContext } from "@/context";
-import { FuturesAssetProps } from "@/models";
+import { FuturesAssetProps, PositionStreamType } from "@/models";
 import { cn } from "@/utils/cn";
-import { usePositionStream, useWS } from "@orderly.network/hooks";
+import { useWS } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -30,6 +30,7 @@ interface TradingViewChartProps {
   params: any;
   orders: API.Order[];
   refresh: import("swr/_internal").KeyedMutator<any[]>;
+  positions: PositionStreamType;
 }
 
 interface ChartElement {
@@ -112,6 +113,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   params,
   refresh,
   orders: ordersData,
+  positions: orders,
 }) => {
   const { isChartLoading, setIsChartLoading } = useGeneralContext();
   const ref = useRef<HTMLDivElement>(null);
@@ -119,7 +121,6 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({
   const ws = useWS();
   const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
   const [chartLines, setChartLines] = useState<{ [key: string]: any }>({});
-  const [orders, _info, { refresh: refreshPosition }] = usePositionStream();
   const [isChartReady, setIsChartReady] = useState(false);
   const chartRef = useRef<any>(null);
   const prevPositionsRef = useRef("");

@@ -3,7 +3,7 @@ import { useGeneralContext } from "@/context";
 import { useResizer } from "@/hook/useResizer";
 import { EnableTrading } from "@/layouts/enable-trading";
 import { MaintenanceStatusModal } from "@/modals/maintenance";
-import { FavoriteProps, FuturesAssetProps } from "@/models";
+import { FavoriteProps, FuturesAssetProps, PositionStreamType } from "@/models";
 import {
   useHoldingStream,
   useMarkets,
@@ -144,6 +144,7 @@ export const Perp = ({ asset }: PerpProps) => {
                         className={""}
                         refresh={refresh}
                         orders={orders as API.Order[]}
+                        positions={positions as unknown as PositionStreamType}
                       />
                     </div>
                   </>
@@ -165,6 +166,7 @@ export const Perp = ({ asset }: PerpProps) => {
                         className={""}
                         refresh={refresh}
                         orders={orders as API.Order[]}
+                        positions={positions as unknown as PositionStreamType}
                       />
                     </div>
                     <div
@@ -214,11 +216,11 @@ export const Perp = ({ asset }: PerpProps) => {
             <div className=" w-full md:min-h-[350px] md:h-[350px] no-scrollbar">
               <div className="no-scrollbar">
                 <Position
-                  asset={asset}
                   orders={orders as API.Order[]}
                   refresh={refresh}
                   cancelOrder={cancelOrder}
-                  updateOrder={updateOrder}
+                  positions={positions as unknown as PositionStreamType}
+                  refreshPosition={refreshPosition}
                 />
               </div>
             </div>{" "}
@@ -237,7 +239,13 @@ export const Perp = ({ asset }: PerpProps) => {
               onMouseDown={(e) => handleLastBoxResize(e)}
             />
           )}
-          <OpenTrade asset={asset} holding={usdc?.holding} refresh={refresh} />
+          <OpenTrade
+            asset={asset}
+            holding={usdc?.holding}
+            refresh={refresh}
+            positions={positions as unknown as PositionStreamType}
+            refreshPosition={refreshPosition}
+          />
         </div>
       </div>
       {/* <div className="flex items-center justify-center lg:hidden h-screen w-screen fixed top-0 bg-[rgba(0,0,0,0.4)] z-[120]">
@@ -254,6 +262,8 @@ export const Perp = ({ asset }: PerpProps) => {
         holding={usdc?.holding}
         refresh={refresh}
         ordersLength={positions?.rows?.length || 0}
+        positions={positions as unknown as PositionStreamType}
+        refreshPosition={refreshPosition}
       />
       <MobileOrdersDrawer
         orders={positions?.rows as API.PositionTPSLExt[]}
