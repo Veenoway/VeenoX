@@ -20,9 +20,10 @@ const DrawerTrigger = DrawerPrimitive.Trigger;
 const DrawerPortal = DrawerPrimitive.Portal;
 
 const DrawerClose = DrawerPrimitive.Close;
+
 interface DrawerOverlayProps
   extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay> {
-  close: () => void; // Déclarez la prop close
+  close: () => void;
 }
 const DrawerOverlay = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Overlay>,
@@ -39,7 +40,7 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 
 interface DrawerContentProps
   extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> {
-  close: () => void; // Déclarez la prop close
+  close: () => void;
 }
 
 const DrawerContent = React.forwardRef<
@@ -54,9 +55,9 @@ const DrawerContent = React.forwardRef<
         "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px]  bg-background",
         className
       )}
+      onTouchMove={close}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
