@@ -64,7 +64,7 @@ export const Header = () => {
       </div>
       <MobileModal
         isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen((prev) => !prev)}
+        onClose={() => setIsMobileMenuOpen(false)}
       />
       <EnableTrading />
     </header>
