@@ -12,12 +12,11 @@ import { formatSymbol } from "@/utils/misc";
 import {
   useMarkPrice,
   useOrderStream,
-  usePrivateQuery,
   useSymbolsInfo,
   useTPSLOrder,
 } from "@orderly.network/hooks";
 import { API } from "@orderly.network/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -35,8 +34,12 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
   const { setOrderPositions } = useGeneralContext();
   const [showCustomQty, setShowCustomQty] = useState(false);
   const [activeQuantity, setActiveQuantity] = useState({
-    percentage: 100,
-    quantity: TPSLOpenOrder.position_qty,
+    percentage: TPSLOpenOrder?.algo_order?.quantity
+      ? Math.round(
+          (TPSLOpenOrder.algo_order.quantity / TPSLOpenOrder.position_qty) * 100
+        )
+      : 100,
+    quantity: TPSLOpenOrder?.algo_order?.quantity || TPSLOpenOrder.position_qty,
   });
   const [algoOrder, { setValue, submit, errors }] = useTPSLOrder(
     TPSLOpenOrder,
@@ -51,7 +54,11 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
     position_qty: TPSLOpenOrder.position_qty,
     tp_trigger_price: TPSLOpenOrder.tp_trigger_price,
     sl_trigger_price: TPSLOpenOrder.sl_trigger_price,
-    quantity: String(Math.abs(TPSLOpenOrder.position_qty)),
+    quantity: String(
+      Math.abs(
+        TPSLOpenOrder?.algo_order?.quantity || TPSLOpenOrder.position_qty
+      )
+    ),
   };
 
   const [_, { cancelTPSLChildOrder, cancelAllTPSLOrders }] = useOrderStream(
@@ -146,7 +153,6 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
         isLoading: false,
         autoClose: 2000,
       });
-      mutate();
       await refreshPosition();
     } catch (e) {
       console.log("err", e);
@@ -204,16 +210,6 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
         return "0%";
     }
   };
-
-  const { data, mutate } = usePrivateQuery("/v1/algo/orders");
-
-  useEffect(() => {
-    if (data) {
-      console.log("data", data);
-    }
-  }, [data, refreshPosition]);
-
-  // console.log("data", );
 
   return (
     <Dialog open={TPSLOpenOrder}>
@@ -511,7 +507,6 @@ export const TPSLModal = ({ refreshPosition }: TPSLModalType) => {
                       setValue("quantity", qty.toString());
                       setActiveQuantity({
                         percentage,
-
                         quantity: qty,
                       });
                     }}
