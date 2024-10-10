@@ -64,3 +64,22 @@ index a2e64cd..53da4da 100644
          }
      ];
  };
+diff --git a/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/utils.js b/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/utils.js
+index af578e2..714ab37 100644
+--- a/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/utils.js
++++ b/node_modules/@orderly.network/hooks/esm/orderly/usePositionStream/utils.js
+@@ -1,4 +1,4 @@
+-import { AlgoOrderType, AlgoOrderRootType, OrderStatus } from "@orderly.network/types";
++import { AlgoOrderRootType, AlgoOrderType, OrderStatus } from "@orderly.network/types";
+ export const findTPSLFromOrders = (orders, symbol)=>{
+     const order = findPositionTPSLFromOrders(orders, symbol);
+     // console.log("!!!!!", order);
+@@ -26,7 +26,7 @@ export const findTPSLFromOrder = (order)=>{
+ export const findPositionTPSLFromOrders = (orders, symbol)=>{
+     return orders?.find((order)=>{
+         // console.log(order.symbol, symbol, order.algo_type);
+-        return order.symbol === symbol && order.algo_type === AlgoOrderRootType.POSITIONAL_TP_SL && (order.root_algo_status === OrderStatus.NEW || order.root_algo_status === OrderStatus.REPLACED || order.root_algo_status === OrderStatus.PARTIAL_FILLED);
++        return order.symbol === symbol && (order.algo_type === AlgoOrderRootType.POSITIONAL_TP_SL || order.algo_type === AlgoOrderRootType.TP_SL) && (order.root_algo_status === OrderStatus.NEW || order.root_algo_status === OrderStatus.REPLACED || order.root_algo_status === OrderStatus.PARTIAL_FILLED);
+     });
+ // return order;
+ };

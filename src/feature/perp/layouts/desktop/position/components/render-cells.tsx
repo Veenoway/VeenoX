@@ -1,5 +1,6 @@
 import { useGeneralContext } from "@/context";
 import { PosterModal } from "@/modals/poster";
+import { TPSLModal } from "@/modals/tp-sl";
 import { cn } from "@/utils/cn";
 import {
   formatSymbol,
@@ -12,7 +13,6 @@ import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import { EditModal } from "./edit-modal";
-import { TPSLModal } from "./tp-sl-modal";
 
 const tdStyle = `text-xs px-2.5 pt-3 pb-0 text-white whitespace-nowrap font-normal text-start`;
 enum Sections {

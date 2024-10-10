@@ -8,12 +8,13 @@ type SliderProps = React.ComponentPropsWithoutRef<
   typeof SliderPrimitive.Root
 > & {
   isBuy: boolean;
+  isTpSl?: boolean;
 };
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, isBuy, ...props }, ref) => (
+>(({ className, isBuy, isTpSl, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
     className={cn(
@@ -26,13 +27,13 @@ const Slider = React.forwardRef<
       <SliderPrimitive.Range
         className={cn(
           "absolute h-full transition-colors duration-150 ease-in-out",
-          isBuy ? "bg-green" : "bg-red"
+          isTpSl ? "bg-base_color" : isBuy ? "bg-green" : "bg-red"
         )}
       />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb
       className={`block h-3 w-3 rounded-full border-2 ${
-        isBuy ? "border-green" : "border-red"
+        isTpSl ? "border-base_color" : isBuy ? "border-green" : "border-red"
       } bg-terciary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 transition-all duration-150 ease-in-out`}
     />
   </SliderPrimitive.Root>
