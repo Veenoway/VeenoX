@@ -18,7 +18,6 @@
     "@mui/material": "^6.1.0",
     "@mui/system": "^6.1.0",
     "@orderly.network/hooks": "^1.5.10",
-    "@orderly.network/react": "^1.5.13",
     "@orderly.network/trading-view": "^1.5.10",
     "@orderly.network/types": "^1.5.10",
     "@orderly.network/web3-onboard": "^1.5.10",
